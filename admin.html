@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Made To Dance Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="admin.css" />
+  </head>
+  <body class="admin-body">
+    <main class="admin-shell">
+      <aside class="admin-sidebar">
+        <a class="brand admin-brand" href="index.html" aria-label="Made To Dance home">
+          <img src="assets/made-to-dance-logo.png" alt="Made To Dance" />
+        </a>
+        <div>
+          <p class="eyebrow">Content Studio</p>
+          <h1>Website Admin</h1>
+          <p>Edit the homepage copy, images, video, packages, teachers, and contact details.</p>
+        </div>
+        <div class="admin-actions">
+          <a class="button button-outline" href="index.html" target="_blank">Preview Site</a>
+          <button class="button button-ghost admin-logout" type="button" data-sign-out hidden>Sign Out</button>
+        </div>
+      </aside>
+
+      <section class="admin-panel">
+        <form class="login-card" data-login-form>
+          <p class="eyebrow">Admin Login</p>
+          <h2>Sign in to edit content.</h2>
+          <label>
+            Email
+            <input type="email" name="email" autocomplete="email" required />
+          </label>
+          <label>
+            Password
+            <input type="password" name="password" autocomplete="current-password" required />
+          </label>
+          <button class="button button-gold" type="submit">Sign In</button>
+          <p class="admin-message" data-login-message></p>
+        </form>
+
+        <form class="editor-form" data-editor-form hidden>
+          <div class="editor-toolbar">
+            <div>
+              <p class="eyebrow">Homepage</p>
+              <h2>Edit Published Content</h2>
+            </div>
+            <button class="button button-gold" type="submit">Save Changes</button>
+          </div>
+
+          <section class="editor-section">
+            <h3>Global</h3>
+            <div class="field-grid">
+              <label>
+                Booking URL
+                <input name="bookingUrl" type="url" />
+              </label>
+              <label>
+                Navigation CTA
+                <input name="nav.cta" type="text" />
+              </label>
+            </div>
+          </section>
+
+          <section class="editor-section">
+            <h3>Hero</h3>
+            <div class="field-grid">
+              <label>
+                Eyebrow
+                <input name="hero.eyebrow" type="text" />
+              </label>
+              <label>
+                Headline
+                <input name="hero.title" type="text" />
+              </label>
+              <label class="wide-field">
+                Supporting Copy
+                <textarea name="hero.body" rows="4"></textarea>
+              </label>
+              <label>
+                Video URL
+                <input name="hero.video" type="url" />
+              </label>
+              <label>
+                Poster Image URL
+                <input name="hero.poster" type="url" />
+              </label>
+              <label>
+                Primary CTA
+                <input name="hero.primaryCta" type="text" />
+              </label>
+              <label>
+                Secondary CTA
+                <input name="hero.secondaryCta" type="text" />
+              </label>
+            </div>
+          </section>
+
+          <section class="editor-section">
+            <h3>Section Copy</h3>
+            <div class="field-grid">
+              <label>
+                Why Eyebrow
+                <input name="why.eyebrow" type="text" />
+              </label>
+              <label>
+                Why Headline
+                <input name="why.title" type="text" />
+              </label>
+              <label>
+                Classes Eyebrow
+                <input name="classes.eyebrow" type="text" />
+              </label>
+              <label>
+                Classes Headline
+                <input name="classes.title" type="text" />
+              </label>
+              <label>
+                Events Eyebrow
+                <input name="events.eyebrow" type="text" />
+              </label>
+              <label>
+                Events Headline
+                <input name="events.title" type="text" />
+              </label>
+              <label>
+                Teachers Eyebrow
+                <input name="teachers.eyebrow" type="text" />
+              </label>
+              <label>
+                Teachers Headline
+                <input name="teachers.title" type="text" />
+              </label>
+              <label>
+                Gallery Eyebrow
+                <input name="gallery.eyebrow" type="text" />
+              </label>
+              <label>
+                Gallery Headline
+                <input name="gallery.title" type="text" />
+              </label>
+              <label>
+                Packages Eyebrow
+                <input name="packages.eyebrow" type="text" />
+              </label>
+              <label>
+                Packages Headline
+                <input name="packages.title" type="text" />
+              </label>
+            </div>
+          </section>
+
+          <section class="editor-section">
+            <h3>Life Beyond Class</h3>
+            <div class="field-grid">
+              <label>
+                Eyebrow
+                <input name="life.eyebrow" type="text" />
+              </label>
+              <label>
+                Headline
+                <input name="life.title" type="text" />
+              </label>
+              <label>
+                Image URL
+                <input name="life.image" type="url" />
+              </label>
+              <label class="wide-field">
+                Copy
+                <textarea name="life.body" rows="4"></textarea>
+              </label>
+            </div>
+          </section>
+
+          <section class="editor-section">
+            <h3>Final CTA</h3>
+            <div class="field-grid">
+              <label>
+                Eyebrow
+                <input name="finalCta.eyebrow" type="text" />
+              </label>
+              <label>
+                Headline
+                <input name="finalCta.title" type="text" />
+              </label>
+              <label>
+                CTA
+                <input name="finalCta.cta" type="text" />
+              </label>
+              <label>
+                Image URL
+                <input name="finalCta.image" type="url" />
+              </label>
+              <label class="wide-field">
+                Copy
+                <textarea name="finalCta.body" rows="3"></textarea>
+              </label>
+            </div>
+          </section>
+
+          <section class="editor-section">
+            <h3>Footer</h3>
+            <div class="field-grid">
+              <label class="wide-field">
+                Footer Copy
+                <textarea name="footer.body" rows="3"></textarea>
+              </label>
+              <label>
+                Address
+                <input name="footer.address" type="text" />
+              </label>
+              <label>
+                Email
+                <input name="footer.email" type="email" />
+              </label>
+              <label>
+                Phone
+                <input name="footer.phone" type="text" />
+              </label>
+              <label>
+                Instagram Label
+                <input name="footer.instagramLabel" type="text" />
+              </label>
+              <label>
+                Instagram URL
+                <input name="footer.instagramUrl" type="url" />
+              </label>
+              <label class="wide-field">
+                Hours
+                <textarea name="footer.hours" rows="3"></textarea>
+              </label>
+              <label class="wide-field">
+                Copyright
+                <input name="footer.copyright" type="text" />
+              </label>
+            </div>
+          </section>
+
+          <section class="editor-section">
+            <h3>Repeatable Content</h3>
+            <p class="editor-help">
+              These sections are arrays. Keep the same JSON shape, duplicate an object to add a card, or remove one to hide it.
+            </p>
+            <div class="json-grid">
+              <label>
+                Why Feature Cards
+                <textarea name="why.features" data-json rows="12"></textarea>
+              </label>
+              <label>
+                Class Cards
+                <textarea name="classes.items" data-json rows="12"></textarea>
+              </label>
+              <label>
+                Event Cards
+                <textarea name="events.items" data-json rows="12"></textarea>
+              </label>
+              <label>
+                Teacher Cards
+                <textarea name="teachers.items" data-json rows="12"></textarea>
+              </label>
+              <label>
+                Gallery Images
+                <textarea name="gallery.items" data-json rows="12"></textarea>
+              </label>
+              <label>
+                Testimonials
+                <textarea name="testimonials" data-json rows="12"></textarea>
+              </label>
+              <label>
+                Packages
+                <textarea name="packages.items" data-json rows="12"></textarea>
+              </label>
+            </div>
+          </section>
+
+          <div class="editor-toolbar bottom-toolbar">
+            <p class="admin-message" data-editor-message></p>
+            <button class="button button-gold" type="submit">Save Changes</button>
+          </div>
+        </form>
+      </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="content.js"></script>
+    <script src="supabase-config.js"></script>
+    <script src="admin.js"></script>
+  </body>
+</html>
