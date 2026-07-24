@@ -7,6 +7,9 @@ const loginMessage = document.querySelector("[data-login-message]");
 const passwordMessage = document.querySelector("[data-password-message]");
 const editorMessage = document.querySelector("[data-editor-message]");
 const signOutButton = document.querySelector("[data-sign-out]");
+const resetPasswordButton = document.querySelector("[data-reset-password]");
+const editorTabs = document.querySelectorAll("[data-editor-tab]");
+const editorPanels = document.querySelectorAll("[data-editor-panel]");
 
 let supabaseClient;
 let currentContent = defaultContentForAdmin;
@@ -19,6 +22,13 @@ const setMessage = (element, message, type = "") => {
   element.textContent = message || "";
   element.classList.toggle("is-error", type === "error");
   element.classList.toggle("is-success", type === "success");
+};
+
+const setSavingState = (isSaving) => {
+  editorForm.querySelectorAll("button[type='submit']").forEach((button) => {
+    button.disabled = isSaving;
+    button.textContent = isSaving ? "Saving..." : "Save Changes";
+  });
 };
 
 const getPath = (object, path) =>
@@ -82,6 +92,16 @@ const showLogin = () => {
   passwordForm.hidden = true;
   editorForm.hidden = true;
   signOutButton.hidden = true;
+};
+
+const activateEditorTab = (tabName) => {
+  editorTabs.forEach((tab) => {
+    tab.classList.toggle("is-active", tab.dataset.editorTab === tabName);
+  });
+
+  editorPanels.forEach((panel) => {
+    panel.classList.toggle("is-active", panel.dataset.editorPanel === tabName);
+  });
 };
 
 const loadContent = async () => {
@@ -182,6 +202,28 @@ loginForm.addEventListener("submit", async (event) => {
   await loadContent();
 });
 
+resetPasswordButton.addEventListener("click", async () => {
+  const email = loginForm.elements.email.value;
+
+  if (!email) {
+    setMessage(loginMessage, "Enter your email first, then request a reset link.", "error");
+    loginForm.elements.email.focus();
+    return;
+  }
+
+  setMessage(loginMessage, "Sending reset link...");
+  const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+    redirectTo: `${window.location.origin}${window.location.pathname}`
+  });
+
+  if (error) {
+    setMessage(loginMessage, error.message, "error");
+    return;
+  }
+
+  setMessage(loginMessage, "Password reset link sent. Check your inbox.", "success");
+});
+
 passwordForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   setMessage(passwordMessage, "Saving password...");
@@ -211,12 +253,14 @@ passwordForm.addEventListener("submit", async (event) => {
 editorForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   setMessage(editorMessage, "Saving...");
+  setSavingState(true);
 
   let nextContent;
   try {
     nextContent = readForm();
   } catch (error) {
     setMessage(editorMessage, error.message, "error");
+    setSavingState(false);
     return;
   }
 
@@ -228,16 +272,22 @@ editorForm.addEventListener("submit", async (event) => {
 
   if (error) {
     setMessage(editorMessage, error.message, "error");
+    setSavingState(false);
     return;
   }
 
   currentContent = nextContent;
   setMessage(editorMessage, "Saved. Refresh the public site to see the latest content.", "success");
+  setSavingState(false);
 });
 
 signOutButton.addEventListener("click", async () => {
   await supabaseClient.auth.signOut();
   showLogin();
+});
+
+editorTabs.forEach((tab) => {
+  tab.addEventListener("click", () => activateEditorTab(tab.dataset.editorTab));
 });
 
 boot();

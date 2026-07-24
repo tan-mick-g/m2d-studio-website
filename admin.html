@@ -31,9 +31,12 @@
       </aside>
 
       <section class="admin-panel">
-        <form class="login-card" data-login-form>
-          <p class="eyebrow">Admin Login</p>
-          <h2>Sign in to edit content.</h2>
+        <form class="login-card auth-card" data-login-form>
+          <div class="auth-heading">
+            <p class="eyebrow">Admin Login</p>
+            <h2>Welcome back.</h2>
+            <p>Sign in with your Made To Dance admin account to update the live website.</p>
+          </div>
           <label>
             Email
             <input type="email" name="email" autocomplete="email" required />
@@ -43,12 +46,20 @@
             <input type="password" name="password" autocomplete="current-password" required />
           </label>
           <button class="button button-gold" type="submit">Sign In</button>
+          <button class="text-button" type="button" data-reset-password>Send password reset link</button>
           <p class="admin-message" data-login-message></p>
+          <div class="auth-note">
+            <strong>New admin?</strong>
+            Open the invitation email from Supabase. The link will bring you back here to create your password.
+          </div>
         </form>
 
-        <form class="login-card" data-password-form hidden>
-          <p class="eyebrow">Account Setup</p>
-          <h2>Create your admin password.</h2>
+        <form class="login-card auth-card" data-password-form hidden>
+          <div class="auth-heading">
+            <p class="eyebrow">Account Setup</p>
+            <h2>Create your password.</h2>
+            <p>Choose a secure password to finish activating your admin account.</p>
+          </div>
           <label>
             New Password
             <input type="password" name="password" autocomplete="new-password" minlength="8" required />
@@ -66,12 +77,26 @@
             <div>
               <p class="eyebrow">Homepage</p>
               <h2>Edit Published Content</h2>
+              <p class="editor-help">Move through the tabs, update fields, then save once when you are done.</p>
             </div>
-            <button class="button button-gold" type="submit">Save Changes</button>
+            <div class="toolbar-actions">
+              <a class="button button-outline" href="index.html" target="_blank">Preview</a>
+              <button class="button button-gold" type="submit">Save Changes</button>
+            </div>
           </div>
 
-          <section class="editor-section">
+          <div class="editor-tabs" role="tablist" aria-label="Editor sections">
+            <button class="is-active" type="button" data-editor-tab="basics">Basics</button>
+            <button type="button" data-editor-tab="hero">Hero</button>
+            <button type="button" data-editor-tab="sections">Sections</button>
+            <button type="button" data-editor-tab="media">Media & CTA</button>
+            <button type="button" data-editor-tab="footer">Footer</button>
+            <button type="button" data-editor-tab="lists">Cards & Lists</button>
+          </div>
+
+          <section class="editor-section is-active" data-editor-panel="basics">
             <h3>Global</h3>
+            <p class="editor-help">These values affect calls to action across the whole site.</p>
             <div class="field-grid">
               <label>
                 Booking URL
@@ -84,8 +109,9 @@
             </div>
           </section>
 
-          <section class="editor-section">
+          <section class="editor-section" data-editor-panel="hero">
             <h3>Hero</h3>
+            <p class="editor-help">This is the first thing visitors see. Keep it warm, short, and confident.</p>
             <div class="field-grid">
               <label>
                 Eyebrow
@@ -118,8 +144,9 @@
             </div>
           </section>
 
-          <section class="editor-section">
+          <section class="editor-section" data-editor-panel="sections">
             <h3>Section Copy</h3>
+            <p class="editor-help">Update the main headings for each homepage section.</p>
             <div class="field-grid">
               <label>
                 Why Eyebrow
@@ -172,7 +199,7 @@
             </div>
           </section>
 
-          <section class="editor-section">
+          <section class="editor-section" data-editor-panel="media">
             <h3>Life Beyond Class</h3>
             <div class="field-grid">
               <label>
@@ -194,7 +221,7 @@
             </div>
           </section>
 
-          <section class="editor-section">
+          <section class="editor-section" data-editor-panel="media">
             <h3>Final CTA</h3>
             <div class="field-grid">
               <label>
@@ -220,8 +247,9 @@
             </div>
           </section>
 
-          <section class="editor-section">
+          <section class="editor-section" data-editor-panel="footer">
             <h3>Footer</h3>
+            <p class="editor-help">Keep contact information and studio hours current.</p>
             <div class="field-grid">
               <label class="wide-field">
                 Footer Copy
@@ -258,10 +286,10 @@
             </div>
           </section>
 
-          <section class="editor-section">
+          <section class="editor-section" data-editor-panel="lists">
             <h3>Repeatable Content</h3>
             <p class="editor-help">
-              These sections are arrays. Keep the same JSON shape, duplicate an object to add a card, or remove one to hide it.
+              These sections control cards and lists. Keep the same JSON shape, duplicate an object to add a card, or remove one to hide it.
             </p>
             <div class="json-grid">
               <label>
