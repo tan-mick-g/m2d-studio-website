@@ -46,6 +46,21 @@
           <p class="admin-message" data-login-message></p>
         </form>
 
+        <form class="login-card" data-password-form hidden>
+          <p class="eyebrow">Account Setup</p>
+          <h2>Create your admin password.</h2>
+          <label>
+            New Password
+            <input type="password" name="password" autocomplete="new-password" minlength="8" required />
+          </label>
+          <label>
+            Confirm Password
+            <input type="password" name="confirmPassword" autocomplete="new-password" minlength="8" required />
+          </label>
+          <button class="button button-gold" type="submit">Save Password</button>
+          <p class="admin-message" data-password-message></p>
+        </form>
+
         <form class="editor-form" data-editor-form hidden>
           <div class="editor-toolbar">
             <div>

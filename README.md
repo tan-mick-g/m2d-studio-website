@@ -29,6 +29,19 @@ http://127.0.0.1:4174/admin.html
 
 Only emails in `public.admin_users` can save site content.
 
+### Invite Links
+
+In Supabase Dashboard > Authentication > URL Configuration:
+
+- Set Site URL to your deployed admin page, for example `https://your-vercel-url.vercel.app/admin.html`.
+- Add Redirect URLs for every admin URL you will use:
+  - `https://your-vercel-url.vercel.app/admin.html`
+  - `https://your-vercel-url.vercel.app/**`
+  - `http://127.0.0.1:4174/admin.html`
+  - `http://127.0.0.1:4174/**`
+
+When inviting users from Supabase Auth, the invite link should send them to `admin.html`, where they can create their password.
+
 ## Vercel
 
 This is a static site. Import the GitHub repository into Vercel and deploy with:

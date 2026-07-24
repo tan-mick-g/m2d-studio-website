@@ -1,13 +1,17 @@
 const adminConfig = window.MTD_SUPABASE || {};
 const defaultContentForAdmin = structuredClone(window.MTD_DEFAULT_CONTENT || {});
 const loginForm = document.querySelector("[data-login-form]");
+const passwordForm = document.querySelector("[data-password-form]");
 const editorForm = document.querySelector("[data-editor-form]");
 const loginMessage = document.querySelector("[data-login-message]");
+const passwordMessage = document.querySelector("[data-password-message]");
 const editorMessage = document.querySelector("[data-editor-message]");
 const signOutButton = document.querySelector("[data-sign-out]");
 
 let supabaseClient;
 let currentContent = defaultContentForAdmin;
+const initialSearchParams = new URLSearchParams(window.location.search);
+const initialHashParams = new URLSearchParams(window.location.hash.slice(1));
 
 const isConfigured = () => Boolean(adminConfig.url && adminConfig.anonKey && window.supabase);
 
@@ -61,8 +65,23 @@ const readForm = () => {
 
 const showEditor = (show) => {
   loginForm.hidden = show;
+  passwordForm.hidden = true;
   editorForm.hidden = !show;
   signOutButton.hidden = !show;
+};
+
+const showPasswordSetup = () => {
+  loginForm.hidden = true;
+  passwordForm.hidden = false;
+  editorForm.hidden = true;
+  signOutButton.hidden = false;
+};
+
+const showLogin = () => {
+  loginForm.hidden = false;
+  passwordForm.hidden = true;
+  editorForm.hidden = true;
+  signOutButton.hidden = true;
 };
 
 const loadContent = async () => {
@@ -82,6 +101,40 @@ const loadContent = async () => {
   fillForm(currentContent);
 };
 
+const getAuthLinkType = () => initialSearchParams.get("type") || initialHashParams.get("type");
+
+const clearAuthParams = () => {
+  window.history.replaceState({}, document.title, window.location.pathname);
+};
+
+const handleAuthLink = async () => {
+  const errorDescription = initialHashParams.get("error_description");
+  if (errorDescription) {
+    setMessage(loginMessage, decodeURIComponent(errorDescription).replaceAll("+", " "), "error");
+    clearAuthParams();
+    return null;
+  }
+
+  const tokenHash = initialSearchParams.get("token_hash");
+  const type = getAuthLinkType();
+
+  if (tokenHash && type) {
+    const { error } = await supabaseClient.auth.verifyOtp({
+      token_hash: tokenHash,
+      type
+    });
+
+    if (error) {
+      setMessage(loginMessage, error.message, "error");
+      clearAuthParams();
+      return null;
+    }
+  }
+
+  const { data } = await supabaseClient.auth.getSession();
+  return data.session;
+};
+
 const boot = async () => {
   if (!isConfigured()) {
     setMessage(
@@ -94,9 +147,16 @@ const boot = async () => {
   }
 
   supabaseClient = window.supabase.createClient(adminConfig.url, adminConfig.anonKey);
-  const { data } = await supabaseClient.auth.getSession();
+  const session = await handleAuthLink();
+  const type = getAuthLinkType();
 
-  if (data.session) {
+  if (session && ["invite", "recovery"].includes(type)) {
+    showPasswordSetup();
+    setMessage(passwordMessage, "Choose a password to finish setting up this admin account.");
+    return;
+  }
+
+  if (session) {
     showEditor(true);
     await loadContent();
   }
@@ -119,6 +179,32 @@ loginForm.addEventListener("submit", async (event) => {
 
   showEditor(true);
   setMessage(loginMessage, "");
+  await loadContent();
+});
+
+passwordForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  setMessage(passwordMessage, "Saving password...");
+
+  const formData = new FormData(passwordForm);
+  const password = formData.get("password");
+  const confirmPassword = formData.get("confirmPassword");
+
+  if (password !== confirmPassword) {
+    setMessage(passwordMessage, "Passwords do not match.", "error");
+    return;
+  }
+
+  const { error } = await supabaseClient.auth.updateUser({ password });
+
+  if (error) {
+    setMessage(passwordMessage, error.message, "error");
+    return;
+  }
+
+  clearAuthParams();
+  setMessage(passwordMessage, "");
+  showEditor(true);
   await loadContent();
 });
 
@@ -151,7 +237,7 @@ editorForm.addEventListener("submit", async (event) => {
 
 signOutButton.addEventListener("click", async () => {
   await supabaseClient.auth.signOut();
-  showEditor(false);
+  showLogin();
 });
 
 boot();
