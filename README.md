@@ -33,10 +33,10 @@ Only emails in `public.admin_users` can save site content.
 
 In Supabase Dashboard > Authentication > URL Configuration:
 
-- Set Site URL to your deployed admin page, for example `https://your-vercel-url.vercel.app/admin.html`.
+- Set Site URL to `https://m2d-studio-website.vercel.app/admin.html`.
 - Add Redirect URLs for every admin URL you will use:
-  - `https://your-vercel-url.vercel.app/admin.html`
-  - `https://your-vercel-url.vercel.app/**`
+  - `https://m2d-studio-website.vercel.app/admin.html`
+  - `https://m2d-studio-website.vercel.app/**`
   - `http://127.0.0.1:4174/admin.html`
   - `http://127.0.0.1:4174/**`
 
