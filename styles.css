@@ -35,7 +35,8 @@ body {
 }
 
 img,
-video {
+video,
+iframe {
   display: block;
   max-width: 100%;
 }
@@ -124,6 +125,7 @@ a {
 }
 
 .hero-video,
+.hero-youtube,
 .hero-fallback,
 .hero-scrim {
   position: absolute;
@@ -135,6 +137,14 @@ a {
 .hero-video {
   object-fit: cover;
   z-index: -3;
+}
+
+.hero-youtube {
+  z-index: -3;
+  border: 0;
+  pointer-events: none;
+  transform: scale(1.18);
+  transform-origin: center;
 }
 
 .hero-fallback {

@@ -35,6 +35,41 @@ const setBackgroundImage = (selector, image, overlay = "") => {
   }
 };
 
+const getYouTubeEmbedUrl = (value = "") => {
+  if (!value) return "";
+
+  try {
+    const url = new URL(value);
+    const host = url.hostname.replace(/^www\./, "");
+    let videoId = "";
+
+    if (host === "youtu.be") {
+      videoId = url.pathname.split("/").filter(Boolean)[0] || "";
+    } else if (host === "youtube.com" || host === "m.youtube.com" || host === "music.youtube.com") {
+      if (url.pathname === "/watch") videoId = url.searchParams.get("v") || "";
+      if (url.pathname.startsWith("/shorts/")) videoId = url.pathname.split("/").filter(Boolean)[1] || "";
+      if (url.pathname.startsWith("/embed/")) videoId = url.pathname.split("/").filter(Boolean)[1] || "";
+    }
+
+    if (!videoId) return "";
+
+    const params = new URLSearchParams({
+      autoplay: "1",
+      mute: "1",
+      controls: "0",
+      loop: "1",
+      playsinline: "1",
+      rel: "0",
+      modestbranding: "1",
+      playlist: videoId
+    });
+
+    return `https://www.youtube.com/embed/${encodeURIComponent(videoId)}?${params.toString()}`;
+  } catch (error) {
+    return "";
+  }
+};
+
 const renderCards = (selector, items, template) => {
   const container = document.querySelector(selector);
   if (container && Array.isArray(items)) {
@@ -63,11 +98,29 @@ const applyContent = (content) => {
   setHref(".hero-actions .button-gold", resolveUrl(content.hero?.primaryCtaUrl, "#packages"));
   setHref(".hero-actions .button-ghost", resolveUrl(content.hero?.secondaryCtaUrl, "#classes"));
 
+  const videoUrl = content.hero?.video || "";
+  const youtubeUrl = getYouTubeEmbedUrl(videoUrl);
   const video = document.querySelector(".hero-video");
+  const youtube = document.querySelector(".hero-youtube");
   const source = video?.querySelector("source");
-  if (video && content.hero?.poster) video.setAttribute("poster", content.hero.poster);
-  if (video && source && content.hero?.video) {
-    source.setAttribute("src", content.hero.video);
+
+  if (youtube) {
+    if (youtubeUrl) {
+      youtube.src = youtubeUrl;
+      youtube.hidden = false;
+    } else {
+      youtube.removeAttribute("src");
+      youtube.hidden = true;
+    }
+  }
+
+  if (video) {
+    video.hidden = Boolean(youtubeUrl);
+    if (content.hero?.poster) video.setAttribute("poster", content.hero.poster);
+  }
+
+  if (video && source && videoUrl && !youtubeUrl) {
+    source.setAttribute("src", videoUrl);
     video.load();
   }
   setBackgroundImage(
@@ -238,8 +291,10 @@ const parallaxHero = () => {
 
   const offset = Math.min(window.scrollY * 0.18, 120);
   const video = hero.querySelector(".hero-video");
+  const youtube = hero.querySelector(".hero-youtube");
   const fallback = hero.querySelector(".hero-fallback");
   if (video) video.style.transform = `translateY(${offset}px) scale(1.03)`;
+  if (youtube) youtube.style.transform = `translateY(${offset}px) scale(1.18)`;
   if (fallback) fallback.style.transform = `translateY(${offset}px) scale(1.05)`;
 };
 

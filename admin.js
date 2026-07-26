@@ -58,6 +58,37 @@ const escapeHtml = (value = "") =>
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
 
+const getYouTubeEmbedUrl = (value = "") => {
+  if (!value) return "";
+
+  try {
+    const url = new URL(value);
+    const host = url.hostname.replace(/^www\./, "");
+    let videoId = "";
+
+    if (host === "youtu.be") {
+      videoId = url.pathname.split("/").filter(Boolean)[0] || "";
+    } else if (host === "youtube.com" || host === "m.youtube.com" || host === "music.youtube.com") {
+      if (url.pathname === "/watch") videoId = url.searchParams.get("v") || "";
+      if (url.pathname.startsWith("/shorts/")) videoId = url.pathname.split("/").filter(Boolean)[1] || "";
+      if (url.pathname.startsWith("/embed/")) videoId = url.pathname.split("/").filter(Boolean)[1] || "";
+    }
+
+    if (!videoId) return "";
+
+    const params = new URLSearchParams({
+      autoplay: "0",
+      controls: "1",
+      rel: "0",
+      modestbranding: "1"
+    });
+
+    return `https://www.youtube.com/embed/${encodeURIComponent(videoId)}?${params.toString()}`;
+  } catch (error) {
+    return "";
+  }
+};
+
 const setSavingState = (isSaving) => {
   editorForm.querySelectorAll("[data-save-content]").forEach((button) => {
     button.disabled = isSaving;
@@ -302,14 +333,23 @@ const renderLinkFields = (content) => {
   ].join("");
 };
 
+const mediaPreviewMarkup = ({ value = "", type = "image", alt = "", label = "" }) => {
+  if (type === "video") {
+    const youtubeUrl = getYouTubeEmbedUrl(value);
+    if (youtubeUrl) {
+      return `<iframe src="${escapeHtml(youtubeUrl)}" title="${escapeHtml(label)} preview" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+    }
+
+    return `<video src="${escapeHtml(value)}" muted controls playsinline></video>`;
+  }
+
+  return `<img src="${escapeHtml(value)}" alt="${escapeHtml(alt || label)}" />`;
+};
+
 const mediaInput = ({ path, label, value = "", type = "image", altPath, alt = "" }) => `
   <article class="media-card" data-media-card>
     <div class="media-preview ${type === "video" ? "is-video" : ""}">
-      ${
-        type === "video"
-          ? `<video src="${escapeHtml(value)}" muted controls playsinline></video>`
-          : `<img src="${escapeHtml(value)}" alt="${escapeHtml(alt || label)}" />`
-      }
+      ${mediaPreviewMarkup({ value, type, alt, label })}
     </div>
     <div class="media-fields">
       <label>
@@ -457,9 +497,15 @@ const syncJsonTextareaFromPath = (path, value) => {
 const updateMediaPreview = (input) => {
   const card = input.closest("[data-media-card]");
   const link = card.querySelector("[data-media-link]");
-  const media = card.querySelector(input.dataset.mediaType === "video" ? "video" : "img");
+  const preview = card.querySelector(".media-preview");
+  const youtubeUrl = input.dataset.mediaType === "video" ? getYouTubeEmbedUrl(input.value) : "";
+  const media = card.querySelector(input.dataset.mediaType === "video" ? "video, iframe" : "img");
 
-  if (media) {
+  if (preview && input.dataset.mediaType === "video" && youtubeUrl) {
+    preview.innerHTML = `<iframe src="${escapeHtml(youtubeUrl)}" title="Hero video preview" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+  } else if (preview && input.dataset.mediaType === "video" && media?.tagName === "IFRAME") {
+    preview.innerHTML = `<video src="${escapeHtml(input.value)}" muted controls playsinline></video>`;
+  } else if (media) {
     media.setAttribute("src", input.value);
     if (media.tagName === "VIDEO") media.load();
   }
