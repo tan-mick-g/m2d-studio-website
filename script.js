@@ -1,6 +1,7 @@
 const header = document.querySelector("[data-header]");
 const mobileCta = document.querySelector("[data-mobile-cta]");
 const hero = document.querySelector(".hero");
+let heroYouTubeTimer;
 
 document.documentElement.classList.add("has-js");
 
@@ -105,12 +106,18 @@ const applyContent = (content) => {
   const source = video?.querySelector("source");
 
   if (youtube) {
+    window.clearTimeout(heroYouTubeTimer);
     if (youtubeUrl) {
+      youtube.classList.add("is-loading");
       youtube.src = youtubeUrl;
       youtube.hidden = false;
+      heroYouTubeTimer = window.setTimeout(() => {
+        youtube.classList.remove("is-loading");
+      }, 1400);
     } else {
       youtube.removeAttribute("src");
       youtube.hidden = true;
+      youtube.classList.remove("is-loading");
     }
   }
 
@@ -119,9 +126,16 @@ const applyContent = (content) => {
     if (content.hero?.poster) video.setAttribute("poster", content.hero.poster);
   }
 
-  if (video && source && videoUrl && !youtubeUrl) {
-    source.setAttribute("src", videoUrl);
-    video.load();
+  if (video && source) {
+    if (videoUrl && !youtubeUrl) {
+      source.setAttribute("src", videoUrl);
+      video.load();
+      video.hidden = false;
+    } else {
+      video.pause();
+      source.removeAttribute("src");
+      video.load();
+    }
   }
   setBackgroundImage(
     ".hero-fallback",

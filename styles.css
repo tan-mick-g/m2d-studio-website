@@ -142,9 +142,15 @@ a {
 .hero-youtube {
   z-index: -3;
   border: 0;
+  opacity: 1;
   pointer-events: none;
   transform: scale(1.18);
   transform-origin: center;
+  transition: opacity 360ms ease;
+}
+
+.hero-youtube.is-loading {
+  opacity: 0;
 }
 
 .hero-fallback {
