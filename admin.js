@@ -592,7 +592,7 @@ editorForm.addEventListener("submit", async (event) => {
   }
 
   currentContent = nextContent;
-  setEditorMessage("Saved. Refresh the public site to see the latest content.", "success");
+  setEditorMessage("Saved and published. Refresh the public site to see the latest content.", "success");
   setSavingState(false);
 });
 
