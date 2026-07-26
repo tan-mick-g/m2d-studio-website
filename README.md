@@ -27,7 +27,10 @@ http://127.0.0.1:4174/admin.html
 3. Create matching users in Supabase Auth.
 4. Confirm `supabase-config.js` has the Project URL and anon public key.
 
-Only emails in `public.admin_users` can save site content.
+Only emails in `public.admin_users` can save site content or upload media.
+
+The setup SQL also creates a public Supabase Storage bucket named `site-media`.
+The admin page can upload images and videos there, then automatically save the public file URL into the homepage content.
 
 ### Invite Links
 

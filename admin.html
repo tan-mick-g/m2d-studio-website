@@ -126,14 +126,6 @@
                 <textarea name="hero.body" rows="4"></textarea>
               </label>
               <label>
-                Video URL
-                <input name="hero.video" type="url" />
-              </label>
-              <label>
-                Poster Image URL
-                <input name="hero.poster" type="url" />
-              </label>
-              <label>
                 Primary CTA
                 <input name="hero.primaryCta" type="text" />
               </label>
@@ -210,10 +202,6 @@
                 Headline
                 <input name="life.title" type="text" />
               </label>
-              <label>
-                Image URL
-                <input name="life.image" type="url" />
-              </label>
               <label class="wide-field">
                 Copy
                 <textarea name="life.body" rows="4"></textarea>
@@ -236,15 +224,19 @@
                 CTA
                 <input name="finalCta.cta" type="text" />
               </label>
-              <label>
-                Image URL
-                <input name="finalCta.image" type="url" />
-              </label>
               <label class="wide-field">
                 Copy
                 <textarea name="finalCta.body" rows="3"></textarea>
               </label>
             </div>
+          </section>
+
+          <section class="editor-section" data-editor-panel="media">
+            <h3>Website Media</h3>
+            <p class="editor-help">
+              Paste image or video URLs here. Use public links from Supabase Storage, Vercel assets, Unsplash, Pexels, or another CDN.
+            </p>
+            <div class="media-grid" data-media-fields></div>
           </section>
 
           <section class="editor-section" data-editor-panel="footer">

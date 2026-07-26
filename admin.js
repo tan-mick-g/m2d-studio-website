@@ -10,6 +10,7 @@ const signOutButton = document.querySelector("[data-sign-out]");
 const resetPasswordButton = document.querySelector("[data-reset-password]");
 const editorTabs = document.querySelectorAll("[data-editor-tab]");
 const editorPanels = document.querySelectorAll("[data-editor-panel]");
+const mediaFields = document.querySelector("[data-media-fields]");
 
 let supabaseClient;
 let currentContent = defaultContentForAdmin;
@@ -23,6 +24,14 @@ const setMessage = (element, message, type = "") => {
   element.classList.toggle("is-error", type === "error");
   element.classList.toggle("is-success", type === "success");
 };
+
+const escapeHtml = (value = "") =>
+  String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 
 const setSavingState = (isSaving) => {
   editorForm.querySelectorAll("button[type='submit']").forEach((button) => {
@@ -45,6 +54,8 @@ const setPath = (object, path, value) => {
 };
 
 const fillForm = (content) => {
+  renderMediaFields(content);
+
   editorForm.querySelectorAll("[name]").forEach((field) => {
     const value = getPath(content, field.name);
     if (field.matches("[data-json]")) {
@@ -55,20 +66,201 @@ const fillForm = (content) => {
   });
 };
 
+const mediaInput = ({ path, label, value = "", type = "image", altPath, alt = "" }) => `
+  <article class="media-card" data-media-card>
+    <div class="media-preview ${type === "video" ? "is-video" : ""}">
+      ${
+        type === "video"
+          ? `<video src="${escapeHtml(value)}" muted controls playsinline></video>`
+          : `<img src="${escapeHtml(value)}" alt="${escapeHtml(alt || label)}" />`
+      }
+    </div>
+    <div class="media-fields">
+      <label>
+        ${escapeHtml(label)}
+        <input name="${escapeHtml(path)}" type="url" value="${escapeHtml(value)}" data-media-url data-media-type="${escapeHtml(type)}" />
+      </label>
+      <label class="upload-field">
+        Upload ${type === "video" ? "Video" : "Image"}
+        <input type="file" accept="${type === "video" ? "video/*" : "image/*"}" data-media-upload data-target-path="${escapeHtml(path)}" />
+      </label>
+      ${
+        altPath
+          ? `<label>
+              Alt Text
+              <input name="${escapeHtml(altPath)}" type="text" value="${escapeHtml(alt)}" data-media-alt />
+            </label>`
+          : ""
+      }
+      <a href="${escapeHtml(value || "#")}" target="_blank" rel="noreferrer" data-media-link>Open media</a>
+    </div>
+  </article>
+`;
+
+const renderMediaGroup = (title, description, fields) => `
+  <div class="media-group">
+    <div class="media-group-heading">
+      <h4>${escapeHtml(title)}</h4>
+      <p>${escapeHtml(description)}</p>
+    </div>
+    <div class="media-card-grid">
+      ${fields.join("")}
+    </div>
+  </div>
+`;
+
+const renderMediaFields = (content) => {
+  if (!mediaFields) return;
+
+  const classFields = (content.classes?.items || []).map((item, index) =>
+    mediaInput({
+      path: `classes.items.${index}.image`,
+      label: `Class Card ${index + 1}: ${item.title || "Untitled"}`,
+      value: item.image,
+      altPath: `classes.items.${index}.alt`,
+      alt: item.alt
+    })
+  );
+
+  const eventFields = (content.events?.items || []).map((item, index) =>
+    mediaInput({
+      path: `events.items.${index}.image`,
+      label: `Event Card ${index + 1}: ${item.title || "Untitled"}`,
+      value: item.image,
+      altPath: `events.items.${index}.alt`,
+      alt: item.alt
+    })
+  );
+
+  const teacherFields = (content.teachers?.items || []).map((item, index) =>
+    mediaInput({
+      path: `teachers.items.${index}.image`,
+      label: `Teacher ${index + 1}: ${item.name || "Untitled"}`,
+      value: item.image,
+      altPath: `teachers.items.${index}.alt`,
+      alt: item.alt
+    })
+  );
+
+  const galleryFields = (content.gallery?.items || []).map((item, index) =>
+    mediaInput({
+      path: `gallery.items.${index}.image`,
+      label: `Gallery Image ${index + 1}`,
+      value: item.image,
+      altPath: `gallery.items.${index}.alt`,
+      alt: item.alt
+    })
+  );
+
+  mediaFields.innerHTML = [
+    renderMediaGroup("Hero", "Video and fallback image shown at the top of the homepage.", [
+      mediaInput({
+        path: "hero.video",
+        label: "Hero Video URL",
+        value: content.hero?.video,
+        type: "video"
+      }),
+      mediaInput({
+        path: "hero.poster",
+        label: "Hero Poster Image URL",
+        value: content.hero?.poster
+      })
+    ]),
+    renderMediaGroup("Feature Backgrounds", "Large emotional images used in the lifestyle and final CTA sections.", [
+      mediaInput({
+        path: "life.image",
+        label: "Life Beyond Class Image",
+        value: content.life?.image
+      }),
+      mediaInput({
+        path: "finalCta.image",
+        label: "Final CTA Image",
+        value: content.finalCta?.image
+      })
+    ]),
+    renderMediaGroup("Classes", "Images shown on class category cards.", classFields),
+    renderMediaGroup("Events", "Images shown on community and event cards.", eventFields),
+    renderMediaGroup("Teachers", "Portrait images shown in the teacher section.", teacherFields),
+    renderMediaGroup("Gallery", "Images shown in the masonry studio gallery.", galleryFields)
+  ].join("");
+};
+
+const syncJsonTextareaFromPath = (path, value) => {
+  const match = path.match(/^(classes|events|teachers|gallery)\.items\.(\d+)\.(image|alt)$/);
+  if (!match) return;
+
+  const [, section, index, property] = match;
+  const textarea = editorForm.querySelector(`[name="${section}.items"][data-json]`);
+  if (!textarea) return;
+
+  try {
+    const items = JSON.parse(textarea.value || "[]");
+    if (items[index]) {
+      items[index][property] = value;
+      textarea.value = JSON.stringify(items, null, 2);
+    }
+  } catch (error) {
+    // Let the normal save validation show the JSON error.
+  }
+};
+
+const updateMediaPreview = (input) => {
+  const card = input.closest("[data-media-card]");
+  const link = card.querySelector("[data-media-link]");
+  const media = card.querySelector(input.dataset.mediaType === "video" ? "video" : "img");
+
+  if (media) {
+    media.setAttribute("src", input.value);
+    if (media.tagName === "VIDEO") media.load();
+  }
+
+  if (link) link.setAttribute("href", input.value || "#");
+};
+
+const uploadMediaFile = async (file, targetPath) => {
+  const extension = file.name.split(".").pop() || "media";
+  const safeName = file.name
+    .replace(/\.[^/.]+$/, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 48);
+  const storagePath = `homepage/${targetPath.replaceAll(".", "-")}-${Date.now()}-${safeName}.${extension}`;
+
+  const { error } = await supabaseClient.storage
+    .from("site-media")
+    .upload(storagePath, file, {
+      cacheControl: "31536000",
+      upsert: true
+    });
+
+  if (error) throw error;
+
+  const { data } = supabaseClient.storage.from("site-media").getPublicUrl(storagePath);
+  return data.publicUrl;
+};
+
 const readForm = () => {
   const nextContent = structuredClone(currentContent);
+  const fields = [...editorForm.querySelectorAll("[name]")];
 
-  editorForm.querySelectorAll("[name]").forEach((field) => {
-    if (field.matches("[data-json]")) {
-      try {
-        setPath(nextContent, field.name, JSON.parse(field.value || "[]"));
-      } catch (error) {
-        throw new Error(`${field.name} has invalid JSON.`);
+  fields
+    .filter((field) => field.matches("[data-json]"))
+    .forEach((field) => {
+      if (field.matches("[data-json]")) {
+        try {
+          setPath(nextContent, field.name, JSON.parse(field.value || "[]"));
+        } catch (error) {
+          throw new Error(`${field.name} has invalid JSON.`);
+        }
       }
-    } else {
+    });
+
+  fields
+    .filter((field) => !field.matches("[data-json]"))
+    .forEach((field) => {
       setPath(nextContent, field.name, field.value);
-    }
-  });
+    });
 
   return nextContent;
 };
@@ -288,6 +480,42 @@ signOutButton.addEventListener("click", async () => {
 
 editorTabs.forEach((tab) => {
   tab.addEventListener("click", () => activateEditorTab(tab.dataset.editorTab));
+});
+
+mediaFields?.addEventListener("input", (event) => {
+  const input = event.target.closest("[data-media-url], [data-media-alt]");
+  if (!input) return;
+
+  const card = input.closest("[data-media-card]");
+  syncJsonTextareaFromPath(input.name, input.value);
+
+  if (input.matches("[data-media-url]")) {
+    updateMediaPreview(input);
+  }
+});
+
+mediaFields?.addEventListener("change", async (event) => {
+  const upload = event.target.closest("[data-media-upload]");
+  if (!upload?.files?.length) return;
+
+  const file = upload.files[0];
+  const targetInput = mediaFields.querySelector(`[name="${upload.dataset.targetPath}"][data-media-url]`);
+  if (!targetInput) return;
+
+  try {
+    upload.disabled = true;
+    setMessage(editorMessage, `Uploading ${file.name}...`);
+    const publicUrl = await uploadMediaFile(file, upload.dataset.targetPath);
+    targetInput.value = publicUrl;
+    syncJsonTextareaFromPath(targetInput.name, targetInput.value);
+    updateMediaPreview(targetInput);
+    setMessage(editorMessage, "Upload complete. Save changes to publish this media update.", "success");
+  } catch (error) {
+    setMessage(editorMessage, error.message, "error");
+  } finally {
+    upload.disabled = false;
+    upload.value = "";
+  }
 });
 
 boot();
