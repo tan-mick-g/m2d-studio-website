@@ -1,7 +1,14 @@
 window.MTD_DEFAULT_CONTENT = {
   bookingUrl: "https://madetodance.rezerv.co/",
   nav: {
-    cta: "Buy Package"
+    cta: "Buy Package",
+    ctaUrl: "#packages",
+    links: {
+      why: "#why",
+      classes: "#classes",
+      events: "#events",
+      packages: "#packages"
+    }
   },
   hero: {
     eyebrow: "Boutique social dance studio",
@@ -10,7 +17,9 @@ window.MTD_DEFAULT_CONTENT = {
     video: "https://videos.pexels.com/video-files/7572112/7572112-uhd_2560_1440_25fps.mp4",
     poster: "https://images.unsplash.com/photo-1524594152303-9fd13543fe6e?auto=format&fit=crop&w=1800&q=82",
     primaryCta: "Buy Class Package",
-    secondaryCta: "Explore Classes"
+    primaryCtaUrl: "#packages",
+    secondaryCta: "Explore Classes",
+    secondaryCtaUrl: "#classes"
   },
   why: {
     eyebrow: "Why Made To Dance",
@@ -43,7 +52,8 @@ window.MTD_DEFAULT_CONTENT = {
         difficulty: "Beginner friendly",
         title: "Salsa Social Basics",
         body: "Simple foundations for relaxed, joyful partner dancing.",
-        cta: "Learn More"
+        cta: "Learn More",
+        ctaUrl: "#packages"
       },
       {
         image: "https://images.unsplash.com/photo-1519925610903-381054cc2a1c?auto=format&fit=crop&w=900&q=82",
@@ -51,7 +61,8 @@ window.MTD_DEFAULT_CONTENT = {
         difficulty: "All levels",
         title: "Bachata Connection",
         body: "Move with comfort, musicality, and a welcoming group.",
-        cta: "Learn More"
+        cta: "Learn More",
+        ctaUrl: "#packages"
       },
       {
         image: "https://images.unsplash.com/photo-1547153760-18fc86324498?auto=format&fit=crop&w=900&q=82",
@@ -59,7 +70,8 @@ window.MTD_DEFAULT_CONTENT = {
         difficulty: "Newcomer path",
         title: "First Step Club",
         body: "A gentle start for anyone who has always wanted to try.",
-        cta: "Learn More"
+        cta: "Learn More",
+        ctaUrl: "#packages"
       }
     ]
   },
@@ -170,6 +182,7 @@ window.MTD_DEFAULT_CONTENT = {
         price: "PHP 2,400",
         body: "A gentle way to discover the studio and meet the community.",
         cta: "Buy Class Package",
+        ctaUrl: "https://madetodance.rezerv.co/",
         recommended: false
       },
       {
@@ -178,6 +191,7 @@ window.MTD_DEFAULT_CONTENT = {
         price: "PHP 4,400",
         body: "Enough time to build comfort, remember faces, and feel real progress.",
         cta: "Buy Class Package",
+        ctaUrl: "https://madetodance.rezerv.co/",
         badge: "Recommended",
         recommended: true
       },
@@ -187,6 +201,7 @@ window.MTD_DEFAULT_CONTENT = {
         price: "PHP 6,000",
         body: "For students ready to make dance part of their week.",
         cta: "Buy Class Package",
+        ctaUrl: "https://madetodance.rezerv.co/",
         recommended: false
       }
     ]
@@ -196,6 +211,7 @@ window.MTD_DEFAULT_CONTENT = {
     title: "Come As You Are.",
     body: "The hardest part is walking through the door. We will take it from there.",
     cta: "Buy Your First Class Package",
+    ctaUrl: "https://madetodance.rezerv.co/",
     image: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=1800&q=82"
   },
   footer: {

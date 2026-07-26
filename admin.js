@@ -11,6 +11,7 @@ const resetPasswordButton = document.querySelector("[data-reset-password]");
 const editorTabs = document.querySelectorAll("[data-editor-tab]");
 const editorPanels = document.querySelectorAll("[data-editor-panel]");
 const mediaFields = document.querySelector("[data-media-fields]");
+const linkFields = document.querySelector("[data-link-fields]");
 
 let supabaseClient;
 let currentContent = defaultContentForAdmin;
@@ -55,15 +56,117 @@ const setPath = (object, path, value) => {
 
 const fillForm = (content) => {
   renderMediaFields(content);
+  renderLinkFields(content);
 
   editorForm.querySelectorAll("[name]").forEach((field) => {
     const value = getPath(content, field.name);
     if (field.matches("[data-json]")) {
       field.value = JSON.stringify(value || [], null, 2);
     } else {
-      field.value = value ?? "";
+      field.value = value ?? field.value ?? "";
     }
   });
+};
+
+const linkInput = ({ path, label, value = "", note = "" }) => `
+  <article class="link-card">
+    <label>
+      ${escapeHtml(label)}
+      <input name="${escapeHtml(path)}" type="text" value="${escapeHtml(value)}" data-link-url />
+    </label>
+    ${note ? `<p>${escapeHtml(note)}</p>` : ""}
+  </article>
+`;
+
+const renderLinkGroup = (title, description, fields) => `
+  <div class="link-group">
+    <div class="media-group-heading">
+      <h4>${escapeHtml(title)}</h4>
+      <p>${escapeHtml(description)}</p>
+    </div>
+    <div class="link-card-grid">
+      ${fields.join("")}
+    </div>
+  </div>
+`;
+
+const renderLinkFields = (content) => {
+  if (!linkFields) return;
+
+  const classLinks = (content.classes?.items || []).map((item, index) =>
+    linkInput({
+      path: `classes.items.${index}.ctaUrl`,
+      label: `Class Card ${index + 1}: ${item.title || "Untitled"}`,
+      value: item.ctaUrl || "#packages",
+      note: item.cta || "Learn More"
+    })
+  );
+
+  const packageLinks = (content.packages?.items || []).map((item, index) =>
+    linkInput({
+      path: `packages.items.${index}.ctaUrl`,
+      label: `Package ${index + 1}: ${item.title || "Untitled"}`,
+      value: item.ctaUrl || content.bookingUrl || "",
+      note: item.cta || "Buy Class Package"
+    })
+  );
+
+  linkFields.innerHTML = [
+    renderLinkGroup("Navigation Menu", "Top navigation links. Use anchors for one-page scrolling or page paths for subpages.", [
+      linkInput({
+        path: "nav.links.why",
+        label: "Why Nav URL",
+        value: content.nav?.links?.why || "#why",
+        note: "Why"
+      }),
+      linkInput({
+        path: "nav.links.classes",
+        label: "Classes Nav URL",
+        value: content.nav?.links?.classes || "#classes",
+        note: "Classes"
+      }),
+      linkInput({
+        path: "nav.links.events",
+        label: "Events Nav URL",
+        value: content.nav?.links?.events || "#events",
+        note: "Events"
+      }),
+      linkInput({
+        path: "nav.links.packages",
+        label: "Packages Nav URL",
+        value: content.nav?.links?.packages || "#packages",
+        note: "Packages"
+      })
+    ]),
+    renderLinkGroup("Main Buttons", "Header, mobile sticky CTA, and hero buttons.", [
+      linkInput({
+        path: "nav.ctaUrl",
+        label: "Header & Mobile CTA URL",
+        value: content.nav?.ctaUrl || "#packages",
+        note: content.nav?.cta || "Buy Package"
+      }),
+      linkInput({
+        path: "hero.primaryCtaUrl",
+        label: "Hero Primary CTA URL",
+        value: content.hero?.primaryCtaUrl || "#packages",
+        note: content.hero?.primaryCta || "Buy Class Package"
+      }),
+      linkInput({
+        path: "hero.secondaryCtaUrl",
+        label: "Hero Secondary CTA URL",
+        value: content.hero?.secondaryCtaUrl || "#classes",
+        note: content.hero?.secondaryCta || "Explore Classes"
+      }),
+      linkInput({
+        path: "finalCta.ctaUrl",
+        label: "Final CTA URL",
+        value: content.finalCta?.ctaUrl || content.bookingUrl || "",
+        note: content.finalCta?.cta || "Buy Your First Class Package"
+      })
+    ]),
+    renderLinkGroup("Class Buttons", "Where each class card button should send visitors.", classLinks),
+    renderLinkGroup("Package Buttons", "Where each package purchase button should send visitors.", packageLinks)
+  ].join("");
 };
 
 const mediaInput = ({ path, label, value = "", type = "image", altPath, alt = "" }) => `
@@ -186,7 +289,7 @@ const renderMediaFields = (content) => {
 };
 
 const syncJsonTextareaFromPath = (path, value) => {
-  const match = path.match(/^(classes|events|teachers|gallery)\.items\.(\d+)\.(image|alt)$/);
+  const match = path.match(/^(classes|events|teachers|gallery|packages)\.items\.(\d+)\.(image|alt|ctaUrl)$/);
   if (!match) return;
 
   const [, section, index, property] = match;
@@ -516,6 +619,12 @@ mediaFields?.addEventListener("change", async (event) => {
     upload.disabled = false;
     upload.value = "";
   }
+});
+
+linkFields?.addEventListener("input", (event) => {
+  const input = event.target.closest("[data-link-url]");
+  if (!input) return;
+  syncJsonTextareaFromPath(input.name, input.value);
 });
 
 boot();

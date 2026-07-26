@@ -234,16 +234,20 @@
 .field-grid,
 .json-grid,
 .media-grid,
-.media-card-grid {
+.media-card-grid,
+.link-grid,
+.link-card-grid {
   display: grid;
   gap: 16px;
 }
 
-.media-grid {
+.media-grid,
+.link-grid {
   gap: 24px;
 }
 
-.media-group {
+.media-group,
+.link-group {
   display: grid;
   gap: 14px;
   border: 1px solid rgba(15, 31, 47, 0.12);
@@ -267,6 +271,21 @@
   margin: 0;
   color: var(--muted);
   font-size: 0.9rem;
+}
+
+.link-card {
+  display: grid;
+  gap: 8px;
+  border: 1px solid rgba(15, 31, 47, 0.12);
+  border-radius: 8px;
+  padding: 14px;
+  background: #fffdf8;
+}
+
+.link-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.84rem;
 }
 
 .media-card {
@@ -398,7 +417,8 @@ button:disabled {
 
   .field-grid,
   .json-grid,
-  .media-card-grid {
+  .media-card-grid,
+  .link-card-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 

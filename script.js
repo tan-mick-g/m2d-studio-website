@@ -44,18 +44,24 @@ const renderCards = (selector, items, template) => {
 
 const applyContent = (content) => {
   const bookingUrl = content.bookingUrl || defaultContent.bookingUrl;
+  const resolveUrl = (value, fallback = bookingUrl) => value || fallback || "#";
 
   setText(".nav-cta", content.nav?.cta);
   setText("[data-mobile-cta]", content.nav?.cta);
-  setHref("[data-booking]", bookingUrl);
+  setHref(".nav-cta", resolveUrl(content.nav?.ctaUrl, "#packages"));
+  setHref("[data-mobile-cta]", resolveUrl(content.nav?.ctaUrl, "#packages"));
+  setHref("[data-nav-link='why']", resolveUrl(content.nav?.links?.why, "#why"));
+  setHref("[data-nav-link='classes']", resolveUrl(content.nav?.links?.classes, "#classes"));
+  setHref("[data-nav-link='events']", resolveUrl(content.nav?.links?.events, "#events"));
+  setHref("[data-nav-link='packages']", resolveUrl(content.nav?.links?.packages, "#packages"));
 
   setText(".hero .eyebrow", content.hero?.eyebrow);
   setText(".hero h1", content.hero?.title);
   setText(".hero-content > p:not(.eyebrow)", content.hero?.body);
   setText(".hero-actions .button-gold", content.hero?.primaryCta);
   setText(".hero-actions .button-ghost", content.hero?.secondaryCta);
-  setHref(".hero-actions .button-gold", "#packages");
-  setHref(".hero-actions .button-ghost", "#classes");
+  setHref(".hero-actions .button-gold", resolveUrl(content.hero?.primaryCtaUrl, "#packages"));
+  setHref(".hero-actions .button-ghost", resolveUrl(content.hero?.secondaryCtaUrl, "#classes"));
 
   const video = document.querySelector(".hero-video");
   const source = video?.querySelector("source");
@@ -89,7 +95,7 @@ const applyContent = (content) => {
         <p class="difficulty">${escapeHtml(item.difficulty)}</p>
         <h3>${escapeHtml(item.title)}</h3>
         <p>${escapeHtml(item.body)}</p>
-        <a href="#packages">${escapeHtml(item.cta || "Learn More")}</a>
+        <a href="${escapeHtml(resolveUrl(item.ctaUrl, "#packages"))}">${escapeHtml(item.cta || "Learn More")}</a>
       </div>
     </article>
   `);
@@ -144,7 +150,7 @@ const applyContent = (content) => {
       <h3>${escapeHtml(item.title)}</h3>
       <p class="price">${escapeHtml(item.price)}</p>
       <p>${escapeHtml(item.body)}</p>
-      <a class="button ${item.recommended ? "button-gold" : "button-outline"}" href="${escapeHtml(bookingUrl)}" data-booking>${escapeHtml(item.cta)}</a>
+      <a class="button ${item.recommended ? "button-gold" : "button-outline"}" href="${escapeHtml(resolveUrl(item.ctaUrl, bookingUrl))}">${escapeHtml(item.cta)}</a>
     </article>
   `);
 
@@ -152,7 +158,7 @@ const applyContent = (content) => {
   setText(".final-content h2", content.finalCta?.title);
   setText(".final-content p:not(.eyebrow)", content.finalCta?.body);
   setText(".final-content .button", content.finalCta?.cta);
-  setHref(".final-content .button", bookingUrl);
+  setHref(".final-content .button", resolveUrl(content.finalCta?.ctaUrl, bookingUrl));
   setBackgroundImage(
     ".final-media",
     content.finalCta?.image,
@@ -182,7 +188,6 @@ const applyContent = (content) => {
   }
   setText(".copyright", content.footer?.copyright);
 
-  bindBookingButtons();
   observeReveals();
 };
 
@@ -236,18 +241,6 @@ const parallaxHero = () => {
   const fallback = hero.querySelector(".hero-fallback");
   if (video) video.style.transform = `translateY(${offset}px) scale(1.03)`;
   if (fallback) fallback.style.transform = `translateY(${offset}px) scale(1.05)`;
-};
-
-const bindBookingButtons = () => {
-  document.querySelectorAll("[data-booking]").forEach((link) => {
-    link.addEventListener(
-      "click",
-      () => {
-        link.textContent = "Opening Rezerv...";
-      },
-      { once: true }
-    );
-  });
 };
 
 document.querySelector(".newsletter")?.addEventListener("submit", (event) => {
