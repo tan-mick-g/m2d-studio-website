@@ -579,11 +579,18 @@ editorForm.addEventListener("submit", async (event) => {
     return;
   }
 
-  const { error } = await supabaseClient.from("site_content").upsert({
-    id: adminConfig.contentId || "homepage",
-    content: nextContent,
-    is_published: true
-  });
+  const { data, error } = await supabaseClient
+    .from("site_content")
+    .upsert(
+      {
+        id: adminConfig.contentId || "homepage",
+        content: nextContent,
+        is_published: true
+      },
+      { onConflict: "id" }
+    )
+    .select("content")
+    .single();
 
   if (error) {
     setEditorMessage(getAdminErrorMessage(error), "error");
@@ -591,7 +598,14 @@ editorForm.addEventListener("submit", async (event) => {
     return;
   }
 
-  currentContent = nextContent;
+  if (!data?.content) {
+    setEditorMessage("Supabase did not return the saved homepage row. Check that public.site_content policies from supabase-setup.sql have been run.", "error");
+    setSavingState(false);
+    return;
+  }
+
+  currentContent = { ...defaultContentForAdmin, ...data.content };
+  fillForm(currentContent);
   setEditorMessage("Saved and published. Refresh the public site to see the latest content.", "success");
   setSavingState(false);
 });
