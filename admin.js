@@ -5,7 +5,7 @@ const passwordForm = document.querySelector("[data-password-form]");
 const editorForm = document.querySelector("[data-editor-form]");
 const loginMessage = document.querySelector("[data-login-message]");
 const passwordMessage = document.querySelector("[data-password-message]");
-const editorMessage = document.querySelector("[data-editor-message]");
+const editorMessages = document.querySelectorAll("[data-editor-message]");
 const signOutButton = document.querySelector("[data-sign-out]");
 const resetPasswordButton = document.querySelector("[data-reset-password]");
 const editorTabs = document.querySelectorAll("[data-editor-tab]");
@@ -24,6 +24,19 @@ const setMessage = (element, message, type = "") => {
   element.textContent = message || "";
   element.classList.toggle("is-error", type === "error");
   element.classList.toggle("is-success", type === "success");
+};
+
+const setEditorMessage = (message, type = "") => {
+  editorMessages.forEach((element) => setMessage(element, message, type));
+};
+
+const getAdminErrorMessage = (error) => {
+  const message = error?.message || String(error);
+  if (message.toLowerCase().includes("row-level security")) {
+    return "Supabase blocked this action. Add this login email to public.admin_users and make sure the site_content and storage policies from supabase-setup.sql have been run.";
+  }
+
+  return message;
 };
 
 const escapeHtml = (value = "") =>
@@ -321,6 +334,7 @@ const updateMediaPreview = (input) => {
 };
 
 const uploadMediaFile = async (file, targetPath) => {
+  const bucketName = "site-media";
   const extension = file.name.split(".").pop() || "media";
   const safeName = file.name
     .replace(/\.[^/.]+$/, "")
@@ -331,15 +345,21 @@ const uploadMediaFile = async (file, targetPath) => {
   const storagePath = `homepage/${targetPath.replaceAll(".", "-")}-${Date.now()}-${safeName}.${extension}`;
 
   const { error } = await supabaseClient.storage
-    .from("site-media")
+    .from(bucketName)
     .upload(storagePath, file, {
       cacheControl: "31536000",
       upsert: true
     });
 
-  if (error) throw error;
+  if (error) {
+    if (error.message?.toLowerCase().includes("bucket not found")) {
+      throw new Error(`Supabase Storage bucket "${bucketName}" was not found. Create it as a public bucket, or rerun the Storage section of supabase-setup.sql.`);
+    }
 
-  const { data } = supabaseClient.storage.from("site-media").getPublicUrl(storagePath);
+    throw error;
+  }
+
+  const { data } = supabaseClient.storage.from(bucketName).getPublicUrl(storagePath);
   return data.publicUrl;
 };
 
@@ -547,14 +567,14 @@ passwordForm.addEventListener("submit", async (event) => {
 
 editorForm.addEventListener("submit", async (event) => {
   event.preventDefault();
-  setMessage(editorMessage, "Saving...");
+  setEditorMessage("Saving...");
   setSavingState(true);
 
   let nextContent;
   try {
     nextContent = readForm();
   } catch (error) {
-    setMessage(editorMessage, error.message, "error");
+    setEditorMessage(error.message, "error");
     setSavingState(false);
     return;
   }
@@ -566,13 +586,13 @@ editorForm.addEventListener("submit", async (event) => {
   });
 
   if (error) {
-    setMessage(editorMessage, error.message, "error");
+    setEditorMessage(getAdminErrorMessage(error), "error");
     setSavingState(false);
     return;
   }
 
   currentContent = nextContent;
-  setMessage(editorMessage, "Saved. Refresh the public site to see the latest content.", "success");
+  setEditorMessage("Saved. Refresh the public site to see the latest content.", "success");
   setSavingState(false);
 });
 
@@ -607,14 +627,14 @@ mediaFields?.addEventListener("change", async (event) => {
 
   try {
     upload.disabled = true;
-    setMessage(editorMessage, `Uploading ${file.name}...`);
+    setEditorMessage(`Uploading ${file.name}...`);
     const publicUrl = await uploadMediaFile(file, upload.dataset.targetPath);
     targetInput.value = publicUrl;
     syncJsonTextareaFromPath(targetInput.name, targetInput.value);
     updateMediaPreview(targetInput);
-    setMessage(editorMessage, "Upload complete. Save changes to publish this media update.", "success");
+    setEditorMessage("Upload complete. Save changes to publish this media update.", "success");
   } catch (error) {
-    setMessage(editorMessage, error.message, "error");
+    setEditorMessage(getAdminErrorMessage(error), "error");
   } finally {
     upload.disabled = false;
     upload.value = "";

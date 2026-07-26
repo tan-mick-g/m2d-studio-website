@@ -106,7 +106,8 @@ for delete
 to authenticated
 using (bucket_id = 'site-media' and public.is_site_admin());
 
--- Add each admin email here before running, or run these later one by one.
--- insert into public.admin_users (email)
--- values ('your-admin-email@example.com')
--- on conflict (email) do nothing;
+insert into public.admin_users (email)
+values
+  ('rej.madetodanceph@gmail.com'),
+  ('mick.madetodanceph@gmail.com')
+on conflict (email) do nothing;
