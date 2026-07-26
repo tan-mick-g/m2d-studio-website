@@ -429,7 +429,7 @@ const renderMediaFields = (content) => {
   );
 
   mediaFields.innerHTML = [
-    renderMediaGroup("Hero", "Video and fallback image shown at the top of the homepage.", [
+    renderMediaGroup("Hero", "Video plus the loading image shown before the hero video is ready.", [
       mediaInput({
         path: "hero.video",
         label: "Hero Video URL",
@@ -438,7 +438,7 @@ const renderMediaFields = (content) => {
       }),
       mediaInput({
         path: "hero.poster",
-        label: "Hero Poster Image URL",
+        label: "Hero Loading / Fallback Image URL",
         value: content.hero?.poster
       })
     ]),
