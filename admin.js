@@ -13,6 +13,7 @@ const editorTabs = document.querySelectorAll("[data-editor-tab]");
 const editorPanels = document.querySelectorAll("[data-editor-panel]");
 const mediaFields = document.querySelector("[data-media-fields]");
 const linkFields = document.querySelector("[data-link-fields]");
+const cardFields = document.querySelector("[data-card-fields]");
 
 let supabaseClient;
 let currentContent = defaultContentForAdmin;
@@ -80,15 +81,124 @@ const setPath = (object, path, value) => {
 const fillForm = (content) => {
   renderMediaFields(content);
   renderLinkFields(content);
+  renderCardFields(content);
 
   editorForm.querySelectorAll("[name]").forEach((field) => {
     const value = getPath(content, field.name);
     if (field.matches("[data-json]")) {
       field.value = JSON.stringify(value || [], null, 2);
+    } else if (field.type === "checkbox") {
+      field.checked = Boolean(value);
     } else {
       field.value = value ?? field.value ?? "";
     }
   });
+};
+
+const cardInput = ({ path, label, value = "", textarea = false, checkbox = false }) => `
+  <label class="${textarea ? "wide-field" : ""}">
+    ${escapeHtml(label)}
+    ${
+      checkbox
+        ? `<input name="${escapeHtml(path)}" type="checkbox" ${value ? "checked" : ""} data-card-field />`
+        : textarea
+          ? `<textarea name="${escapeHtml(path)}" rows="3" data-card-field>${escapeHtml(value)}</textarea>`
+          : `<input name="${escapeHtml(path)}" type="text" value="${escapeHtml(value)}" data-card-field />`
+    }
+  </label>
+`;
+
+const renderContentCard = (title, fields) => `
+  <article class="content-card">
+    <h5>${escapeHtml(title)}</h5>
+    <div class="field-grid">
+      ${fields.join("")}
+    </div>
+  </article>
+`;
+
+const renderCardGroup = (title, description, cards) => `
+  <div class="content-card-group">
+    <div class="media-group-heading">
+      <h4>${escapeHtml(title)}</h4>
+      <p>${escapeHtml(description)}</p>
+    </div>
+    <div class="content-card-grid">
+      ${cards.join("")}
+    </div>
+  </div>
+`;
+
+const renderCardFields = (content) => {
+  if (!cardFields) return;
+
+  const whyCards = (content.why?.features || []).map((item, index) =>
+    renderContentCard(`Why Card ${index + 1}`, [
+      cardInput({ path: `why.features.${index}.number`, label: "Number", value: item.number }),
+      cardInput({ path: `why.features.${index}.title`, label: "Title", value: item.title }),
+      cardInput({ path: `why.features.${index}.body`, label: "Copy", value: item.body, textarea: true })
+    ])
+  );
+
+  const classCards = (content.classes?.items || []).map((item, index) =>
+    renderContentCard(`Class Card ${index + 1}`, [
+      cardInput({ path: `classes.items.${index}.title`, label: "Class Name", value: item.title }),
+      cardInput({ path: `classes.items.${index}.difficulty`, label: "Level", value: item.difficulty }),
+      cardInput({ path: `classes.items.${index}.cta`, label: "Button Text", value: item.cta }),
+      cardInput({ path: `classes.items.${index}.body`, label: "Description", value: item.body, textarea: true })
+    ])
+  );
+
+  const eventCards = (content.events?.items || []).map((item, index) =>
+    renderContentCard(`Event Card ${index + 1}`, [
+      cardInput({ path: `events.items.${index}.label`, label: "Label", value: item.label }),
+      cardInput({ path: `events.items.${index}.title`, label: "Title", value: item.title }),
+      cardInput({ path: `events.items.${index}.body`, label: "Description", value: item.body, textarea: true })
+    ])
+  );
+
+  const teacherCards = (content.teachers?.items || []).map((item, index) =>
+    renderContentCard(`Teacher Card ${index + 1}`, [
+      cardInput({ path: `teachers.items.${index}.name`, label: "Name", value: item.name }),
+      cardInput({ path: `teachers.items.${index}.bio`, label: "Bio", value: item.bio, textarea: true }),
+      cardInput({ path: `teachers.items.${index}.favorite`, label: "Favorite Thing", value: item.favorite, textarea: true })
+    ])
+  );
+
+  const packageCards = (content.packages?.items || []).map((item, index) =>
+    renderContentCard(`Package ${index + 1}`, [
+      cardInput({ path: `packages.items.${index}.label`, label: "Label", value: item.label }),
+      cardInput({ path: `packages.items.${index}.title`, label: "Package Name", value: item.title }),
+      cardInput({ path: `packages.items.${index}.price`, label: "Price", value: item.price }),
+      cardInput({ path: `packages.items.${index}.badge`, label: "Badge", value: item.badge }),
+      cardInput({ path: `packages.items.${index}.cta`, label: "Button Text", value: item.cta }),
+      cardInput({ path: `packages.items.${index}.recommended`, label: "Recommended Style", value: item.recommended, checkbox: true }),
+      cardInput({ path: `packages.items.${index}.body`, label: "Description", value: item.body, textarea: true })
+    ])
+  );
+
+  const galleryCards = (content.gallery?.items || []).map((item, index) =>
+    renderContentCard(`Gallery Image ${index + 1}`, [
+      cardInput({ path: `gallery.items.${index}.alt`, label: "Alt Text", value: item.alt }),
+      cardInput({ path: `gallery.items.${index}.size`, label: "Layout Size", value: item.size })
+    ])
+  );
+
+  const testimonialCards = (content.testimonials || []).map((quote, index) =>
+    renderContentCard(`Testimonial ${index + 1}`, [
+      cardInput({ path: `testimonials.${index}`, label: "Quote", value: quote, textarea: true })
+    ])
+  );
+
+  cardFields.innerHTML = [
+    renderCardGroup("Why Cards", "Short feature cards below the opening section.", whyCards),
+    renderCardGroup("Class Cards", "Class name, level, description, and button text.", classCards),
+    renderCardGroup("Event Cards", "Community event labels, titles, and descriptions.", eventCards),
+    renderCardGroup("Teacher Cards", "Teacher names and profile copy.", teacherCards),
+    renderCardGroup("Package Cards", "Package names, prices, descriptions, badges, and button text.", packageCards),
+    renderCardGroup("Gallery", "Image descriptions and layout sizes. Use tall, wide, or leave blank.", galleryCards),
+    renderCardGroup("Testimonials", "Short pull quotes shown in the quote strip.", testimonialCards)
+  ].join("");
 };
 
 const linkInput = ({ path, label, value = "", note = "" }) => `
@@ -312,19 +422,33 @@ const renderMediaFields = (content) => {
 };
 
 const syncJsonTextareaFromPath = (path, value) => {
-  const match = path.match(/^(classes|events|teachers|gallery|packages)\.items\.(\d+)\.(image|alt|ctaUrl)$/);
-  if (!match) return;
+  const itemMatch = path.match(/^(why)\.features\.(\d+)\.(.+)$/)
+    || path.match(/^(classes|events|teachers|gallery|packages)\.items\.(\d+)\.(.+)$/);
+  const testimonialMatch = path.match(/^testimonials\.(\d+)$/);
+  const jsonPath = itemMatch
+    ? `${itemMatch[1]}.${itemMatch[1] === "why" ? "features" : "items"}`
+    : testimonialMatch
+      ? "testimonials"
+      : "";
 
-  const [, section, index, property] = match;
-  const textarea = editorForm.querySelector(`[name="${section}.items"][data-json]`);
+  if (!jsonPath) return;
+
+  const textarea = editorForm.querySelector(`[name="${jsonPath}"][data-json]`);
   if (!textarea) return;
 
   try {
     const items = JSON.parse(textarea.value || "[]");
-    if (items[index]) {
-      items[index][property] = value;
-      textarea.value = JSON.stringify(items, null, 2);
+    if (itemMatch) {
+      const [, , index, property] = itemMatch;
+      if (items[index]) items[index][property] = value;
     }
+
+    if (testimonialMatch) {
+      const [, index] = testimonialMatch;
+      if (items[index] !== undefined) items[index] = value;
+    }
+
+    textarea.value = JSON.stringify(items, null, 2);
   } catch (error) {
     // Let the normal save validation show the JSON error.
   }
@@ -392,7 +516,7 @@ const readForm = () => {
   fields
     .filter((field) => !field.matches("[data-json]"))
     .forEach((field) => {
-      setPath(nextContent, field.name, field.value);
+      setPath(nextContent, field.name, field.type === "checkbox" ? field.checked : field.value);
     });
 
   return nextContent;
@@ -697,6 +821,18 @@ linkFields?.addEventListener("input", (event) => {
   const input = event.target.closest("[data-link-url]");
   if (!input) return;
   syncJsonTextareaFromPath(input.name, input.value);
+});
+
+cardFields?.addEventListener("input", (event) => {
+  const input = event.target.closest("[data-card-field]");
+  if (!input) return;
+  syncJsonTextareaFromPath(input.name, input.type === "checkbox" ? input.checked : input.value);
+});
+
+cardFields?.addEventListener("change", (event) => {
+  const input = event.target.closest("[data-card-field]");
+  if (!input || input.type !== "checkbox") return;
+  syncJsonTextareaFromPath(input.name, input.checked);
 });
 
 boot();

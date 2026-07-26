@@ -264,7 +264,8 @@
 }
 
 .media-group,
-.link-group {
+.link-group,
+.content-card-group {
   display: grid;
   gap: 14px;
   border: 1px solid rgba(15, 31, 47, 0.12);
@@ -278,16 +279,49 @@
   gap: 4px;
 }
 
-.media-group h4 {
+.media-group h4,
+.content-card-group h4 {
   margin: 0;
   color: var(--navy);
   font-size: 1rem;
 }
 
-.media-group p {
+.media-group p,
+.content-card-group p {
   margin: 0;
   color: var(--muted);
   font-size: 0.9rem;
+}
+
+.content-card-editor {
+  display: grid;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.content-card-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.content-card {
+  display: grid;
+  gap: 14px;
+  border: 1px solid rgba(15, 31, 47, 0.12);
+  border-radius: 8px;
+  padding: 16px;
+  background: #fffdf8;
+}
+
+.content-card h5 {
+  margin: 0;
+  color: var(--navy);
+  font-size: 0.95rem;
+}
+
+.advanced-heading {
+  border-top: 1px solid var(--line);
+  padding-top: 28px;
 }
 
 .link-card {
@@ -376,6 +410,11 @@ textarea {
   font-weight: 500;
 }
 
+input[type="checkbox"] {
+  width: auto;
+  justify-self: start;
+}
+
 button.button {
   appearance: none;
   border: 0;
@@ -443,7 +482,8 @@ button:disabled {
   .field-grid,
   .json-grid,
   .media-card-grid,
-  .link-card-grid {
+  .link-card-grid,
+  .content-card-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
