@@ -8,6 +8,7 @@ const passwordMessage = document.querySelector("[data-password-message]");
 const editorMessages = document.querySelectorAll("[data-editor-message]");
 const signOutButton = document.querySelector("[data-sign-out]");
 const resetPasswordButton = document.querySelector("[data-reset-password]");
+const saveContentButton = document.querySelector("[data-save-content]");
 const editorTabs = document.querySelectorAll("[data-editor-tab]");
 const editorPanels = document.querySelectorAll("[data-editor-panel]");
 const mediaFields = document.querySelector("[data-media-fields]");
@@ -15,6 +16,7 @@ const linkFields = document.querySelector("[data-link-fields]");
 
 let supabaseClient;
 let currentContent = defaultContentForAdmin;
+let isSavingContent = false;
 const initialSearchParams = new URLSearchParams(window.location.search);
 const initialHashParams = new URLSearchParams(window.location.hash.slice(1));
 
@@ -30,10 +32,18 @@ const setEditorMessage = (message, type = "") => {
   editorMessages.forEach((element) => setMessage(element, message, type));
 };
 
-const getAdminErrorMessage = (error) => {
+const getStatusTime = () =>
+  new Intl.DateTimeFormat(undefined, {
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit"
+  }).format(new Date());
+
+const getAdminErrorMessage = (error, email = "") => {
   const message = error?.message || String(error);
   if (message.toLowerCase().includes("row-level security")) {
-    return "Supabase blocked this action. Add this login email to public.admin_users and make sure the site_content and storage policies from supabase-setup.sql have been run.";
+    const emailText = email ? ` Logged in as ${email}.` : "";
+    return `Supabase blocked this action.${emailText} Add this exact email to public.admin_users and make sure the site_content and storage policies from supabase-setup.sql have been run.`;
   }
 
   return message;
@@ -48,7 +58,7 @@ const escapeHtml = (value = "") =>
     .replaceAll("'", "&#039;");
 
 const setSavingState = (isSaving) => {
-  editorForm.querySelectorAll("button[type='submit']").forEach((button) => {
+  editorForm.querySelectorAll("[data-save-content]").forEach((button) => {
     button.disabled = isSaving;
     button.textContent = isSaving ? "Saving..." : "Save Changes";
   });
@@ -565,9 +575,11 @@ passwordForm.addEventListener("submit", async (event) => {
   await loadContent();
 });
 
-editorForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  setEditorMessage("Saving...");
+const saveContent = async () => {
+  if (isSavingContent) return;
+
+  isSavingContent = true;
+  setEditorMessage(`Saving started at ${getStatusTime()}...`);
   setSavingState(true);
 
   let nextContent;
@@ -576,39 +588,65 @@ editorForm.addEventListener("submit", async (event) => {
   } catch (error) {
     setEditorMessage(error.message, "error");
     setSavingState(false);
+    isSavingContent = false;
     return;
   }
 
-  const { data, error } = await supabaseClient
-    .from("site_content")
-    .upsert(
-      {
-        id: adminConfig.contentId || "homepage",
-        content: nextContent,
-        is_published: true
-      },
-      { onConflict: "id" }
-    )
-    .select("content")
-    .single();
+  let sessionData;
+  let saveResult;
+
+  try {
+    const sessionResponse = await supabaseClient.auth.getSession();
+    sessionData = sessionResponse.data;
+    saveResult = await supabaseClient
+      .from("site_content")
+      .upsert(
+        {
+          id: adminConfig.contentId || "homepage",
+          content: nextContent,
+          is_published: true
+        },
+        { onConflict: "id" }
+      )
+      .select("content")
+      .single();
+  } catch (error) {
+    setEditorMessage(`Save failed at ${getStatusTime()}: ${getAdminErrorMessage(error)}`, "error");
+    setSavingState(false);
+    isSavingContent = false;
+    return;
+  }
+
+  const email = sessionData?.session?.user?.email || "";
+  const { data, error } = saveResult;
 
   if (error) {
-    setEditorMessage(getAdminErrorMessage(error), "error");
+    setEditorMessage(`Save failed at ${getStatusTime()}: ${getAdminErrorMessage(error, email)}`, "error");
     setSavingState(false);
+    isSavingContent = false;
     return;
   }
 
   if (!data?.content) {
-    setEditorMessage("Supabase did not return the saved homepage row. Check that public.site_content policies from supabase-setup.sql have been run.", "error");
+    setEditorMessage(`Save failed at ${getStatusTime()}: Supabase did not return the saved homepage row. Check that public.site_content policies from supabase-setup.sql have been run.`, "error");
     setSavingState(false);
+    isSavingContent = false;
     return;
   }
 
   currentContent = { ...defaultContentForAdmin, ...data.content };
   fillForm(currentContent);
-  setEditorMessage("Saved and published. Refresh the public site to see the latest content.", "success");
+  setEditorMessage(`Saved and published at ${getStatusTime()}. Refresh the public site to see the latest content.`, "success");
   setSavingState(false);
+  isSavingContent = false;
+};
+
+editorForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  await saveContent();
 });
+
+saveContentButton?.addEventListener("click", saveContent);
 
 signOutButton.addEventListener("click", async () => {
   await supabaseClient.auth.signOut();

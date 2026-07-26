@@ -405,6 +405,8 @@ button:disabled {
 
 .admin-message {
   min-height: 1.4em;
+  border-radius: 8px;
+  padding: 8px 10px;
 }
 
 .sticky-message {
@@ -413,10 +415,12 @@ button:disabled {
 
 .admin-message.is-error {
   color: #9a3412;
+  background: rgba(154, 52, 18, 0.1);
 }
 
 .admin-message.is-success {
   color: #2f6b45;
+  background: rgba(47, 107, 69, 0.1);
 }
 
 .admin-logout {
