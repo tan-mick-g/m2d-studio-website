@@ -319,6 +319,10 @@
   font-size: 0.95rem;
 }
 
+.content-card .media-card {
+  grid-column: 1 / -1;
+}
+
 .advanced-heading {
   border-top: 1px solid var(--line);
   padding-top: 28px;

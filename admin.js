@@ -11,8 +11,8 @@ const resetPasswordButton = document.querySelector("[data-reset-password]");
 const saveContentButton = document.querySelector("[data-save-content]");
 const editorTabs = document.querySelectorAll("[data-editor-tab]");
 const editorPanels = document.querySelectorAll("[data-editor-panel]");
-const mediaFields = document.querySelector("[data-media-fields]");
-const cardFields = document.querySelector("[data-card-fields]");
+const mediaSections = document.querySelectorAll("[data-section-media]");
+const cardSections = document.querySelectorAll("[data-section-cards]");
 
 let supabaseClient;
 let currentContent = defaultContentForAdmin;
@@ -118,13 +118,20 @@ const renderCardGroup = (title, description, cards) => `
   </div>
 `;
 
+const getSectionContainer = (containers, attribute, name) =>
+  [...containers].find((container) => container.dataset[attribute] === name);
+
 const renderCardFields = (content) => {
-  if (!cardFields) return;
+  const classesContainer = getSectionContainer(cardSections, "sectionCards", "classes");
+  const packagesContainer = getSectionContainer(cardSections, "sectionCards", "packages");
+  const facultyContainer = getSectionContainer(cardSections, "sectionCards", "faculty");
 
   const classCards = (content.classes?.items || []).map((item, index) =>
     renderContentCard(`Class ${index + 1}`, [
       textField({ path: `classes.items.${index}.title`, label: "Button / Class Name", value: item.title }),
-      textField({ path: `classes.items.${index}.ctaUrl`, label: "Class Link", value: item.ctaUrl })
+      textField({ path: `classes.items.${index}.ctaUrl`, label: "Class Link", value: item.ctaUrl }),
+      textField({ path: `classes.items.${index}.alt`, label: "Image Alt Text", value: item.alt }),
+      mediaInput({ path: `classes.items.${index}.image`, label: "Class Image", value: item.image })
     ])
   );
 
@@ -142,15 +149,20 @@ const renderCardFields = (content) => {
   const facultyCards = (content.faculty?.items || []).map((item, index) =>
     renderContentCard(`Faculty ${index + 1}`, [
       textField({ path: `faculty.items.${index}.name`, label: "Name", value: item.name }),
-      textField({ path: `faculty.items.${index}.alt`, label: "Image Alt Text", value: item.alt })
+      textField({ path: `faculty.items.${index}.alt`, label: "Image Alt Text", value: item.alt }),
+      mediaInput({ path: `faculty.items.${index}.image`, label: "Faculty Image", value: item.image })
     ])
   );
 
-  cardFields.innerHTML = [
-    renderCardGroup("Class Cards", "Three class cards shown above the calendar.", classCards),
-    renderCardGroup("Package Cards", "Temporary package cards until Rezerv is connected.", packageCards),
-    renderCardGroup("Faculty Placeholders", "Names and image descriptions for the faculty image grid.", facultyCards)
-  ].join("");
+  if (classesContainer) {
+    classesContainer.innerHTML = renderCardGroup("Class Cards", "Three class cards shown above the calendar.", classCards);
+  }
+  if (packagesContainer) {
+    packagesContainer.innerHTML = renderCardGroup("Package Cards", "Temporary package cards until Rezerv is connected.", packageCards);
+  }
+  if (facultyContainer) {
+    facultyContainer.innerHTML = renderCardGroup("Faculty Placeholders", "Names, photos, and image descriptions for the faculty grid.", facultyCards);
+  }
 };
 
 const mediaInput = ({ path, label, value = "", note = "", kind = "image" }) => `
@@ -188,7 +200,11 @@ const renderMediaGroup = (title, description, fields) => `
 `;
 
 const renderMediaFields = (content) => {
-  if (!mediaFields) return;
+  const heroContainer = getSectionContainer(mediaSections, "sectionMedia", "hero");
+  const aboutContainer = getSectionContainer(mediaSections, "sectionMedia", "about");
+  const packagesContainer = getSectionContainer(mediaSections, "sectionMedia", "packages");
+  const contactContainer = getSectionContainer(mediaSections, "sectionMedia", "contact");
+  const footerContainer = getSectionContainer(mediaSections, "sectionMedia", "footer");
 
   const heroImages = (content.hero?.images?.length ? content.hero.images : [content.hero?.image, "", ""]).slice(0, 5);
   while (heroImages.length < 5) heroImages.push("");
@@ -201,32 +217,39 @@ const renderMediaFields = (content) => {
     })
   );
 
-  const classImages = (content.classes?.items || []).map((item, index) =>
-    mediaInput({ path: `classes.items.${index}.image`, label: `Class ${index + 1} Image`, value: item.image })
-  );
-  const facultyImages = (content.faculty?.items || []).map((item, index) =>
-    mediaInput({ path: `faculty.items.${index}.image`, label: `Faculty ${index + 1} Image`, value: item.image })
-  );
-
-  mediaFields.innerHTML = [
-    renderMediaGroup("Hero Media", "Add a video background, or use up to five rotating hero photos. If video is set, it appears instead of the photo rotation.", [
+  if (heroContainer) {
+    heroContainer.innerHTML = renderMediaGroup("Hero Media", "Add a video background, or use up to five rotating hero photos. If video is set, it appears instead of the photo rotation.", [
       mediaInput({ path: "hero.video", label: "Hero Video URL", value: content.hero?.video, kind: "video" }),
       ...heroImageFields
-    ]),
-    renderMediaGroup("Main Images", "Large images used in the hero and feature sections.", [
-      mediaInput({ path: "about.image", label: "About Image", value: content.about?.image }),
-      mediaInput({ path: "packagesBand.image", label: "Packages Band Image", value: content.packagesBand?.image }),
+    ]);
+  }
+  if (aboutContainer) {
+    aboutContainer.innerHTML = renderMediaGroup("About Image", "Main image beside the about copy.", [
+      mediaInput({ path: "about.image", label: "About Image", value: content.about?.image })
+    ]);
+  }
+  if (packagesContainer) {
+    packagesContainer.innerHTML = renderMediaGroup("Packages Band Image", "Wide image behind the packages callout band.", [
+      mediaInput({ path: "packagesBand.image", label: "Packages Band Image", value: content.packagesBand?.image })
+    ]);
+  }
+  if (contactContainer) {
+    contactContainer.innerHTML = renderMediaGroup("Contact Background", "Large image behind the contact section.", [
       mediaInput({ path: "contact.image", label: "Contact Background Image", value: content.contact?.image })
-    ]),
-    renderMediaGroup("Class Images", "Three class card placeholders.", classImages),
-    renderMediaGroup("Faculty Images", "Eight oval faculty placeholders.", facultyImages)
-  ].join("");
+    ]);
+  }
+  if (footerContainer) {
+    footerContainer.innerHTML = renderMediaGroup("Footer Logo", "Logo shown in the footer.", [
+      mediaInput({ path: "footer.logoUrl", label: "Footer Logo URL", value: content.footer?.logoUrl })
+    ]);
+  }
 };
 
 const syncJsonTextareaFromPath = (path, value) => {
   const itemMatch = path.match(/^(classes|packages|faculty)\.items\.(\d+)\.(.+)$/);
+  const heroImageMatch = path.match(/^hero\.images\.(\d+)$/);
   const highlightedMatch = path.match(/^schedule\.highlightedDays$/);
-  const jsonPath = itemMatch ? `${itemMatch[1]}.items` : highlightedMatch ? "schedule.highlightedDays" : "";
+  const jsonPath = itemMatch ? `${itemMatch[1]}.items` : heroImageMatch ? "hero.images" : highlightedMatch ? "schedule.highlightedDays" : "";
   if (!jsonPath) return;
 
   const textarea = editorForm.querySelector(`[name="${jsonPath}"][data-json]`);
@@ -238,6 +261,11 @@ const syncJsonTextareaFromPath = (path, value) => {
       const [, , index, property] = itemMatch;
       if (items[index]) items[index][property] = value;
       textarea.value = JSON.stringify(items, null, 2);
+    } else if (heroImageMatch) {
+      const images = JSON.parse(textarea.value || "[]");
+      const [, index] = heroImageMatch;
+      images[index] = value;
+      textarea.value = JSON.stringify(images, null, 2);
     }
   } catch (error) {
     // Save validation will surface JSON errors.
@@ -555,22 +583,22 @@ editorTabs.forEach((tab) => {
   tab.addEventListener("click", () => activateEditorTab(tab.dataset.editorTab));
 });
 
-mediaFields?.addEventListener("input", (event) => {
+editorForm.addEventListener("input", (event) => {
   const input = event.target.closest("[data-media-url]");
   if (!input) return;
   if (input.name === "hero.images.0") {
-    const fallbackInput = mediaFields.querySelector('[name="hero.image"][data-media-url]');
+    const fallbackInput = editorForm.querySelector('[name="hero.image"][data-media-url]');
     if (fallbackInput) fallbackInput.value = input.value;
   }
   syncJsonTextareaFromPath(input.name, input.value);
   updateMediaPreview(input);
 });
 
-mediaFields?.addEventListener("change", async (event) => {
+editorForm.addEventListener("change", async (event) => {
   const upload = event.target.closest("[data-media-upload]");
   if (!upload?.files?.length) return;
 
-  const targetInput = mediaFields.querySelector(`[name="${upload.dataset.targetPath}"][data-media-url]`);
+  const targetInput = editorForm.querySelector(`[name="${upload.dataset.targetPath}"][data-media-url]`);
   if (!targetInput) return;
 
   try {
@@ -579,7 +607,7 @@ mediaFields?.addEventListener("change", async (event) => {
     const publicUrl = await uploadMediaFile(upload.files[0], upload.dataset.targetPath);
     targetInput.value = publicUrl;
     if (targetInput.name === "hero.images.0") {
-      const fallbackInput = mediaFields.querySelector('[name="hero.image"][data-media-url]');
+      const fallbackInput = editorForm.querySelector('[name="hero.image"][data-media-url]');
       if (fallbackInput) fallbackInput.value = publicUrl;
     }
     syncJsonTextareaFromPath(targetInput.name, targetInput.value);
@@ -593,7 +621,7 @@ mediaFields?.addEventListener("change", async (event) => {
   }
 });
 
-cardFields?.addEventListener("input", (event) => {
+editorForm.addEventListener("input", (event) => {
   const input = event.target.closest("[data-card-field]");
   if (!input) return;
   syncJsonTextareaFromPath(input.name, input.value);

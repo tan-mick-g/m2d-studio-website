@@ -82,18 +82,22 @@
             </div>
 
             <div class="editor-tabs" role="tablist" aria-label="Editor sections">
-              <button class="is-active" type="button" data-editor-tab="basics">Basics</button>
-              <button type="button" data-editor-tab="copy">Copy</button>
-              <button type="button" data-editor-tab="cards">Cards</button>
-              <button type="button" data-editor-tab="media">Media</button>
+              <button class="is-active" type="button" data-editor-tab="global">Global</button>
+              <button type="button" data-editor-tab="hero">Hero</button>
+              <button type="button" data-editor-tab="about">About</button>
+              <button type="button" data-editor-tab="classes">Classes</button>
+              <button type="button" data-editor-tab="schedule">Schedule</button>
+              <button type="button" data-editor-tab="packages">Packages</button>
+              <button type="button" data-editor-tab="faculty">Faculty</button>
               <button type="button" data-editor-tab="contact">Contact</button>
-              <button type="button" data-editor-tab="advanced">Advanced JSON</button>
+              <button type="button" data-editor-tab="footer">Footer</button>
+              <button type="button" data-editor-tab="advanced">Advanced</button>
             </div>
           </div>
 
-          <section class="editor-section is-active" data-editor-panel="basics">
+          <section class="editor-section is-active" data-editor-panel="global">
             <h3>Global & Navigation</h3>
-            <p class="editor-help">These links scroll to sections for now. Login and booking can point to Rezerv.</p>
+            <p class="editor-help">Set the main booking link and where each menu item goes.</p>
             <div class="field-grid">
               <label>Booking URL <input name="bookingUrl" type="url" /></label>
               <label>Book Button Text <input name="nav.cta" type="text" /></label>
@@ -107,47 +111,91 @@
             </div>
           </section>
 
-          <section class="editor-section" data-editor-panel="copy">
-            <h3>Main Section Copy</h3>
+          <section class="editor-section" data-editor-panel="hero">
+            <h3>Hero</h3>
+            <p class="editor-help">Use a video URL, or leave it empty to rotate through the hero photos.</p>
             <div class="field-grid">
               <label>Hero Headline <input name="hero.title" type="text" /></label>
+              <label>Hero Image Alt Text <input name="hero.alt" type="text" /></label>
+            </div>
+            <div class="media-grid" data-section-media="hero"></div>
+          </section>
+
+          <section class="editor-section" data-editor-panel="about">
+            <h3>About</h3>
+            <div class="field-grid">
               <label>About Headline <input name="about.title" type="text" /></label>
               <label class="wide-field">About Paragraph 1 <textarea name="about.body" rows="3"></textarea></label>
               <label class="wide-field">About Paragraph 2 <textarea name="about.body2" rows="3"></textarea></label>
+              <label>About Image Alt Text <input name="about.alt" type="text" /></label>
+            </div>
+            <div class="media-grid" data-section-media="about"></div>
+          </section>
+
+          <section class="editor-section" data-editor-panel="classes">
+            <h3>Classes</h3>
+            <p class="editor-help">Edit the placeholder class cards until the Rezerv class widget is ready.</p>
+            <div class="field-grid">
               <label>Classes Headline <input name="classes.title" type="text" /></label>
+              <label class="wide-field">Class Widget Placeholder Text <input name="classes.widgetNote" type="text" /></label>
+            </div>
+            <div class="content-card-editor" data-section-cards="classes"></div>
+          </section>
+
+          <section class="editor-section" data-editor-panel="schedule">
+            <h3>Schedule</h3>
+            <p class="editor-help">This is the calendar placeholder until the Rezerv schedule widget is added.</p>
+            <div class="field-grid">
               <label>Schedule Month <input name="schedule.title" type="text" /></label>
               <label class="wide-field">Schedule Placeholder Text <input name="schedule.placeholderText" type="text" /></label>
-              <label>Package Band Headline <input name="packagesBand.title" type="text" /></label>
-              <label>Package Band Button Text <input name="packagesBand.cta" type="text" /></label>
-              <label>Faculty Headline <input name="faculty.title" type="text" /></label>
-              <label class="wide-field">Faculty Copy <textarea name="faculty.body" rows="4"></textarea></label>
-              <label>Faculty Button Text <input name="faculty.cta" type="text" /></label>
-              <label>Packages Headline <input name="packages.title" type="text" /></label>
-              <label class="wide-field">Packages Copy <textarea name="packages.body" rows="3"></textarea></label>
+              <label class="wide-field">Highlighted Days JSON <textarea name="schedule.highlightedDays" data-json rows="6"></textarea></label>
             </div>
           </section>
 
-          <section class="editor-section" data-editor-panel="cards">
-            <h3>Classes, Packages & Faculty</h3>
-            <p class="editor-help">Use these as placeholders until the Rezerv widgets are ready.</p>
-            <div class="content-card-editor" data-card-fields></div>
+          <section class="editor-section" data-editor-panel="packages">
+            <h3>Packages</h3>
+            <p class="editor-help">Edit the packages band and package cards in one place.</p>
+            <div class="field-grid">
+              <label>Package Band Headline <input name="packagesBand.title" type="text" /></label>
+              <label>Package Band Button Text <input name="packagesBand.cta" type="text" /></label>
+              <label>Package Band Button Link <input name="packagesBand.ctaUrl" type="text" /></label>
+              <label>Package Band Image Alt Text <input name="packagesBand.alt" type="text" /></label>
+              <label>Packages Headline <input name="packages.title" type="text" /></label>
+              <label class="wide-field">Packages Copy <textarea name="packages.body" rows="3"></textarea></label>
+            </div>
+            <div class="media-grid" data-section-media="packages"></div>
+            <div class="content-card-editor" data-section-cards="packages"></div>
           </section>
 
-          <section class="editor-section" data-editor-panel="media">
-            <h3>Images</h3>
-            <p class="editor-help">Photos can be added later. Empty fields show neutral placeholders.</p>
-            <div class="media-grid" data-media-fields></div>
+          <section class="editor-section" data-editor-panel="faculty">
+            <h3>Faculty</h3>
+            <p class="editor-help">Edit the faculty section copy and image placeholders.</p>
+            <div class="field-grid">
+              <label>Faculty Headline <input name="faculty.title" type="text" /></label>
+              <label>Faculty Button Text <input name="faculty.cta" type="text" /></label>
+              <label>Faculty Button Link <input name="faculty.ctaUrl" type="text" /></label>
+              <label class="wide-field">Faculty Copy <textarea name="faculty.body" rows="4"></textarea></label>
+            </div>
+            <div class="content-card-editor" data-section-cards="faculty"></div>
           </section>
 
           <section class="editor-section" data-editor-panel="contact">
-            <h3>Contact & Footer</h3>
+            <h3>Contact</h3>
             <div class="field-grid">
               <label>Contact Headline <input name="contact.title" type="text" /></label>
               <label>Contact Form Title <input name="contact.formTitle" type="text" /></label>
               <label class="wide-field">Contact Copy <textarea name="contact.body" rows="3"></textarea></label>
               <label>Submit Button Text <input name="contact.submitLabel" type="text" /></label>
               <label>Form Recipient Email <input name="contact.recipientEmail" type="email" /></label>
-              <label class="wide-field">Footer Logo URL <input name="footer.logoUrl" type="text" /></label>
+              <label>Contact Image Alt Text <input name="contact.alt" type="text" /></label>
+            </div>
+            <div class="media-grid" data-section-media="contact"></div>
+          </section>
+
+          <section class="editor-section" data-editor-panel="footer">
+            <h3>Footer</h3>
+            <p class="editor-help">Edit the final footer logo, booking link, address, socials, and legal link.</p>
+            <div class="field-grid">
               <label>Footer Book Button Text <input name="footer.bookLabel" type="text" /></label>
               <label>Footer Book URL <input name="footer.bookUrl" type="url" /></label>
               <label class="wide-field">Footer Address <textarea name="footer.address" rows="4"></textarea></label>
@@ -156,16 +204,17 @@
               <label>Terms URL <input name="footer.termsUrl" type="url" /></label>
               <label class="wide-field">Copyright <input name="footer.copyright" type="text" /></label>
             </div>
+            <div class="media-grid" data-section-media="footer"></div>
           </section>
 
           <section class="editor-section" data-editor-panel="advanced">
             <h3>Advanced JSON</h3>
             <p class="editor-help">Use these only when adding, removing, or reordering repeated items.</p>
             <div class="json-grid">
+              <label>Hero Photos <textarea name="hero.images" data-json rows="10"></textarea></label>
               <label>Class Cards <textarea name="classes.items" data-json rows="12"></textarea></label>
               <label>Packages <textarea name="packages.items" data-json rows="12"></textarea></label>
               <label>Faculty <textarea name="faculty.items" data-json rows="12"></textarea></label>
-              <label>Highlighted Calendar Days <textarea name="schedule.highlightedDays" data-json rows="8"></textarea></label>
             </div>
           </section>
 
