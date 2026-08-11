@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
@@ -22,7 +22,7 @@
         <div>
           <p class="eyebrow">Content Studio</p>
           <h1>Website Admin</h1>
-          <p>Edit the homepage copy, images, video, packages, teachers, and contact details.</p>
+          <p>Edit the redesigned homepage copy, placeholders, images, links, and contact settings.</p>
         </div>
         <div class="admin-actions">
           <a class="button button-outline" href="index.html" target="_blank">Preview Site</a>
@@ -48,10 +48,6 @@
           <button class="button button-gold" type="submit">Sign In</button>
           <button class="text-button" type="button" data-reset-password>Send password reset link</button>
           <p class="admin-message" data-login-message></p>
-          <div class="auth-note">
-            <strong>New admin?</strong>
-            Open the invitation email from Supabase. The link will bring you back here to create your password.
-          </div>
         </form>
 
         <form class="login-card auth-card" data-password-form hidden>
@@ -78,7 +74,7 @@
               <div>
                 <p class="eyebrow">Homepage</p>
                 <h2>Edit Published Content</h2>
-                <p class="editor-help">Move through the tabs, update fields, then save once when you are done.</p>
+                <p class="editor-help">Update the redesigned page sections, then use the floating save button.</p>
               </div>
               <div class="toolbar-actions">
                 <a class="button button-outline" href="index.html" target="_blank">Preview</a>
@@ -87,247 +83,88 @@
 
             <div class="editor-tabs" role="tablist" aria-label="Editor sections">
               <button class="is-active" type="button" data-editor-tab="basics">Basics</button>
-              <button type="button" data-editor-tab="hero">Hero</button>
-              <button type="button" data-editor-tab="sections">Sections</button>
-              <button type="button" data-editor-tab="links">Links</button>
-              <button type="button" data-editor-tab="media">Media & CTA</button>
-              <button type="button" data-editor-tab="footer">Footer</button>
-              <button type="button" data-editor-tab="lists">Cards & Lists</button>
+              <button type="button" data-editor-tab="copy">Copy</button>
+              <button type="button" data-editor-tab="cards">Cards</button>
+              <button type="button" data-editor-tab="media">Media</button>
+              <button type="button" data-editor-tab="contact">Contact</button>
+              <button type="button" data-editor-tab="advanced">Advanced JSON</button>
             </div>
           </div>
 
           <section class="editor-section is-active" data-editor-panel="basics">
-            <h3>Global</h3>
-            <p class="editor-help">These values affect calls to action across the whole site.</p>
+            <h3>Global & Navigation</h3>
+            <p class="editor-help">These links scroll to sections for now. Login and booking can point to Rezerv.</p>
             <div class="field-grid">
-              <label>
-                Booking URL
-                <input name="bookingUrl" type="url" />
-              </label>
-              <label>
-                Navigation CTA
-                <input name="nav.cta" type="text" />
-              </label>
+              <label>Booking URL <input name="bookingUrl" type="url" /></label>
+              <label>Book Button Text <input name="nav.cta" type="text" /></label>
+              <label>Home Link <input name="nav.links.home" type="text" /></label>
+              <label>About Link <input name="nav.links.about" type="text" /></label>
+              <label>Classes Link <input name="nav.links.classes" type="text" /></label>
+              <label>Schedule Link <input name="nav.links.schedule" type="text" /></label>
+              <label>Services Link <input name="nav.links.services" type="text" /></label>
+              <label>FAQ Link <input name="nav.links.faq" type="text" /></label>
+              <label>Login / Sign Up Link <input name="nav.links.login" type="text" /></label>
             </div>
           </section>
 
-          <section class="editor-section" data-editor-panel="hero">
-            <h3>Hero</h3>
-            <p class="editor-help">This is the first thing visitors see. Keep it warm, short, and confident.</p>
+          <section class="editor-section" data-editor-panel="copy">
+            <h3>Main Section Copy</h3>
             <div class="field-grid">
-              <label>
-                Eyebrow
-                <input name="hero.eyebrow" type="text" />
-              </label>
-              <label>
-                Headline
-                <input name="hero.title" type="text" />
-              </label>
-              <label class="wide-field">
-                Supporting Copy
-                <textarea name="hero.body" rows="4"></textarea>
-              </label>
-              <label>
-                Primary CTA
-                <input name="hero.primaryCta" type="text" />
-              </label>
-              <label>
-                Secondary CTA
-                <input name="hero.secondaryCta" type="text" />
-              </label>
+              <label>Hero Headline <input name="hero.title" type="text" /></label>
+              <label>About Headline <input name="about.title" type="text" /></label>
+              <label class="wide-field">About Paragraph 1 <textarea name="about.body" rows="3"></textarea></label>
+              <label class="wide-field">About Paragraph 2 <textarea name="about.body2" rows="3"></textarea></label>
+              <label>Classes Headline <input name="classes.title" type="text" /></label>
+              <label>Schedule Month <input name="schedule.title" type="text" /></label>
+              <label class="wide-field">Schedule Placeholder Text <input name="schedule.placeholderText" type="text" /></label>
+              <label>Package Band Headline <input name="packagesBand.title" type="text" /></label>
+              <label>Package Band Button Text <input name="packagesBand.cta" type="text" /></label>
+              <label>Faculty Headline <input name="faculty.title" type="text" /></label>
+              <label class="wide-field">Faculty Copy <textarea name="faculty.body" rows="4"></textarea></label>
+              <label>Faculty Button Text <input name="faculty.cta" type="text" /></label>
+              <label>Packages Headline <input name="packages.title" type="text" /></label>
+              <label class="wide-field">Packages Copy <textarea name="packages.body" rows="3"></textarea></label>
             </div>
           </section>
 
-          <section class="editor-section" data-editor-panel="sections">
-            <h3>Section Copy</h3>
-            <p class="editor-help">Update the main headings for each homepage section.</p>
-            <div class="field-grid">
-              <label>
-                Why Eyebrow
-                <input name="why.eyebrow" type="text" />
-              </label>
-              <label>
-                Why Headline
-                <input name="why.title" type="text" />
-              </label>
-              <label>
-                Classes Eyebrow
-                <input name="classes.eyebrow" type="text" />
-              </label>
-              <label>
-                Classes Headline
-                <input name="classes.title" type="text" />
-              </label>
-              <label>
-                Events Eyebrow
-                <input name="events.eyebrow" type="text" />
-              </label>
-              <label>
-                Events Headline
-                <input name="events.title" type="text" />
-              </label>
-              <label>
-                Teachers Eyebrow
-                <input name="teachers.eyebrow" type="text" />
-              </label>
-              <label>
-                Teachers Headline
-                <input name="teachers.title" type="text" />
-              </label>
-              <label>
-                Gallery Eyebrow
-                <input name="gallery.eyebrow" type="text" />
-              </label>
-              <label>
-                Gallery Headline
-                <input name="gallery.title" type="text" />
-              </label>
-              <label>
-                Packages Eyebrow
-                <input name="packages.eyebrow" type="text" />
-              </label>
-              <label>
-                Packages Headline
-                <input name="packages.title" type="text" />
-              </label>
-            </div>
+          <section class="editor-section" data-editor-panel="cards">
+            <h3>Classes, Packages & Faculty</h3>
+            <p class="editor-help">Use these as placeholders until the Rezerv widgets are ready.</p>
+            <div class="content-card-editor" data-card-fields></div>
           </section>
 
           <section class="editor-section" data-editor-panel="media">
-            <h3>Life Beyond Class</h3>
-            <div class="field-grid">
-              <label>
-                Eyebrow
-                <input name="life.eyebrow" type="text" />
-              </label>
-              <label>
-                Headline
-                <input name="life.title" type="text" />
-              </label>
-              <label class="wide-field">
-                Copy
-                <textarea name="life.body" rows="4"></textarea>
-              </label>
-            </div>
-          </section>
-
-          <section class="editor-section" data-editor-panel="media">
-            <h3>Final CTA</h3>
-            <div class="field-grid">
-              <label>
-                Eyebrow
-                <input name="finalCta.eyebrow" type="text" />
-              </label>
-              <label>
-                Headline
-                <input name="finalCta.title" type="text" />
-              </label>
-              <label>
-                CTA
-                <input name="finalCta.cta" type="text" />
-              </label>
-              <label class="wide-field">
-                Copy
-                <textarea name="finalCta.body" rows="3"></textarea>
-              </label>
-            </div>
-          </section>
-
-          <section class="editor-section" data-editor-panel="media">
-            <h3>Website Media</h3>
-            <p class="editor-help">
-              Paste image, uploaded video, or YouTube links here. The hero loading image appears while a YouTube or uploaded video is loading.
-            </p>
+            <h3>Images</h3>
+            <p class="editor-help">Photos can be added later. Empty fields show neutral placeholders.</p>
             <div class="media-grid" data-media-fields></div>
           </section>
 
-          <section class="editor-section" data-editor-panel="links">
-            <h3>Button & Page Links</h3>
-            <p class="editor-help">
-              Choose where buttons go. Use full URLs like `https://madetodance.rezerv.co/`, page paths like `/classes`, or section anchors like `#packages`.
-            </p>
-            <div class="link-grid" data-link-fields></div>
-          </section>
-
-          <section class="editor-section" data-editor-panel="footer">
-            <h3>Footer</h3>
-            <p class="editor-help">Keep contact information and studio hours current.</p>
+          <section class="editor-section" data-editor-panel="contact">
+            <h3>Contact & Footer</h3>
             <div class="field-grid">
-              <label class="wide-field">
-                Footer Copy
-                <textarea name="footer.body" rows="3"></textarea>
-              </label>
-              <label>
-                Address
-                <input name="footer.address" type="text" />
-              </label>
-              <label>
-                Email
-                <input name="footer.email" type="email" />
-              </label>
-              <label>
-                Phone
-                <input name="footer.phone" type="text" />
-              </label>
-              <label>
-                Instagram Label
-                <input name="footer.instagramLabel" type="text" />
-              </label>
-              <label>
-                Instagram URL
-                <input name="footer.instagramUrl" type="url" />
-              </label>
-              <label class="wide-field">
-                Hours
-                <textarea name="footer.hours" rows="3"></textarea>
-              </label>
-              <label class="wide-field">
-                Copyright
-                <input name="footer.copyright" type="text" />
-              </label>
+              <label>Contact Headline <input name="contact.title" type="text" /></label>
+              <label>Contact Form Title <input name="contact.formTitle" type="text" /></label>
+              <label class="wide-field">Contact Copy <textarea name="contact.body" rows="3"></textarea></label>
+              <label>Submit Button Text <input name="contact.submitLabel" type="text" /></label>
+              <label>Form Recipient Email <input name="contact.recipientEmail" type="email" /></label>
+              <label>Footer Book Button Text <input name="footer.bookLabel" type="text" /></label>
+              <label>Footer Book URL <input name="footer.bookUrl" type="url" /></label>
+              <label class="wide-field">Footer Address <textarea name="footer.address" rows="4"></textarea></label>
+              <label>Instagram URL <input name="footer.instagramUrl" type="url" /></label>
+              <label>Facebook URL <input name="footer.facebookUrl" type="url" /></label>
+              <label>Terms URL <input name="footer.termsUrl" type="url" /></label>
+              <label class="wide-field">Copyright <input name="footer.copyright" type="text" /></label>
             </div>
           </section>
 
-          <section class="editor-section" data-editor-panel="lists">
-            <h3>Repeatable Content</h3>
-            <p class="editor-help">
-              Edit the card text visitors see on the homepage. Advanced JSON is still available below for adding, removing, or reordering cards.
-            </p>
-            <div class="content-card-editor" data-card-fields></div>
-
-            <h3 class="advanced-heading">Advanced JSON</h3>
-            <p class="editor-help">
-              Use these only when you need to duplicate, remove, or reorder cards.
-            </p>
+          <section class="editor-section" data-editor-panel="advanced">
+            <h3>Advanced JSON</h3>
+            <p class="editor-help">Use these only when adding, removing, or reordering repeated items.</p>
             <div class="json-grid">
-              <label>
-                Why Feature Cards
-                <textarea name="why.features" data-json rows="12"></textarea>
-              </label>
-              <label>
-                Class Cards
-                <textarea name="classes.items" data-json rows="12"></textarea>
-              </label>
-              <label>
-                Event Cards
-                <textarea name="events.items" data-json rows="12"></textarea>
-              </label>
-              <label>
-                Teacher Cards
-                <textarea name="teachers.items" data-json rows="12"></textarea>
-              </label>
-              <label>
-                Gallery Images
-                <textarea name="gallery.items" data-json rows="12"></textarea>
-              </label>
-              <label>
-                Testimonials
-                <textarea name="testimonials" data-json rows="12"></textarea>
-              </label>
-              <label>
-                Packages
-                <textarea name="packages.items" data-json rows="12"></textarea>
-              </label>
+              <label>Class Cards <textarea name="classes.items" data-json rows="12"></textarea></label>
+              <label>Packages <textarea name="packages.items" data-json rows="12"></textarea></label>
+              <label>Faculty <textarea name="faculty.items" data-json rows="12"></textarea></label>
+              <label>Highlighted Calendar Days <textarea name="schedule.highlightedDays" data-json rows="8"></textarea></label>
             </div>
           </section>
 
