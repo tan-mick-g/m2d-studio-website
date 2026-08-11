@@ -58,6 +58,11 @@ const renderCards = (selector, items, template) => {
   if (container && Array.isArray(items)) container.innerHTML = items.map(template).join("");
 };
 
+const getContentImage = (content, path) => getPath(content, path) || getPath(defaultContent, path) || "";
+
+const getItemImage = (content, section, index, item) =>
+  item?.image || defaultContent[section]?.items?.[index]?.image || "";
+
 const renderCalendar = (schedule) => {
   const container = document.querySelector("[data-calendar]");
   if (!container) return;
@@ -97,24 +102,30 @@ const applyContent = (content) => {
   });
 
   document.querySelectorAll("[data-image]").forEach((element) => {
-    setImage(`[data-image="${element.dataset.image}"]`, getPath(content, element.dataset.image));
+    setImage(`[data-image="${element.dataset.image}"]`, getContentImage(content, element.dataset.image));
   });
 
-  renderCards("[data-class-cards]", content.classes?.items, (item) => `
+  renderCards("[data-class-cards]", content.classes?.items, (item, index) => {
+    const image = getItemImage(content, "classes", index, item);
+    return `
     <article class="class-pick">
-      <div class="class-image image-fill ${item.image ? "has-image" : ""}" style="${item.image ? `background-image:url('${escapeHtml(item.image)}')` : ""}" role="img" aria-label="${escapeHtml(item.alt || item.title)}"></div>
+      <div class="class-image image-fill ${image ? "has-image" : ""}" style="${image ? `background-image:url('${escapeHtml(image)}')` : ""}" role="img" aria-label="${escapeHtml(item.alt || item.title)}"></div>
       <a class="button navy-button" href="${escapeHtml(resolveUrl(item.ctaUrl, "#schedule"))}">${escapeHtml(item.title)}</a>
     </article>
-  `);
+  `;
+  });
 
   renderCalendar(content.schedule);
 
   setHref("[data-packages-band-cta]", resolveUrl(content.packagesBand?.ctaUrl, "#packages"));
   setText("[data-packages-band-cta]", content.packagesBand?.cta || "Get Started");
 
-  renderCards("[data-faculty-grid]", content.faculty?.items, (item) => `
-    <div class="faculty-photo image-fill ${item.image ? "has-image" : ""}" style="${item.image ? `background-image:url('${escapeHtml(item.image)}')` : ""}" role="img" aria-label="${escapeHtml(item.alt || item.name)}"></div>
-  `);
+  renderCards("[data-faculty-grid]", content.faculty?.items, (item, index) => {
+    const image = getItemImage(content, "faculty", index, item);
+    return `
+      <div class="faculty-photo image-fill ${image ? "has-image" : ""}" style="${image ? `background-image:url('${escapeHtml(image)}')` : ""}" role="img" aria-label="${escapeHtml(item.alt || item.name)}"></div>
+    `;
+  });
   setHref("[data-faculty-cta]", resolveUrl(content.faculty?.ctaUrl, "#contact"));
   setText("[data-faculty-cta]", content.faculty?.cta || "Meet Our Teachers");
 

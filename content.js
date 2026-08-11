@@ -14,14 +14,14 @@ window.MTD_DEFAULT_CONTENT = {
   },
   hero: {
     title: "Lorem Ipsum",
-    image: "",
+    image: "https://images.unsplash.com/photo-1524594152303-9fd13543fe6e?auto=format&fit=crop&w=1800&q=82",
     alt: "Made To Dance studio class"
   },
   about: {
     title: "Lorem Ipsum",
     body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.",
     body2: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.",
-    image: "",
+    image: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1400&q=82",
     alt: "Students dancing together"
   },
   classes: {
@@ -30,19 +30,19 @@ window.MTD_DEFAULT_CONTENT = {
     items: [
       {
         title: "Class 1",
-        image: "",
+        image: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=900&q=82",
         alt: "Dance class placeholder",
         ctaUrl: "#schedule"
       },
       {
         title: "Class 2",
-        image: "",
+        image: "https://images.unsplash.com/photo-1519925610903-381054cc2a1c?auto=format&fit=crop&w=900&q=82",
         alt: "Dance class placeholder",
         ctaUrl: "#schedule"
       },
       {
         title: "Class 3",
-        image: "",
+        image: "https://images.unsplash.com/photo-1547153760-18fc86324498?auto=format&fit=crop&w=900&q=82",
         alt: "Dance class placeholder",
         ctaUrl: "#schedule"
       }
@@ -57,7 +57,7 @@ window.MTD_DEFAULT_CONTENT = {
     title: "Our Packages",
     cta: "Get Started",
     ctaUrl: "#packages",
-    image: "",
+    image: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=1800&q=82",
     alt: "Dancers celebrating"
   },
   packages: {
@@ -96,14 +96,14 @@ window.MTD_DEFAULT_CONTENT = {
     cta: "Meet Our Teachers",
     ctaUrl: "#contact",
     items: [
-      { name: "Teacher 1", image: "", alt: "Faculty placeholder" },
-      { name: "Teacher 2", image: "", alt: "Faculty placeholder" },
-      { name: "Teacher 3", image: "", alt: "Faculty placeholder" },
-      { name: "Teacher 4", image: "", alt: "Faculty placeholder" },
-      { name: "Teacher 5", image: "", alt: "Faculty placeholder" },
-      { name: "Teacher 6", image: "", alt: "Faculty placeholder" },
-      { name: "Teacher 7", image: "", alt: "Faculty placeholder" },
-      { name: "Teacher 8", image: "", alt: "Faculty placeholder" }
+      { name: "Teacher 1", image: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=700&q=82", alt: "Dance faculty placeholder" },
+      { name: "Teacher 2", image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=700&q=82", alt: "Dance faculty placeholder" },
+      { name: "Teacher 3", image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=700&q=82", alt: "Dance faculty placeholder" },
+      { name: "Teacher 4", image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=700&q=82", alt: "Dance faculty placeholder" },
+      { name: "Teacher 5", image: "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=700&q=82", alt: "Dance faculty placeholder" },
+      { name: "Teacher 6", image: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=700&q=82", alt: "Dance faculty placeholder" },
+      { name: "Teacher 7", image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=700&q=82", alt: "Dance faculty placeholder" },
+      { name: "Teacher 8", image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=700&q=82", alt: "Dance faculty placeholder" }
     ]
   },
   contact: {
@@ -112,7 +112,7 @@ window.MTD_DEFAULT_CONTENT = {
     formTitle: "Contact Form",
     submitLabel: "Submit",
     recipientEmail: "marketing@madetodance.ph",
-    image: "",
+    image: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1800&q=82",
     alt: "Social dancing event"
   },
   footer: {
