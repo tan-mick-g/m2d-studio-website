@@ -674,28 +674,44 @@ h2 {
 
 .site-footer {
   display: grid;
-  grid-template-columns: 0.7fr 1fr 0.9fr;
-  gap: 36px;
+  grid-template-columns: minmax(230px, 0.72fr) minmax(320px, 1fr) minmax(320px, 1fr);
+  gap: clamp(36px, 6vw, 96px);
   align-items: center;
-  padding: clamp(42px, 6vw, 76px);
+  min-height: 360px;
+  padding: clamp(54px, 7vw, 92px) clamp(48px, 8vw, 132px);
   color: var(--cream);
   background: var(--navy);
   border-top: 2px solid var(--red);
 }
 
+.footer-mark {
+  width: clamp(220px, 18vw, 330px);
+  overflow: hidden;
+}
+
 .footer-mark img {
-  width: min(230px, 100%);
+  width: 580px;
+  max-width: none;
+  height: clamp(150px, 14vw, 230px);
+  object-fit: cover;
+  object-position: left center;
 }
 
 .footer-booking,
 .footer-socials {
   display: grid;
-  gap: 22px;
+  gap: 24px;
+}
+
+.footer-booking {
+  justify-items: start;
 }
 
 .footer-booking p,
 .footer-socials p {
   margin: 0;
+  font-size: clamp(1rem, 1.4vw, 1.28rem);
+  line-height: 1.45;
   white-space: pre-line;
 }
 
@@ -706,7 +722,8 @@ h2 {
 
 .footer-socials div {
   display: flex;
-  gap: 20px;
+  gap: 22px;
+  justify-content: flex-end;
 }
 
 .footer-socials a {
@@ -717,13 +734,19 @@ h2 {
 .footer-socials div a {
   display: grid;
   place-items: center;
-  width: 44px;
+  width: 54px;
   aspect-ratio: 1;
   border: 3px solid var(--cream);
-  border-radius: 14px;
-  font-size: 1.8rem;
+  border-radius: 16px;
+  font-size: 2.05rem;
   line-height: 1;
   text-decoration: none;
+}
+
+.footer-socials div a:last-child {
+  border-radius: 50%;
+  font-family: Arial, sans-serif;
+  font-weight: 900;
 }
 
 .has-js .section-pad,
@@ -822,6 +845,10 @@ h2 {
     justify-items: start;
     text-align: left;
   }
+
+  .footer-socials div {
+    justify-content: flex-start;
+  }
 }
 
 @media (max-width: 760px) {
@@ -888,5 +915,18 @@ h2 {
 
   .contact-form {
     margin: 48px auto;
+  }
+
+  .site-footer {
+    padding-inline: 28px;
+  }
+
+  .footer-mark {
+    width: 220px;
+  }
+
+  .footer-mark img {
+    width: 420px;
+    height: 150px;
   }
 }

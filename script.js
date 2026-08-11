@@ -194,6 +194,8 @@ const applyContent = (content) => {
   setHref("[data-footer-booking]", resolveUrl(content.footer?.bookUrl, bookingUrl));
   setText("[data-footer-booking]", content.footer?.bookLabel || "Book Now");
   setText("[data-footer-address]", content.footer?.address || "");
+  const footerLogo = document.querySelector("[data-footer-logo]");
+  if (footerLogo && content.footer?.logoUrl) footerLogo.setAttribute("src", content.footer.logoUrl);
   setHref("[data-social='instagram']", content.footer?.instagramUrl || "#");
   setHref("[data-social='facebook']", content.footer?.facebookUrl || "#");
   setHref("[data-terms]", content.footer?.termsUrl || "#");
