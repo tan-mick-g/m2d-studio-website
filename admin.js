@@ -2,13 +2,16 @@ const adminConfig = window.MTD_SUPABASE || {};
 const defaultContentForAdmin = structuredClone(window.MTD_DEFAULT_CONTENT || {});
 const loginForm = document.querySelector("[data-login-form]");
 const passwordForm = document.querySelector("[data-password-form]");
+const accountForm = document.querySelector("[data-account-form]");
 const editorForm = document.querySelector("[data-editor-form]");
 const loginMessage = document.querySelector("[data-login-message]");
 const passwordMessage = document.querySelector("[data-password-message]");
+const accountMessage = document.querySelector("[data-account-message]");
 const editorMessages = document.querySelectorAll("[data-editor-message]");
 const signOutButton = document.querySelector("[data-sign-out]");
 const resetPasswordButton = document.querySelector("[data-reset-password]");
 const saveContentButton = document.querySelector("[data-save-content]");
+const changePasswordButton = document.querySelector("[data-change-password-button]");
 const editorTabs = document.querySelectorAll("[data-editor-tab]");
 const editorPanels = document.querySelectorAll("[data-editor-panel]");
 const mediaSections = document.querySelectorAll("[data-section-media]");
@@ -354,6 +357,7 @@ const readForm = () => {
 const showEditor = (show) => {
   loginForm.hidden = show;
   passwordForm.hidden = true;
+  accountForm.hidden = !show;
   editorForm.hidden = !show;
   signOutButton.hidden = !show;
 };
@@ -361,6 +365,7 @@ const showEditor = (show) => {
 const showPasswordSetup = () => {
   loginForm.hidden = true;
   passwordForm.hidden = false;
+  accountForm.hidden = true;
   editorForm.hidden = true;
   signOutButton.hidden = false;
 };
@@ -368,6 +373,7 @@ const showPasswordSetup = () => {
 const showLogin = () => {
   loginForm.hidden = false;
   passwordForm.hidden = true;
+  accountForm.hidden = true;
   editorForm.hidden = true;
   signOutButton.hidden = true;
 };
@@ -565,6 +571,30 @@ passwordForm.addEventListener("submit", async (event) => {
   setMessage(passwordMessage, "");
   showEditor(true);
   await loadContent();
+});
+
+accountForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  setMessage(accountMessage, "Updating password...");
+  changePasswordButton.disabled = true;
+
+  const formData = new FormData(accountForm);
+  if (formData.get("password") !== formData.get("confirmPassword")) {
+    setMessage(accountMessage, "Passwords do not match.", "error");
+    changePasswordButton.disabled = false;
+    return;
+  }
+
+  const { error } = await supabaseClient.auth.updateUser({ password: formData.get("password") });
+  if (error) {
+    setMessage(accountMessage, error.message, "error");
+    changePasswordButton.disabled = false;
+    return;
+  }
+
+  accountForm.reset();
+  setMessage(accountMessage, "Password updated successfully.", "success");
+  changePasswordButton.disabled = false;
 });
 
 editorForm.addEventListener("submit", async (event) => {

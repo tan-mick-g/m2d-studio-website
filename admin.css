@@ -69,6 +69,7 @@
 }
 
 .login-card,
+.account-card,
 .editor-form {
   width: min(1160px, 100%);
   margin: 0 auto;
@@ -76,6 +77,30 @@
   border-radius: 8px;
   background: rgba(255, 250, 240, 0.97);
   box-shadow: var(--shadow);
+}
+
+.account-card {
+  display: grid;
+  gap: 18px;
+  margin-bottom: 18px;
+  padding: clamp(18px, 4vw, 28px);
+}
+
+.account-card h3 {
+  margin: 0 0 8px;
+  color: var(--navy);
+  font-size: 1.12rem;
+}
+
+.account-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.account-actions .button {
+  width: auto;
 }
 
 .login-card {
