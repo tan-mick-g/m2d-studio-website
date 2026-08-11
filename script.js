@@ -2,6 +2,7 @@ const config = window.MTD_SUPABASE || {};
 const defaultContent = window.MTD_DEFAULT_CONTENT || {};
 const menuToggle = document.querySelector("[data-menu-toggle]");
 const mobileNav = document.querySelector("[data-mobile-nav]");
+let heroCarouselTimer;
 
 document.documentElement.classList.add("has-js");
 
@@ -63,6 +64,52 @@ const getContentImage = (content, path) => getPath(content, path) || getPath(def
 const getItemImage = (content, section, index, item) =>
   item?.image || defaultContent[section]?.items?.[index]?.image || "";
 
+const getHeroImages = (content) => {
+  const savedImages = Array.isArray(content.hero?.images) ? content.hero.images.filter(Boolean) : [];
+  const defaultImages = Array.isArray(defaultContent.hero?.images) ? defaultContent.hero.images.filter(Boolean) : [];
+  return savedImages.length ? savedImages : defaultImages.length ? defaultImages : [getContentImage(content, "hero.image")].filter(Boolean);
+};
+
+const applyHeroMedia = (content) => {
+  const heroImage = document.querySelector(".hero-image");
+  const heroVideo = document.querySelector("[data-hero-video]");
+  const videoUrl = content.hero?.video || "";
+  const images = getHeroImages(content);
+
+  window.clearInterval(heroCarouselTimer);
+
+  if (videoUrl && heroVideo) {
+    heroVideo.src = videoUrl;
+    heroVideo.hidden = false;
+    heroVideo.load();
+    heroVideo.play().catch(() => {});
+    if (heroImage) heroImage.hidden = true;
+    return;
+  }
+
+  if (heroVideo) {
+    heroVideo.pause();
+    heroVideo.removeAttribute("src");
+    heroVideo.hidden = true;
+  }
+
+  if (!heroImage) return;
+  heroImage.hidden = false;
+  setImage(".hero-image", images[0] || getContentImage(content, "hero.image"));
+
+  if (images.length <= 1) return;
+
+  let index = 0;
+  heroCarouselTimer = window.setInterval(() => {
+    index = (index + 1) % images.length;
+    heroImage.classList.add("is-fading");
+    window.setTimeout(() => {
+      setImage(".hero-image", images[index]);
+      heroImage.classList.remove("is-fading");
+    }, 520);
+  }, 4200);
+};
+
 const renderCalendar = (schedule) => {
   const container = document.querySelector("[data-calendar]");
   if (!container) return;
@@ -104,6 +151,7 @@ const applyContent = (content) => {
   document.querySelectorAll("[data-image]").forEach((element) => {
     setImage(`[data-image="${element.dataset.image}"]`, getContentImage(content, element.dataset.image));
   });
+  applyHeroMedia(content);
 
   renderCards("[data-class-cards]", content.classes?.items, (item, index) => {
     const image = getItemImage(content, "classes", index, item);

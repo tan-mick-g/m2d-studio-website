@@ -153,10 +153,14 @@ const renderCardFields = (content) => {
   ].join("");
 };
 
-const mediaInput = ({ path, label, value = "", note = "" }) => `
+const mediaInput = ({ path, label, value = "", note = "", kind = "image" }) => `
   <article class="media-card" data-media-card>
-    <div class="media-preview">
-      <img src="${escapeHtml(value)}" alt="${escapeHtml(label)}" />
+    <div class="media-preview ${kind === "video" ? "is-video" : ""}">
+      ${
+        kind === "video"
+          ? `<video src="${escapeHtml(value)}" muted controls playsinline></video>`
+          : `<img src="${escapeHtml(value)}" alt="${escapeHtml(label)}" />`
+      }
     </div>
     <div class="media-fields">
       <label>
@@ -164,8 +168,8 @@ const mediaInput = ({ path, label, value = "", note = "" }) => `
         <input name="${escapeHtml(path)}" type="url" value="${escapeHtml(value)}" data-media-url />
       </label>
       <label class="upload-field">
-        Upload Image
-        <input type="file" accept="image/*" data-media-upload data-target-path="${escapeHtml(path)}" />
+        Upload ${kind === "video" ? "Video" : "Image"}
+        <input type="file" accept="${kind === "video" ? "video/*" : "image/*"}" data-media-upload data-target-path="${escapeHtml(path)}" />
       </label>
       ${note ? `<p>${escapeHtml(note)}</p>` : ""}
       <a href="${escapeHtml(value || "#")}" target="_blank" rel="noreferrer" data-media-link>Open media</a>
@@ -186,6 +190,17 @@ const renderMediaGroup = (title, description, fields) => `
 const renderMediaFields = (content) => {
   if (!mediaFields) return;
 
+  const heroImages = (content.hero?.images?.length ? content.hero.images : [content.hero?.image, "", ""]).slice(0, 5);
+  while (heroImages.length < 5) heroImages.push("");
+  const heroImageFields = heroImages.map((image, index) =>
+    mediaInput({
+      path: `hero.images.${index}`,
+      label: `Hero Rotating Photo ${index + 1}`,
+      value: image,
+      note: index === 0 ? "The hero rotates through these photos every few seconds when no hero video is set." : ""
+    })
+  );
+
   const classImages = (content.classes?.items || []).map((item, index) =>
     mediaInput({ path: `classes.items.${index}.image`, label: `Class ${index + 1} Image`, value: item.image })
   );
@@ -194,8 +209,11 @@ const renderMediaFields = (content) => {
   );
 
   mediaFields.innerHTML = [
+    renderMediaGroup("Hero Media", "Add a video background, or use up to five rotating hero photos. If video is set, it appears instead of the photo rotation.", [
+      mediaInput({ path: "hero.video", label: "Hero Video URL", value: content.hero?.video, kind: "video" }),
+      ...heroImageFields
+    ]),
     renderMediaGroup("Main Images", "Large images used in the hero and feature sections.", [
-      mediaInput({ path: "hero.image", label: "Hero Image", value: content.hero?.image }),
       mediaInput({ path: "about.image", label: "About Image", value: content.about?.image }),
       mediaInput({ path: "packagesBand.image", label: "Packages Band Image", value: content.packagesBand?.image }),
       mediaInput({ path: "contact.image", label: "Contact Background Image", value: content.contact?.image })
@@ -228,9 +246,12 @@ const syncJsonTextareaFromPath = (path, value) => {
 
 const updateMediaPreview = (input) => {
   const card = input.closest("[data-media-card]");
-  const image = card?.querySelector("img");
+  const media = card?.querySelector("img, video");
   const link = card?.querySelector("[data-media-link]");
-  if (image) image.setAttribute("src", input.value);
+  if (media) {
+    media.setAttribute("src", input.value);
+    if (media.tagName === "VIDEO") media.load();
+  }
   if (link) link.setAttribute("href", input.value || "#");
 };
 
@@ -294,6 +315,10 @@ const readForm = () => {
     .forEach((field) => {
       setPath(nextContent, field.name, field.value);
     });
+
+  if (Array.isArray(nextContent.hero?.images)) {
+    nextContent.hero.image = nextContent.hero.images.find(Boolean) || nextContent.hero.image || "";
+  }
 
   return nextContent;
 };
@@ -533,6 +558,10 @@ editorTabs.forEach((tab) => {
 mediaFields?.addEventListener("input", (event) => {
   const input = event.target.closest("[data-media-url]");
   if (!input) return;
+  if (input.name === "hero.images.0") {
+    const fallbackInput = mediaFields.querySelector('[name="hero.image"][data-media-url]');
+    if (fallbackInput) fallbackInput.value = input.value;
+  }
   syncJsonTextareaFromPath(input.name, input.value);
   updateMediaPreview(input);
 });
@@ -549,6 +578,10 @@ mediaFields?.addEventListener("change", async (event) => {
     setEditorMessage(`Uploading ${upload.files[0].name}...`);
     const publicUrl = await uploadMediaFile(upload.files[0], upload.dataset.targetPath);
     targetInput.value = publicUrl;
+    if (targetInput.name === "hero.images.0") {
+      const fallbackInput = mediaFields.querySelector('[name="hero.image"][data-media-url]');
+      if (fallbackInput) fallbackInput.value = publicUrl;
+    }
     syncJsonTextareaFromPath(targetInput.name, targetInput.value);
     updateMediaPreview(targetInput);
     setEditorMessage("Upload complete. Save changes to publish this media update.", "success");

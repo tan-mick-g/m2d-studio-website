@@ -15,6 +15,12 @@ window.MTD_DEFAULT_CONTENT = {
   hero: {
     title: "Lorem Ipsum",
     image: "https://images.unsplash.com/photo-1524594152303-9fd13543fe6e?auto=format&fit=crop&w=1800&q=82",
+    video: "",
+    images: [
+      "https://images.unsplash.com/photo-1524594152303-9fd13543fe6e?auto=format&fit=crop&w=1800&q=82",
+      "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1800&q=82",
+      "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=1800&q=82"
+    ],
     alt: "Made To Dance studio class"
   },
   about: {

@@ -210,10 +210,27 @@ textarea {
   overflow: hidden;
 }
 
+.hero-video,
 .hero-image,
 .hero-overlay {
   position: absolute;
   inset: 0;
+}
+
+.hero-video {
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-image {
+  z-index: 0;
+  transition: opacity 520ms ease;
+}
+
+.hero-image.is-fading {
+  opacity: 0;
 }
 
 .hero-overlay {
