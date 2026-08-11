@@ -149,6 +149,45 @@ const renderCalendar = (schedule) => {
   ].join("");
 };
 
+const sendRezervUtms = (iframe) => {
+  const widgetOrigin = "https://widgets.rezerv.co";
+  const keys = ["utm_source", "utm_campaign", "utm_medium", "utm_term", "utm_content"];
+  const params = new URLSearchParams(window.location.search);
+  const utms = {};
+
+  keys.forEach((key) => {
+    const value = params.get(key);
+    if (value) utms[key] = value;
+  });
+
+  if (!iframe?.contentWindow || Object.keys(utms).length === 0) return;
+  iframe.contentWindow.postMessage({ type: "UTM_PARAMS", utms }, widgetOrigin);
+};
+
+const renderScheduleWidget = (schedule) => {
+  const widget = document.querySelector("[data-schedule-widget]");
+  const placeholder = document.querySelector("[data-schedule-placeholder]");
+  const widgetUrl = schedule?.widgetUrl || "";
+  if (!widget || !placeholder) return;
+
+  if (!widgetUrl) {
+    widget.hidden = true;
+    widget.removeAttribute("src");
+    placeholder.hidden = false;
+    return;
+  }
+
+  widget.src = widgetUrl;
+  widget.height = Number(schedule?.widgetHeight) || 1080;
+  widget.hidden = false;
+  placeholder.hidden = true;
+  widget.addEventListener("load", () => {
+    sendRezervUtms(widget);
+    window.setTimeout(() => sendRezervUtms(widget), 500);
+    window.setTimeout(() => sendRezervUtms(widget), 1500);
+  });
+};
+
 const applyContent = (content) => {
   const bookingUrl = content.bookingUrl || defaultContent.bookingUrl;
   const resolveUrl = (value, fallback = bookingUrl) => value || fallback || "#";
@@ -184,6 +223,7 @@ const applyContent = (content) => {
   });
 
   renderCalendar(content.schedule);
+  renderScheduleWidget(content.schedule);
 
   setHref("[data-packages-band-cta]", resolveUrl(content.packagesBand?.ctaUrl, "#packages"));
   setText("[data-packages-band-cta]", content.packagesBand?.cta || "Get Started");
@@ -265,6 +305,12 @@ document.addEventListener("click", (event) => {
 
 mobileNav?.addEventListener("click", (event) => {
   if (event.target.closest("a")) mobileNav.classList.remove("is-open");
+});
+
+window.addEventListener("message", (event) => {
+  if (event.origin !== "https://widgets.rezerv.co") return;
+  if (event.data?.type !== "REQUEST_UTM_PARAMS") return;
+  sendRezervUtms(document.querySelector("[data-schedule-widget]"));
 });
 
 const revealElements = () => {

@@ -86,8 +86,17 @@
           <h2 data-text="schedule.title">August 2026</h2>
           <button type="button" aria-label="Next month">›</button>
         </div>
-        <div class="calendar-placeholder" data-calendar></div>
-        <p class="widget-note" data-text="schedule.placeholderText"></p>
+        <div data-schedule-placeholder>
+          <div class="calendar-placeholder" data-calendar></div>
+          <p class="widget-note" data-text="schedule.placeholderText"></p>
+        </div>
+        <iframe
+          class="rezerv-schedule-widget"
+          title="Made To Dance schedule"
+          loading="lazy"
+          data-schedule-widget
+          hidden
+        ></iframe>
       </section>
 
       <section class="package-band" id="packages">
