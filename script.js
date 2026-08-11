@@ -71,7 +71,8 @@ const getHeroImages = (content) => {
 };
 
 const applyHeroMedia = (content) => {
-  const heroImage = document.querySelector(".hero-image");
+  const heroFilm = document.querySelector("[data-hero-film]");
+  const heroTrack = document.querySelector("[data-hero-film-track]");
   const heroVideo = document.querySelector("[data-hero-video]");
   const videoUrl = content.hero?.video || "";
   const images = getHeroImages(content);
@@ -83,7 +84,7 @@ const applyHeroMedia = (content) => {
     heroVideo.hidden = false;
     heroVideo.load();
     heroVideo.play().catch(() => {});
-    if (heroImage) heroImage.hidden = true;
+    if (heroFilm) heroFilm.hidden = true;
     return;
   }
 
@@ -93,21 +94,24 @@ const applyHeroMedia = (content) => {
     heroVideo.hidden = true;
   }
 
-  if (!heroImage) return;
-  heroImage.hidden = false;
-  setImage(".hero-image", images[0] || getContentImage(content, "hero.image"));
+  if (!heroFilm || !heroTrack) return;
+  heroFilm.hidden = false;
+  heroTrack.style.transform = "translateX(0)";
+  heroTrack.innerHTML = images
+    .map(
+      (image) => `
+        <div class="image-fill hero-image has-image" style="background-image:url('${escapeHtml(image)}')"></div>
+      `
+    )
+    .join("");
 
   if (images.length <= 1) return;
 
   let index = 0;
   heroCarouselTimer = window.setInterval(() => {
     index = (index + 1) % images.length;
-    heroImage.classList.add("is-fading");
-    window.setTimeout(() => {
-      setImage(".hero-image", images[index]);
-      heroImage.classList.remove("is-fading");
-    }, 520);
-  }, 4200);
+    heroTrack.style.transform = `translateX(-${index * 100}%)`;
+  }, 4000);
 };
 
 const renderCalendar = (schedule) => {
@@ -218,9 +222,55 @@ menuToggle?.addEventListener("click", () => {
   mobileNav?.classList.toggle("is-open");
 });
 
+const scrollToHash = (hash) => {
+  const target = document.querySelector(hash);
+  if (!target) return false;
+
+  const headerOffset = document.querySelector(".site-header")?.offsetHeight || 0;
+  const top = target.getBoundingClientRect().top + window.scrollY - headerOffset;
+  window.scrollTo({ top, behavior: "smooth" });
+  return true;
+};
+
+document.addEventListener("click", (event) => {
+  const link = event.target.closest("a[href^='#']");
+  if (!link) return;
+
+  const hash = link.getAttribute("href");
+  if (!hash || hash === "#") return;
+  if (!scrollToHash(hash)) return;
+
+  event.preventDefault();
+  mobileNav?.classList.remove("is-open");
+});
+
 mobileNav?.addEventListener("click", (event) => {
   if (event.target.closest("a")) mobileNav.classList.remove("is-open");
 });
+
+const revealElements = () => {
+  const elements = document.querySelectorAll(".section-pad, .package-band, .contact-section, .package-card, .class-pick, .faculty-photo");
+  if (!("IntersectionObserver" in window)) {
+    elements.forEach((element) => element.classList.add("is-visible"));
+    return;
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-visible");
+        observer.unobserve(entry.target);
+      });
+    },
+    { rootMargin: "0px 0px -12% 0px", threshold: 0.08 }
+  );
+
+  elements.forEach((element, index) => {
+    element.style.setProperty("--reveal-delay", `${Math.min(index % 8, 5) * 70}ms`);
+    observer.observe(element);
+  });
+};
 
 document.querySelector("[data-contact-form]")?.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -240,4 +290,5 @@ document.querySelector("[data-contact-form]")?.addEventListener("submit", async 
 
 loadContent().then((content) => {
   applyContent(content);
+  revealElements();
 });

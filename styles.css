@@ -19,6 +19,7 @@
   --display: "Fredoka", "Inter", system-ui, sans-serif;
   --serif: var(--display);
   --sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 * {
@@ -118,6 +119,15 @@ textarea {
   font-weight: 900;
   text-transform: uppercase;
   cursor: pointer;
+  transition: transform 180ms var(--ease-out), box-shadow 180ms var(--ease-out), background-color 180ms ease, color 180ms ease;
+}
+
+.button:hover,
+.nav-cta:hover,
+.button:focus-visible,
+.nav-cta:focus-visible {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(21, 58, 99, 0.16);
 }
 
 .nav-cta,
@@ -211,7 +221,7 @@ textarea {
 }
 
 .hero-video,
-.hero-image,
+.hero-film,
 .hero-overlay {
   position: absolute;
   inset: 0;
@@ -224,13 +234,47 @@ textarea {
   object-fit: cover;
 }
 
-.hero-image {
+.hero-film {
   z-index: 0;
-  transition: opacity 520ms ease;
+  overflow: hidden;
 }
 
-.hero-image.is-fading {
-  opacity: 0;
+.hero-film-track {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+  transition: transform 980ms cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.hero-image {
+  flex: 0 0 100%;
+  height: 100%;
+}
+
+.hero-film::before,
+.hero-film::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  bottom: 0;
+  width: min(9vw, 86px);
+  pointer-events: none;
+  background:
+    linear-gradient(var(--navy) 0 0) 0 5% / 14px 24px repeat-y,
+    linear-gradient(var(--navy) 0 0) 0 95% / 14px 24px repeat-y,
+    linear-gradient(90deg, rgba(21, 58, 99, 0.42), transparent);
+  opacity: 0.45;
+}
+
+.hero-film::before {
+  left: 0;
+}
+
+.hero-film::after {
+  right: 0;
+  transform: scaleX(-1);
 }
 
 .hero-overlay {
@@ -298,6 +342,7 @@ h2 {
 .decor {
   position: absolute;
   pointer-events: none;
+  animation: decorFloat 8s ease-in-out infinite alternate;
 }
 
 .decor-burst {
@@ -318,6 +363,7 @@ h2 {
   border: 12px solid #ff9d1f;
   border-radius: 50%;
   box-shadow: inset 0 0 0 14px var(--cream), inset 0 0 0 26px #ff9d1f;
+  animation-duration: 10s;
 }
 
 .decor-star {
@@ -327,6 +373,8 @@ h2 {
   aspect-ratio: 1;
   background: var(--red);
   clip-path: polygon(50% 0, 59% 34%, 87% 12%, 70% 45%, 100% 50%, 70% 57%, 87% 88%, 58% 69%, 50% 100%, 41% 69%, 13% 88%, 30% 57%, 0 50%, 30% 44%, 13% 12%, 41% 34%);
+  animation-duration: 9s;
+  animation-direction: alternate-reverse;
 }
 
 .classes-section {
@@ -352,6 +400,12 @@ h2 {
   aspect-ratio: 1.06;
   border: 3px solid var(--red);
   border-radius: 56px;
+  transition: transform 260ms var(--ease-out), box-shadow 260ms var(--ease-out);
+}
+
+.class-pick:hover .class-image {
+  transform: translateY(-5px) rotate(-0.5deg);
+  box-shadow: 0 18px 42px rgba(21, 58, 99, 0.16);
 }
 
 .class-pick a {
@@ -469,6 +523,12 @@ h2 {
   aspect-ratio: 0.72;
   border: 3px solid var(--red);
   border-radius: 999px;
+  transition: transform 240ms var(--ease-out), box-shadow 240ms var(--ease-out);
+}
+
+.faculty-photo:hover {
+  transform: translateY(-5px) rotate(0.8deg);
+  box-shadow: 0 16px 36px rgba(21, 58, 99, 0.14);
 }
 
 .faculty-copy {
@@ -506,6 +566,12 @@ h2 {
   padding: 26px;
   background: var(--white);
   text-align: center;
+  transition: transform 220ms var(--ease-out), box-shadow 220ms var(--ease-out);
+}
+
+.package-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 18px 44px rgba(21, 58, 99, 0.14);
 }
 
 .package-card h3 {
@@ -658,6 +724,66 @@ h2 {
   font-size: 1.8rem;
   line-height: 1;
   text-decoration: none;
+}
+
+.has-js .section-pad,
+.has-js .package-band,
+.has-js .contact-section,
+.has-js .package-card,
+.has-js .class-pick,
+.has-js .faculty-photo {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 560ms var(--ease-out) var(--reveal-delay, 0ms), transform 560ms var(--ease-out) var(--reveal-delay, 0ms);
+}
+
+.has-js .section-pad.is-visible,
+.has-js .package-band.is-visible,
+.has-js .contact-section.is-visible,
+.has-js .package-card.is-visible,
+.has-js .class-pick.is-visible,
+.has-js .faculty-photo.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.has-js .package-card.is-visible:hover,
+.has-js .faculty-photo.is-visible:hover {
+  transform: translateY(-5px);
+}
+
+@keyframes decorFloat {
+  from {
+    transform: translate3d(0, 0, 0) rotate(-1deg);
+  }
+  to {
+    transform: translate3d(10px, -14px, 0) rotate(2deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  .has-js .section-pad,
+  .has-js .package-band,
+  .has-js .contact-section,
+  .has-js .package-card,
+  .has-js .class-pick,
+  .has-js .faculty-photo {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 @media (max-width: 1050px) {
