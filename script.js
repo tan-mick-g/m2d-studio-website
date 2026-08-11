@@ -55,6 +55,9 @@ const setImage = (selector, value) => {
   });
 };
 
+const formatCopyright = (value = "") =>
+  String(value).replace(/\.\s*All\s+rights\s+reserved\.?/i, ".\nAll Rights Reserved");
+
 const renderCards = (selector, items, template) => {
   const container = document.querySelector(selector);
   if (container && Array.isArray(items)) container.innerHTML = items.map(template).join("");
@@ -206,6 +209,7 @@ const applyContent = (content) => {
     const value = getPath(content, element.dataset.text);
     if (value !== undefined) element.textContent = value;
   });
+  setText('[data-text="footer.copyright"]', formatCopyright(content.footer?.copyright || defaultContent.footer?.copyright || ""));
 
   document.querySelectorAll("[data-image]").forEach((element) => {
     setImage(`[data-image="${element.dataset.image}"]`, getContentImage(content, element.dataset.image));

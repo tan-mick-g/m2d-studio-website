@@ -132,6 +132,6 @@ window.MTD_DEFAULT_CONTENT = {
     instagramUrl: "#",
     facebookUrl: "#",
     termsUrl: "#",
-    copyright: "© Made to Dance Studio 2026"
+    copyright: "Copyright 2026 Made To Dance.\nAll Rights Reserved"
   }
 };
