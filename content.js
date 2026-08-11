@@ -57,6 +57,7 @@ window.MTD_DEFAULT_CONTENT = {
   schedule: {
     title: "August 2026",
     placeholderText: "Calendar placeholder for Rezerv schedule widget",
+    widgetEmbed: "",
     widgetUrl: "https://widgets.rezerv.co/timetable?businessId=4101cbba-03e4-4d51-80eb-1ce0fbdbd038&businessUrl=https%3A%2F%2Fmadetodance.rezerv.co&fontFamily=Poppins&gaEnabled=false&gaId=null&hideBranding=false&layout=list&noClassDisplay=4&openInNewTab=true&outlinedButtonColor=%23143155&primaryBackground=%23FEFFE9&scheduleTabs=%5B%7B%22id%22%3A%22classes%22%2C%22label%22%3A%22Classes%22%2C%22source%22%3A%22classes%22%2C%22visible%22%3Atrue%7D%2C%7B%22id%22%3A%22appointments%22%2C%22label%22%3A%22Appointments%22%2C%22source%22%3A%22appointments%22%2C%22visible%22%3Atrue%7D%5D&scheduleViewType=list&scheduleViewTypeOrder=%5B%22list%22%2C%22grid%22%5D&scheduleViewTypeVisibility=%7B%22list%22%3Atrue%2C%22grid%22%3Atrue%7D&secondaryBackground=%23FEFFE9&showRatings=false&showSlotsLeft=false&showSwitcherTabs=true&solidButtonBackground=%23143155&solidButtonText=%23FEFFEA&subCategory=Show+all&textColor=%23143155",
     widgetHeight: "1080",
     highlightedDays: [5, 6, 7, 8]

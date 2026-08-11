@@ -313,13 +313,48 @@ const uploadMediaFile = async (file, targetPath) => {
   return data.publicUrl;
 };
 
+const buildRezervEmbedCode = (schedule = {}) => {
+  if (!schedule.widgetUrl) return "";
+  return `<iframe
+  src="${schedule.widgetUrl}"
+  frameborder="0"
+  style="border: none; width: 100%; height: ${schedule.widgetHeight || 1080}px;"
+></iframe>`;
+};
+
+const parseRezervEmbedCode = (embedCode = "") => {
+  const trimmed = embedCode.trim();
+  if (!trimmed) return { widgetUrl: "", widgetHeight: "" };
+
+  const srcMatch = trimmed.match(/\ssrc=(["'])(.*?)\1/i);
+  const heightMatch = trimmed.match(/height\s*:\s*(\d+)px/i) || trimmed.match(/\sheight=(["'])(\d+)\1/i);
+  const widgetUrl = srcMatch?.[2] || (/^https?:\/\//i.test(trimmed) ? trimmed : "");
+  if (!widgetUrl) throw new Error("Schedule embed code needs a Rezerv iframe src URL.");
+
+  let parsedUrl;
+  try {
+    parsedUrl = new URL(widgetUrl);
+  } catch (error) {
+    throw new Error("Schedule embed code has an invalid iframe URL.");
+  }
+
+  if (parsedUrl.hostname !== "widgets.rezerv.co") {
+    throw new Error("Schedule embed code must use a widgets.rezerv.co iframe URL.");
+  }
+
+  const widgetHeight = heightMatch?.[2] || heightMatch?.[1] || "1080";
+  return { widgetUrl, widgetHeight };
+};
+
 const fillForm = (content) => {
   renderCardFields(content);
   renderMediaFields(content);
 
   editorForm.querySelectorAll("[name]").forEach((field) => {
     const value = getPath(content, field.name);
-    if (field.matches("[data-json]")) {
+    if (field.name === "schedule.widgetEmbed") {
+      field.value = value || buildRezervEmbedCode(content.schedule);
+    } else if (field.matches("[data-json]")) {
       field.value = JSON.stringify(value || [], null, 2);
     } else {
       field.value = value ?? "";
@@ -346,6 +381,14 @@ const readForm = () => {
     .forEach((field) => {
       setPath(nextContent, field.name, field.value);
     });
+
+  const embedField = editorForm.querySelector('[name="schedule.widgetEmbed"]');
+  if (embedField) {
+    const parsedWidget = parseRezervEmbedCode(embedField.value);
+    nextContent.schedule.widgetEmbed = embedField.value.trim();
+    nextContent.schedule.widgetUrl = parsedWidget.widgetUrl;
+    nextContent.schedule.widgetHeight = parsedWidget.widgetHeight;
+  }
 
   if (Array.isArray(nextContent.hero?.images)) {
     nextContent.hero.image = nextContent.hero.images.find(Boolean) || nextContent.hero.image || "";
