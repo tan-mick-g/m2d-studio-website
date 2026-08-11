@@ -215,6 +215,7 @@ const applyContent = (content) => {
   setHref("[data-social='instagram']", content.footer?.instagramUrl || "#");
   setHref("[data-social='facebook']", content.footer?.facebookUrl || "#");
   setHref("[data-terms]", content.footer?.termsUrl || "#");
+  document.body.classList.remove("content-loading");
 };
 
 const loadContent = async () => {

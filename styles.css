@@ -218,6 +218,7 @@ textarea {
   display: grid;
   place-items: center;
   overflow: hidden;
+  background: var(--navy);
 }
 
 .hero-video,
@@ -299,6 +300,18 @@ textarea {
   text-align: center;
   text-transform: uppercase;
   text-shadow: 0 8px 28px rgba(21, 58, 99, 0.25);
+}
+
+.has-js .content-loading .hero-film,
+.has-js .content-loading .hero-video,
+.has-js .content-loading .hero h1 {
+  opacity: 0;
+}
+
+.has-js .content-loading .hero {
+  background:
+    linear-gradient(rgba(21, 58, 99, 0.88), rgba(21, 58, 99, 0.92)),
+    var(--navy);
 }
 
 .section-pad {
