@@ -3,6 +3,7 @@ const defaultContent = window.MTD_DEFAULT_CONTENT || {};
 const menuToggle = document.querySelector("[data-menu-toggle]");
 const mobileNav = document.querySelector("[data-mobile-nav]");
 let heroCarouselTimer;
+let heroCarouselResetTimer;
 
 document.documentElement.classList.add("has-js");
 
@@ -78,6 +79,7 @@ const applyHeroMedia = (content) => {
   const images = getHeroImages(content);
 
   window.clearInterval(heroCarouselTimer);
+  window.clearTimeout(heroCarouselResetTimer);
 
   if (videoUrl && heroVideo) {
     heroVideo.src = videoUrl;
@@ -97,7 +99,8 @@ const applyHeroMedia = (content) => {
   if (!heroFilm || !heroTrack) return;
   heroFilm.hidden = false;
   heroTrack.style.transform = "translateX(0)";
-  heroTrack.innerHTML = images
+  heroTrack.classList.remove("is-resetting");
+  heroTrack.innerHTML = [...images, images[0]]
     .map(
       (image) => `
         <div class="image-fill hero-image has-image" style="background-image:url('${escapeHtml(image)}')"></div>
@@ -109,9 +112,22 @@ const applyHeroMedia = (content) => {
 
   let index = 0;
   heroCarouselTimer = window.setInterval(() => {
-    index = (index + 1) % images.length;
+    heroTrack.classList.remove("is-resetting");
+    index += 1;
     heroTrack.style.transform = `translateX(-${index * 100}%)`;
-  }, 4000);
+
+    if (index === images.length) {
+      window.clearTimeout(heroCarouselResetTimer);
+      heroCarouselResetTimer = window.setTimeout(() => {
+        heroTrack.classList.add("is-resetting");
+        heroTrack.style.transform = "translateX(0)";
+        index = 0;
+        window.requestAnimationFrame(() => {
+          heroTrack.classList.remove("is-resetting");
+        });
+      }, 1200);
+    }
+  }, 5000);
 };
 
 const renderCalendar = (schedule) => {
@@ -251,7 +267,9 @@ mobileNav?.addEventListener("click", (event) => {
 });
 
 const revealElements = () => {
-  const elements = document.querySelectorAll(".section-pad, .package-band, .contact-section, .package-card, .class-pick, .faculty-photo");
+  const elements = document.querySelectorAll(
+    ".section-pad, .package-band, .contact-section, .package-card, .class-pick, .faculty-photo, .about-copy, .about-photo, .package-band-panel, .contact-copy, .contact-form, .site-footer"
+  );
   if (!("IntersectionObserver" in window)) {
     elements.forEach((element) => element.classList.add("is-visible"));
     return;
@@ -269,7 +287,7 @@ const revealElements = () => {
   );
 
   elements.forEach((element, index) => {
-    element.style.setProperty("--reveal-delay", `${Math.min(index % 8, 5) * 70}ms`);
+    element.style.setProperty("--reveal-delay", `${Math.min(index % 8, 5) * 55}ms`);
     observer.observe(element);
   });
 };
