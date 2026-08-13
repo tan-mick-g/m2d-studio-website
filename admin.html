@@ -92,18 +92,24 @@
 
         <form class="editor-form" data-editor-form hidden>
           <div class="editor-sticky">
+            <div class="page-tabs" role="tablist" aria-label="Admin pages">
+              <button class="is-active" type="button" data-page-tab="homepage">Homepage</button>
+              <button type="button" data-page-tab="about-page">About Page</button>
+            </div>
+
             <div class="editor-toolbar">
               <div>
-                <p class="eyebrow">Homepage</p>
+                <p class="eyebrow" data-editor-page-label>Homepage</p>
                 <h2>Edit Published Content</h2>
                 <p class="editor-help">Update the redesigned page sections, then use the floating save button.</p>
               </div>
               <div class="toolbar-actions">
                 <a class="button button-outline" href="index.html" target="_blank">Preview</a>
+                <a class="button button-outline" href="about.html" target="_blank">Preview About</a>
               </div>
             </div>
 
-            <div class="editor-tabs" role="tablist" aria-label="Editor sections">
+            <div class="editor-tabs is-active" role="tablist" aria-label="Homepage sections" data-page-tabs="homepage">
               <button class="is-active" type="button" data-editor-tab="global">Global</button>
               <button type="button" data-editor-tab="hero">Hero</button>
               <button type="button" data-editor-tab="about">About</button>
@@ -115,23 +121,33 @@
               <button type="button" data-editor-tab="footer">Footer</button>
               <button type="button" data-editor-tab="advanced">Advanced</button>
             </div>
+
+            <div class="editor-tabs" role="tablist" aria-label="About page sections" data-page-tabs="about-page">
+              <button class="is-active" type="button" data-editor-tab="about-page-hero">Hero</button>
+              <button type="button" data-editor-tab="about-page-story">Story</button>
+              <button type="button" data-editor-tab="about-page-philosophy">Philosophy</button>
+              <button type="button" data-editor-tab="about-page-audience">Who It Is For</button>
+              <button type="button" data-editor-tab="about-page-location">Studio Feel</button>
+              <button type="button" data-editor-tab="about-page-cta">CTA</button>
+            </div>
           </div>
 
-          <section class="editor-section is-active" data-editor-panel="global">
-            <h3>Global & Navigation</h3>
-            <p class="editor-help">Set the main booking link and where each menu item goes.</p>
-            <div class="field-grid">
-              <label>Booking URL <input name="bookingUrl" type="url" /></label>
-              <label>Book Button Text <input name="nav.cta" type="text" /></label>
-              <label>Home Link <input name="nav.links.home" type="text" /></label>
-              <label>About Link <input name="nav.links.about" type="text" /></label>
-              <label>Classes Link <input name="nav.links.classes" type="text" /></label>
-              <label>Schedule Link <input name="nav.links.schedule" type="text" /></label>
-              <label>Services Link <input name="nav.links.services" type="text" /></label>
-              <label>FAQ Link <input name="nav.links.faq" type="text" /></label>
-              <label>Login / Sign Up Link <input name="nav.links.login" type="text" /></label>
-            </div>
-          </section>
+          <div class="editor-page is-active" data-page-panel="homepage">
+            <section class="editor-section is-active" data-editor-panel="global">
+              <h3>Global & Navigation</h3>
+              <p class="editor-help">Set the main booking link and where each menu item goes.</p>
+              <div class="field-grid">
+                <label>Booking URL <input name="bookingUrl" type="url" /></label>
+                <label>Book Button Text <input name="nav.cta" type="text" /></label>
+                <label>Home Link <input name="nav.links.home" type="text" /></label>
+                <label>About Link <input name="nav.links.about" type="text" /></label>
+                <label>Classes Link <input name="nav.links.classes" type="text" /></label>
+                <label>Schedule Link <input name="nav.links.schedule" type="text" /></label>
+                <label>Services Link <input name="nav.links.services" type="text" /></label>
+                <label>FAQ Link <input name="nav.links.faq" type="text" /></label>
+                <label>Login / Sign Up Link <input name="nav.links.login" type="text" /></label>
+              </div>
+            </section>
 
           <section class="editor-section" data-editor-panel="hero">
             <h3>Hero</h3>
@@ -240,6 +256,65 @@
               <label>Faculty <textarea name="faculty.items" data-json rows="12"></textarea></label>
             </div>
           </section>
+          </div>
+
+          <div class="editor-page" data-page-panel="about-page">
+            <section class="editor-section is-active" data-editor-panel="about-page-hero">
+              <h3>About Page Hero</h3>
+              <p class="editor-help">This is the first section of the About Us page.</p>
+              <div class="field-grid">
+                <label>Eyebrow <input name="aboutPage.eyebrow" type="text" /></label>
+                <label>Hero Image Alt Text <input name="aboutPage.heroAlt" type="text" /></label>
+                <label class="wide-field">Headline <textarea name="aboutPage.title" rows="3"></textarea></label>
+                <label class="wide-field">Intro Copy <textarea name="aboutPage.intro" rows="5"></textarea></label>
+              </div>
+              <div class="media-grid" data-section-media="aboutPageHero"></div>
+            </section>
+
+            <section class="editor-section" data-editor-panel="about-page-story">
+              <h3>Our Story</h3>
+              <div class="field-grid">
+                <label>Story Headline <input name="aboutPage.storyTitle" type="text" /></label>
+                <label>Story Image Alt Text <input name="aboutPage.storyAlt" type="text" /></label>
+                <label class="wide-field">Story Copy <textarea name="aboutPage.storyBody" rows="6"></textarea></label>
+              </div>
+              <div class="media-grid" data-section-media="aboutPageStory"></div>
+            </section>
+
+            <section class="editor-section" data-editor-panel="about-page-philosophy">
+              <h3>Philosophy</h3>
+              <div class="field-grid">
+                <label>Philosophy Headline <input name="aboutPage.missionTitle" type="text" /></label>
+                <label class="wide-field">Philosophy Copy <textarea name="aboutPage.missionBody" rows="6"></textarea></label>
+              </div>
+            </section>
+
+            <section class="editor-section" data-editor-panel="about-page-audience">
+              <h3>Who It Is For</h3>
+              <div class="field-grid">
+                <label>Audience Headline <input name="aboutPage.audienceTitle" type="text" /></label>
+                <label class="wide-field">Audience Copy <textarea name="aboutPage.audienceBody" rows="6"></textarea></label>
+              </div>
+            </section>
+
+            <section class="editor-section" data-editor-panel="about-page-location">
+              <h3>Studio Feel</h3>
+              <div class="field-grid">
+                <label>Studio Headline <input name="aboutPage.locationTitle" type="text" /></label>
+                <label class="wide-field">Studio Copy <textarea name="aboutPage.locationBody" rows="6"></textarea></label>
+              </div>
+            </section>
+
+            <section class="editor-section" data-editor-panel="about-page-cta">
+              <h3>Call To Action</h3>
+              <div class="field-grid">
+                <label>CTA Headline <input name="aboutPage.ctaTitle" type="text" /></label>
+                <label>CTA Button Text <input name="aboutPage.ctaLabel" type="text" /></label>
+                <label class="wide-field">CTA Copy <textarea name="aboutPage.ctaBody" rows="4"></textarea></label>
+                <label class="wide-field">CTA Link <input name="aboutPage.ctaUrl" type="url" /></label>
+              </div>
+            </section>
+          </div>
 
           <div class="editor-toolbar floating-save-bar">
             <p class="admin-message" role="status" aria-live="polite" data-editor-message></p>

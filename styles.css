@@ -318,6 +318,10 @@ textarea {
   padding: clamp(70px, 10vw, 132px) clamp(22px, 5vw, 78px);
 }
 
+[data-text] {
+  white-space: pre-line;
+}
+
 h2 {
   margin: 0;
   color: var(--navy);
@@ -699,6 +703,136 @@ h2 {
   text-transform: uppercase;
 }
 
+.page-hero {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.9fr) minmax(340px, 1.1fr);
+  gap: clamp(34px, 6vw, 86px);
+  align-items: center;
+  min-height: min(720px, calc(100svh - 104px));
+  padding: clamp(54px, 8vw, 96px) clamp(22px, 5vw, 78px);
+  background:
+    radial-gradient(circle at 8% 82%, rgba(237, 31, 47, 0.12), transparent 22%),
+    var(--cream);
+}
+
+.page-hero-copy {
+  display: grid;
+  gap: 24px;
+}
+
+.page-hero-copy h1 {
+  margin: 0;
+  color: var(--navy);
+  font-family: var(--display);
+  font-size: clamp(4rem, 9vw, 8rem);
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+
+.page-hero-copy p:not(.eyebrow) {
+  max-width: 48ch;
+  margin: 0;
+  color: var(--brown);
+  font-size: clamp(1.05rem, 1.7vw, 1.35rem);
+  font-weight: 700;
+}
+
+.page-hero-image {
+  min-height: clamp(420px, 48vw, 660px);
+  border: 3px solid var(--red);
+  border-radius: 72px;
+}
+
+.about-story {
+  display: grid;
+  grid-template-columns: minmax(320px, 1.05fr) minmax(280px, 0.95fr);
+  gap: clamp(34px, 6vw, 86px);
+  align-items: center;
+}
+
+.about-story-image {
+  min-height: clamp(360px, 42vw, 560px);
+  border: 3px solid var(--red);
+  border-radius: 48px 110px 48px 110px;
+}
+
+.about-story-copy,
+.about-location > div,
+.about-cta {
+  display: grid;
+  gap: 24px;
+}
+
+.about-story-copy p,
+.about-beliefs p:not(.eyebrow),
+.about-location p:not(.eyebrow),
+.about-cta p {
+  max-width: 56ch;
+  margin: 0;
+  color: var(--brown);
+  font-size: clamp(1.02rem, 1.4vw, 1.18rem);
+  font-weight: 700;
+}
+
+.about-beliefs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(24px, 4vw, 48px);
+  background: var(--cream-soft);
+}
+
+.about-beliefs article {
+  display: grid;
+  gap: 18px;
+  border: 2px solid var(--red);
+  border-radius: 36px;
+  padding: clamp(24px, 4vw, 44px);
+  background: var(--white);
+}
+
+.about-beliefs h2 {
+  font-size: clamp(2.6rem, 5vw, 5.2rem);
+}
+
+.about-location {
+  position: relative;
+  overflow: hidden;
+  background: var(--navy);
+}
+
+.about-location::after {
+  content: "";
+  position: absolute;
+  right: -42px;
+  bottom: -52px;
+  width: clamp(180px, 20vw, 310px);
+  aspect-ratio: 1;
+  background: var(--teal);
+  border-radius: 999px 999px 0 999px;
+  opacity: 0.86;
+}
+
+.about-location h2,
+.about-location p,
+.about-location .eyebrow {
+  color: var(--cream);
+}
+
+.about-location > div {
+  position: relative;
+  z-index: 1;
+  max-width: 760px;
+}
+
+.about-cta {
+  justify-items: center;
+  text-align: center;
+}
+
+.about-cta p {
+  max-width: 42ch;
+}
+
 .site-footer {
   display: grid;
   grid-template-columns: minmax(230px, 0.72fr) minmax(320px, 1fr) minmax(320px, 1fr);
@@ -787,7 +921,12 @@ h2 {
 .has-js .package-band-panel,
 .has-js .contact-copy,
 .has-js .contact-form,
-.has-js .site-footer {
+.has-js .site-footer,
+.has-js .page-hero-copy,
+.has-js .page-hero-image,
+.has-js .about-story-image,
+.has-js .about-story-copy,
+.has-js .about-beliefs article {
   opacity: 0;
   transform: translateY(18px) scale(0.992);
   transition:
@@ -806,7 +945,12 @@ h2 {
 .has-js .package-band-panel.is-visible,
 .has-js .contact-copy.is-visible,
 .has-js .contact-form.is-visible,
-.has-js .site-footer.is-visible {
+.has-js .site-footer.is-visible,
+.has-js .page-hero-copy.is-visible,
+.has-js .page-hero-image.is-visible,
+.has-js .about-story-image.is-visible,
+.has-js .about-story-copy.is-visible,
+.has-js .about-beliefs article.is-visible {
   opacity: 1;
   transform: translateY(0) scale(1);
 }
@@ -850,7 +994,12 @@ h2 {
   .has-js .package-band-panel,
   .has-js .contact-copy,
   .has-js .contact-form,
-  .has-js .site-footer {
+  .has-js .site-footer,
+  .has-js .page-hero-copy,
+  .has-js .page-hero-image,
+  .has-js .about-story-image,
+  .has-js .about-story-copy,
+  .has-js .about-beliefs article {
     opacity: 1;
     transform: none;
   }
@@ -868,6 +1017,9 @@ h2 {
   }
 
   .about-section,
+  .page-hero,
+  .about-story,
+  .about-beliefs,
   .faculty-section,
   .contact-section,
   .site-footer {
@@ -921,6 +1073,16 @@ h2 {
   }
 
   .about-photo {
+    min-height: 330px;
+    border-radius: 44px;
+  }
+
+  .page-hero {
+    min-height: 0;
+  }
+
+  .page-hero-image,
+  .about-story-image {
     min-height: 330px;
     border-radius: 44px;
   }

@@ -12,6 +12,10 @@ const signOutButton = document.querySelector("[data-sign-out]");
 const resetPasswordButton = document.querySelector("[data-reset-password]");
 const saveContentButton = document.querySelector("[data-save-content]");
 const changePasswordButton = document.querySelector("[data-change-password-button]");
+const pageTabs = document.querySelectorAll("[data-page-tab]");
+const pagePanels = document.querySelectorAll("[data-page-panel]");
+const pageTabGroups = document.querySelectorAll("[data-page-tabs]");
+const editorPageLabel = document.querySelector("[data-editor-page-label]");
 const editorTabs = document.querySelectorAll("[data-editor-tab]");
 const editorPanels = document.querySelectorAll("[data-editor-panel]");
 const mediaSections = document.querySelectorAll("[data-section-media]");
@@ -208,6 +212,8 @@ const renderMediaFields = (content) => {
   const packagesContainer = getSectionContainer(mediaSections, "sectionMedia", "packages");
   const contactContainer = getSectionContainer(mediaSections, "sectionMedia", "contact");
   const footerContainer = getSectionContainer(mediaSections, "sectionMedia", "footer");
+  const aboutPageHeroContainer = getSectionContainer(mediaSections, "sectionMedia", "aboutPageHero");
+  const aboutPageStoryContainer = getSectionContainer(mediaSections, "sectionMedia", "aboutPageStory");
 
   const heroImages = (content.hero?.images?.length ? content.hero.images : [content.hero?.image, "", ""]).slice(0, 5);
   while (heroImages.length < 5) heroImages.push("");
@@ -244,6 +250,16 @@ const renderMediaFields = (content) => {
   if (footerContainer) {
     footerContainer.innerHTML = renderMediaGroup("Footer Logo", "Logo shown in the footer.", [
       mediaInput({ path: "footer.logoUrl", label: "Footer Logo URL", value: content.footer?.logoUrl })
+    ]);
+  }
+  if (aboutPageHeroContainer) {
+    aboutPageHeroContainer.innerHTML = renderMediaGroup("Hero Image", "Main image shown at the top of the About Us page.", [
+      mediaInput({ path: "aboutPage.heroImage", label: "About Page Hero Image", value: content.aboutPage?.heroImage })
+    ]);
+  }
+  if (aboutPageStoryContainer) {
+    aboutPageStoryContainer.innerHTML = renderMediaGroup("Story Image", "Image shown beside the About Us story.", [
+      mediaInput({ path: "aboutPage.storyImage", label: "About Page Story Image", value: content.aboutPage?.storyImage })
     ]);
   }
 };
@@ -422,13 +438,36 @@ const showLogin = () => {
 };
 
 const activateEditorTab = (tabName) => {
-  editorTabs.forEach((tab) => {
+  const activePage = [...pagePanels].find((panel) => panel.classList.contains("is-active"));
+  const tabScope = activePage || editorForm;
+  const activeTabGroup = [...pageTabGroups].find((group) => group.classList.contains("is-active"));
+
+  (activeTabGroup ? activeTabGroup.querySelectorAll("[data-editor-tab]") : editorTabs).forEach((tab) => {
     tab.classList.toggle("is-active", tab.dataset.editorTab === tabName);
   });
 
-  editorPanels.forEach((panel) => {
+  tabScope.querySelectorAll("[data-editor-panel]").forEach((panel) => {
     panel.classList.toggle("is-active", panel.dataset.editorPanel === tabName);
   });
+};
+
+const activatePage = (pageName) => {
+  pageTabs.forEach((tab) => {
+    tab.classList.toggle("is-active", tab.dataset.pageTab === pageName);
+  });
+
+  pagePanels.forEach((panel) => {
+    panel.classList.toggle("is-active", panel.dataset.pagePanel === pageName);
+  });
+
+  pageTabGroups.forEach((group) => {
+    group.classList.toggle("is-active", group.dataset.pageTabs === pageName);
+  });
+
+  if (editorPageLabel) editorPageLabel.textContent = pageName === "about-page" ? "About Page" : "Homepage";
+  const activeGroup = [...pageTabGroups].find((group) => group.dataset.pageTabs === pageName);
+  const firstTab = activeGroup?.querySelector("[data-editor-tab]");
+  if (firstTab) activateEditorTab(firstTab.dataset.editorTab);
 };
 
 const loadContent = async () => {
@@ -650,6 +689,10 @@ saveContentButton?.addEventListener("click", saveContent);
 signOutButton.addEventListener("click", async () => {
   await supabaseClient.auth.signOut();
   showLogin();
+});
+
+pageTabs.forEach((tab) => {
+  tab.addEventListener("click", () => activatePage(tab.dataset.pageTab));
 });
 
 editorTabs.forEach((tab) => {

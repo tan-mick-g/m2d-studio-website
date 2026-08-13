@@ -226,13 +226,47 @@
   backdrop-filter: blur(14px);
 }
 
-.editor-tabs {
+.page-tabs {
   display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.page-tabs button {
+  border: 1px solid rgba(21, 58, 99, 0.18);
+  border-radius: 999px;
+  padding: 11px 18px;
+  color: var(--navy);
+  background: rgba(255, 253, 248, 0.72);
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.page-tabs button.is-active {
+  color: var(--cream);
+  background: var(--navy);
+}
+
+.editor-page {
+  display: none;
+}
+
+.editor-page.is-active {
+  display: block;
+}
+
+.editor-tabs {
+  display: none;
   gap: 8px;
   overflow-x: auto;
   border-top: 1px solid var(--line);
   margin-inline: calc(var(--editor-pad) * -1);
   padding: 12px var(--editor-pad);
+}
+
+.editor-tabs.is-active {
+  display: flex;
 }
 
 .editor-tabs button {

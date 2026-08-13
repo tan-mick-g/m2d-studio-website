@@ -3,12 +3,12 @@ window.MTD_DEFAULT_CONTENT = {
   nav: {
     cta: "Book Here",
     links: {
-      home: "#home",
-      about: "#about",
-      classes: "#classes",
-      schedule: "#schedule",
-      services: "#packages",
-      faq: "#contact",
+      home: "/",
+      about: "/about",
+      classes: "/#classes",
+      schedule: "/#schedule",
+      services: "/#packages",
+      faq: "/#contact",
       login: "https://madetodance.rezerv.co/"
     }
   },
@@ -29,6 +29,27 @@ window.MTD_DEFAULT_CONTENT = {
     body2: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.",
     image: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1400&q=82",
     alt: "Students dancing together"
+  },
+  aboutPage: {
+    eyebrow: "About Made To Dance",
+    title: "Dance That Feels Like Coming Home",
+    intro: "Made To Dance is a social dance studio for adults who want movement to feel joyful, welcoming, and a little bit magical. We believe dance is easier to begin when the room feels kind, the music feels alive, and progress is allowed to be personal.",
+    heroImage: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1800&q=82",
+    heroAlt: "Adults enjoying a social dance class",
+    storyTitle: "Our Story",
+    storyBody: "We started with a simple idea: people learn best when they feel safe enough to try. Made To Dance was built as a place where beginners, returning dancers, and curious adults can step into a class without needing to perform, impress, or already know what they are doing.",
+    storyImage: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=1500&q=82",
+    storyAlt: "Dance community celebrating together",
+    missionTitle: "Our Philosophy",
+    missionBody: "Technique matters, but so does warmth. Our classes balance clear teaching with a relaxed social atmosphere, so students can build confidence, connection, and rhythm at a pace that feels human.",
+    audienceTitle: "Who It Is For",
+    audienceBody: "This is for adults who want to move more, meet people, learn partner dance, or simply make one night of the week feel lighter. You do not need a partner, a dance background, or the perfect outfit to begin.",
+    locationTitle: "The Studio Feel",
+    locationBody: "Inside the studio, the mood is friendly, polished, and playful without feeling intimidating. Think good music, helpful teachers, familiar faces, and enough structure to help you grow.",
+    ctaTitle: "Ready To Take The First Step?",
+    ctaBody: "Start with a class, bring your curiosity, and let the rest unfold from there.",
+    ctaLabel: "Book A Class",
+    ctaUrl: "https://madetodance.rezerv.co/"
   },
   classes: {
     title: "Pick Your Class",

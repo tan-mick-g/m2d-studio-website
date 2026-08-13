@@ -63,6 +63,18 @@ const renderCards = (selector, items, template) => {
   if (container && Array.isArray(items)) container.innerHTML = items.map(template).join("");
 };
 
+const normalizeNavLink = (value, fallback) => {
+  const legacyLinks = {
+    "#home": "/",
+    "#about": "/about",
+    "#classes": "/#classes",
+    "#schedule": "/#schedule",
+    "#packages": "/#packages",
+    "#contact": "/#contact"
+  };
+  return legacyLinks[value] || value || fallback;
+};
+
 const getContentImage = (content, path) => getPath(content, path) || getPath(defaultContent, path) || "";
 
 const getItemImage = (content, section, index, item) =>
@@ -196,12 +208,12 @@ const applyContent = (content) => {
   const resolveUrl = (value, fallback = bookingUrl) => value || fallback || "#";
 
   setHref("[data-booking]", resolveUrl(content.bookingUrl));
-  setHref("[data-nav-link='home']", content.nav?.links?.home || "#home");
-  setHref("[data-nav-link='about']", content.nav?.links?.about || "#about");
-  setHref("[data-nav-link='classes']", content.nav?.links?.classes || "#classes");
-  setHref("[data-nav-link='schedule']", content.nav?.links?.schedule || "#schedule");
-  setHref("[data-nav-link='services']", content.nav?.links?.services || "#packages");
-  setHref("[data-nav-link='faq']", content.nav?.links?.faq || "#contact");
+  setHref("[data-nav-link='home']", normalizeNavLink(content.nav?.links?.home, "/"));
+  setHref("[data-nav-link='about']", normalizeNavLink(content.nav?.links?.about, "/about"));
+  setHref("[data-nav-link='classes']", normalizeNavLink(content.nav?.links?.classes, "/#classes"));
+  setHref("[data-nav-link='schedule']", normalizeNavLink(content.nav?.links?.schedule, "/#schedule"));
+  setHref("[data-nav-link='services']", normalizeNavLink(content.nav?.links?.services, "/#packages"));
+  setHref("[data-nav-link='faq']", normalizeNavLink(content.nav?.links?.faq, "/#contact"));
   setHref("[data-nav-link='login']", content.nav?.links?.login || bookingUrl);
   setText("[data-booking]", content.nav?.cta || "Book Here");
 
@@ -213,6 +225,10 @@ const applyContent = (content) => {
 
   document.querySelectorAll("[data-image]").forEach((element) => {
     setImage(`[data-image="${element.dataset.image}"]`, getContentImage(content, element.dataset.image));
+  });
+  document.querySelectorAll("[data-aria]").forEach((element) => {
+    const value = getPath(content, element.dataset.aria);
+    if (value) element.setAttribute("aria-label", value);
   });
   applyHeroMedia(content);
 
@@ -259,6 +275,7 @@ const applyContent = (content) => {
   setHref("[data-social='instagram']", content.footer?.instagramUrl || "#");
   setHref("[data-social='facebook']", content.footer?.facebookUrl || "#");
   setHref("[data-terms]", content.footer?.termsUrl || "#");
+  setHref("[data-about-page-cta]", resolveUrl(content.aboutPage?.ctaUrl, bookingUrl));
   document.body.classList.remove("content-loading");
 };
 
@@ -296,10 +313,16 @@ const scrollToHash = (hash) => {
 };
 
 document.addEventListener("click", (event) => {
-  const link = event.target.closest("a[href^='#']");
+  const link = event.target.closest("a[href*='#']");
   if (!link) return;
 
-  const hash = link.getAttribute("href");
+  const href = link.getAttribute("href");
+  const url = new URL(href, window.location.href);
+  const isSamePage = url.origin === window.location.origin && url.pathname === window.location.pathname;
+  const isHomeSection = url.origin === window.location.origin && url.pathname === "/" && window.location.pathname === "/";
+  if (!isSamePage && !isHomeSection) return;
+
+  const hash = url.hash;
   if (!hash || hash === "#") return;
   if (!scrollToHash(hash)) return;
 
@@ -319,7 +342,7 @@ window.addEventListener("message", (event) => {
 
 const revealElements = () => {
   const elements = document.querySelectorAll(
-    ".section-pad, .package-band, .contact-section, .package-card, .class-pick, .faculty-photo, .about-copy, .about-photo, .package-band-panel, .contact-copy, .contact-form, .site-footer"
+    ".section-pad, .package-band, .contact-section, .package-card, .class-pick, .faculty-photo, .about-copy, .about-photo, .package-band-panel, .contact-copy, .contact-form, .site-footer, .page-hero-copy, .page-hero-image, .about-story-image, .about-story-copy, .about-beliefs article"
   );
   if (!("IntersectionObserver" in window)) {
     elements.forEach((element) => element.classList.add("is-visible"));
