@@ -52,6 +52,16 @@
 
 .admin-intro .sidebar-preview {
   width: min(220px, 100%);
+  border-color: rgba(255, 250, 240, 0.46);
+  color: var(--cream);
+  background: rgba(255, 250, 240, 0.04);
+}
+
+.admin-intro .sidebar-preview:hover,
+.admin-intro .sidebar-preview:focus-visible {
+  border-color: var(--gold-light);
+  color: var(--navy);
+  background: var(--cream);
 }
 
 .admin-actions {
