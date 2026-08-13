@@ -135,9 +135,10 @@
 
             <div class="editor-tabs" role="tablist" aria-label="Services page sections" data-page-tabs="services-page">
               <button class="is-active" type="button" data-editor-tab="services-page-hero">Hero</button>
-              <button type="button" data-editor-tab="services-page-wedding">Wedding</button>
-              <button type="button" data-editor-tab="services-page-studio">Celebrations</button>
-              <button type="button" data-editor-tab="services-page-corporate">Corporate Wellness</button>
+              <button type="button" data-editor-tab="services-page-wedding">Service 1</button>
+              <button type="button" data-editor-tab="services-page-studio">Service 2</button>
+              <button type="button" data-editor-tab="services-page-corporate">Service 3</button>
+              <button type="button" data-editor-tab="services-page-other">Others</button>
               <button type="button" data-editor-tab="services-page-cta">CTA</button>
             </div>
           </div>
@@ -340,33 +341,47 @@
             </section>
 
             <section class="editor-section" data-editor-panel="services-page-wedding">
-              <h3>Wedding Dance</h3>
+              <h3>Service 1</h3>
               <div class="field-grid">
-                <label>Wedding Headline <input name="servicesPage.weddingTitle" type="text" /></label>
-                <label>Wedding Image Alt Text <input name="servicesPage.weddingAlt" type="text" /></label>
-                <label class="wide-field">Wedding Copy <textarea name="servicesPage.weddingBody" rows="6"></textarea></label>
+                <label>Section Label <input name="servicesPage.weddingLabel" type="text" /></label>
+                <label>Headline <input name="servicesPage.weddingTitle" type="text" /></label>
+                <label>Image Alt Text <input name="servicesPage.weddingAlt" type="text" /></label>
+                <label class="wide-field">Copy <textarea name="servicesPage.weddingBody" rows="6"></textarea></label>
               </div>
               <div class="media-grid" data-section-media="servicesPageWedding"></div>
             </section>
 
             <section class="editor-section" data-editor-panel="services-page-studio">
-              <h3>Celebrations</h3>
+              <h3>Service 2</h3>
               <div class="field-grid">
-                <label>Celebrations Headline <input name="servicesPage.studioTitle" type="text" /></label>
-                <label>Celebrations Image Alt Text <input name="servicesPage.studioAlt" type="text" /></label>
-                <label class="wide-field">Celebrations Copy <textarea name="servicesPage.studioBody" rows="6"></textarea></label>
+                <label>Section Label <input name="servicesPage.studioLabel" type="text" /></label>
+                <label>Headline <input name="servicesPage.studioTitle" type="text" /></label>
+                <label>Image Alt Text <input name="servicesPage.studioAlt" type="text" /></label>
+                <label class="wide-field">Copy <textarea name="servicesPage.studioBody" rows="6"></textarea></label>
               </div>
               <div class="media-grid" data-section-media="servicesPageStudio"></div>
             </section>
 
             <section class="editor-section" data-editor-panel="services-page-corporate">
-              <h3>Corporate Wellness</h3>
+              <h3>Service 3</h3>
               <div class="field-grid">
-                <label>Corporate Headline <input name="servicesPage.corporateTitle" type="text" /></label>
-                <label>Corporate Image Alt Text <input name="servicesPage.corporateAlt" type="text" /></label>
-                <label class="wide-field">Corporate Copy <textarea name="servicesPage.corporateBody" rows="6"></textarea></label>
+                <label>Section Label <input name="servicesPage.corporateLabel" type="text" /></label>
+                <label>Headline <input name="servicesPage.corporateTitle" type="text" /></label>
+                <label>Image Alt Text <input name="servicesPage.corporateAlt" type="text" /></label>
+                <label class="wide-field">Copy <textarea name="servicesPage.corporateBody" rows="6"></textarea></label>
               </div>
               <div class="media-grid" data-section-media="servicesPageCorporate"></div>
+            </section>
+
+            <section class="editor-section" data-editor-panel="services-page-other">
+              <h3>Other Services</h3>
+              <div class="field-grid">
+                <label>Section Label <input name="servicesPage.otherLabel" type="text" /></label>
+                <label>Headline <input name="servicesPage.otherTitle" type="text" /></label>
+                <label>Image Alt Text <input name="servicesPage.otherAlt" type="text" /></label>
+                <label class="wide-field">Copy <textarea name="servicesPage.otherBody" rows="6"></textarea></label>
+              </div>
+              <div class="media-grid" data-section-media="servicesPageOther"></div>
             </section>
 
             <section class="editor-section" data-editor-panel="services-page-cta">

@@ -235,6 +235,7 @@ const renderMediaFields = (content) => {
   const servicesPageStudioContainer = getSectionContainer(mediaSections, "sectionMedia", "servicesPageStudio");
   const servicesPageWeddingContainer = getSectionContainer(mediaSections, "sectionMedia", "servicesPageWedding");
   const servicesPageCorporateContainer = getSectionContainer(mediaSections, "sectionMedia", "servicesPageCorporate");
+  const servicesPageOtherContainer = getSectionContainer(mediaSections, "sectionMedia", "servicesPageOther");
 
   const heroImages = (content.hero?.images?.length ? content.hero.images : [content.hero?.image, "", ""]).slice(0, 5);
   while (heroImages.length < 5) heroImages.push("");
@@ -289,18 +290,23 @@ const renderMediaFields = (content) => {
     ]);
   }
   if (servicesPageStudioContainer) {
-    servicesPageStudioContainer.innerHTML = renderMediaGroup("Celebrations Image", "Image shown with the celebrations section.", [
-      mediaInput({ path: "servicesPage.studioImage", label: "Celebrations Image", value: content.servicesPage?.studioImage })
+    servicesPageStudioContainer.innerHTML = renderMediaGroup("Service 2 Image", "Image shown with the second service section.", [
+      mediaInput({ path: "servicesPage.studioImage", label: "Service 2 Image", value: content.servicesPage?.studioImage })
     ]);
   }
   if (servicesPageWeddingContainer) {
-    servicesPageWeddingContainer.innerHTML = renderMediaGroup("Wedding Image", "Image shown with the wedding dance section.", [
-      mediaInput({ path: "servicesPage.weddingImage", label: "Wedding Dance Image", value: content.servicesPage?.weddingImage })
+    servicesPageWeddingContainer.innerHTML = renderMediaGroup("Service 1 Image", "Image shown with the first service section.", [
+      mediaInput({ path: "servicesPage.weddingImage", label: "Service 1 Image", value: content.servicesPage?.weddingImage })
     ]);
   }
   if (servicesPageCorporateContainer) {
-    servicesPageCorporateContainer.innerHTML = renderMediaGroup("Corporate Wellness Image", "Image shown with the corporate wellness section.", [
-      mediaInput({ path: "servicesPage.corporateImage", label: "Corporate Wellness Image", value: content.servicesPage?.corporateImage })
+    servicesPageCorporateContainer.innerHTML = renderMediaGroup("Service 3 Image", "Image shown with the third service section.", [
+      mediaInput({ path: "servicesPage.corporateImage", label: "Service 3 Image", value: content.servicesPage?.corporateImage })
+    ]);
+  }
+  if (servicesPageOtherContainer) {
+    servicesPageOtherContainer.innerHTML = renderMediaGroup("Other Services Image", "Image shown with the other services section.", [
+      mediaInput({ path: "servicesPage.otherImage", label: "Other Services Image", value: content.servicesPage?.otherImage })
     ]);
   }
 };
