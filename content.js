@@ -169,6 +169,7 @@ window.MTD_DEFAULT_CONTENT = {
     ]
   },
   contact: {
+    eyebrow: "Contact",
     title: "Connect With Us",
     body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.",
     formTitle: "Contact Form",

@@ -230,6 +230,7 @@ const renderMediaFields = (content) => {
   const aboutContainer = getSectionContainer(mediaSections, "sectionMedia", "about");
   const packagesContainer = getSectionContainer(mediaSections, "sectionMedia", "packages");
   const contactContainer = getSectionContainer(mediaSections, "sectionMedia", "contact");
+  const contactPageContainer = getSectionContainer(mediaSections, "sectionMedia", "contactPage");
   const footerContainer = getSectionContainer(mediaSections, "sectionMedia", "footer");
   const aboutPageHeroContainer = getSectionContainer(mediaSections, "sectionMedia", "aboutPageHero");
   const aboutPageStoryContainer = getSectionContainer(mediaSections, "sectionMedia", "aboutPageStory");
@@ -269,6 +270,11 @@ const renderMediaFields = (content) => {
   if (contactContainer) {
     contactContainer.innerHTML = renderMediaGroup("Contact Background", "Large image behind the contact section.", [
       mediaInput({ path: "contact.image", label: "Contact Background Image", value: content.contact?.image })
+    ]);
+  }
+  if (contactPageContainer) {
+    contactPageContainer.innerHTML = renderMediaGroup("Contact Image", "Image used on the Contact page and homepage contact section.", [
+      mediaInput({ path: "contact.image", label: "Contact Image", value: content.contact?.image })
     ]);
   }
   if (footerContainer) {
@@ -519,7 +525,8 @@ const activatePage = (pageName) => {
   const pageLabels = {
     homepage: "Homepage",
     "about-page": "About Page",
-    "services-page": "Services Page"
+    "services-page": "Services Page",
+    "contact-page": "Contact Page"
   };
   if (editorPageLabel) editorPageLabel.textContent = pageLabels[pageName] || "Homepage";
   const activeGroup = [...pageTabGroups].find((group) => group.dataset.pageTabs === pageName);

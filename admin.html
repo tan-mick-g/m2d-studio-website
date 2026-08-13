@@ -99,6 +99,7 @@
               <button class="is-active" type="button" data-page-tab="homepage">Homepage</button>
               <button type="button" data-page-tab="about-page">About Page</button>
               <button type="button" data-page-tab="services-page">Services Page</button>
+              <button type="button" data-page-tab="contact-page">Contact Page</button>
             </div>
 
             <div class="editor-toolbar">
@@ -144,6 +145,12 @@
               <button type="button" data-editor-tab="services-page-corporate">Service 3</button>
               <button type="button" data-editor-tab="services-page-other">Others</button>
               <button type="button" data-editor-tab="services-page-cta">CTA</button>
+            </div>
+
+            <div class="editor-tabs" role="tablist" aria-label="Contact page sections" data-page-tabs="contact-page">
+              <button class="is-active" type="button" data-editor-tab="contact-page-copy">Copy</button>
+              <button type="button" data-editor-tab="contact-page-form">Form & Email</button>
+              <button type="button" data-editor-tab="contact-page-media">Media</button>
             </div>
           </div>
 
@@ -236,17 +243,8 @@
 
           <section class="editor-section" data-editor-panel="contact">
             <h3>Contact</h3>
-            <div class="field-grid">
-              <label>Contact Headline <input name="contact.title" type="text" /></label>
-              <label>Contact Form Title <input name="contact.formTitle" type="text" /></label>
-              <label class="wide-field">Contact Copy <textarea name="contact.body" rows="3"></textarea></label>
-              <label>Submit Button Text <input name="contact.submitLabel" type="text" /></label>
-              <label>Form Recipient Email <input name="contact.recipientEmail" type="email" /></label>
-              <label>Contact Image Alt Text <input name="contact.alt" type="text" /></label>
-              <label class="wide-field">Success Message <textarea name="contact.successMessage" rows="3"></textarea></label>
-              <label class="wide-field">Error Message <textarea name="contact.errorMessage" rows="3"></textarea></label>
-            </div>
-            <div class="media-grid" data-section-media="contact"></div>
+            <p class="editor-help">The homepage contact section and the Contact page share the same copy, image, recipient email, and form messages.</p>
+            <button class="button button-outline" type="button" data-page-tab="contact-page">Edit Contact Page</button>
           </section>
 
           <section class="editor-section" data-editor-panel="footer">
@@ -399,6 +397,37 @@
                 <label class="wide-field">CTA Copy <textarea name="servicesPage.ctaBody" rows="4"></textarea></label>
                 <label class="wide-field">CTA Link <input name="servicesPage.ctaUrl" type="url" /></label>
               </div>
+            </section>
+          </div>
+
+          <div class="editor-page" data-page-panel="contact-page">
+            <section class="editor-section is-active" data-editor-panel="contact-page-copy">
+              <h3>Contact Page Copy</h3>
+              <p class="editor-help">These fields are also used by the contact section on the homepage.</p>
+              <div class="field-grid">
+                <label>Eyebrow <input name="contact.eyebrow" type="text" /></label>
+                <label>Headline <input name="contact.title" type="text" /></label>
+                <label>Image Alt Text <input name="contact.alt" type="text" /></label>
+                <label class="wide-field">Contact Copy <textarea name="contact.body" rows="5"></textarea></label>
+              </div>
+            </section>
+
+            <section class="editor-section" data-editor-panel="contact-page-form">
+              <h3>Form & Email</h3>
+              <p class="editor-help">The recipient must be a verified Made To Dance email address, such as marketing@madetodance.ph or info@madetodance.ph.</p>
+              <div class="field-grid">
+                <label>Contact Form Title <input name="contact.formTitle" type="text" /></label>
+                <label>Submit Button Text <input name="contact.submitLabel" type="text" /></label>
+                <label>Form Recipient Email <input name="contact.recipientEmail" type="email" /></label>
+                <label class="wide-field">Success Message <textarea name="contact.successMessage" rows="3"></textarea></label>
+                <label class="wide-field">Error Message <textarea name="contact.errorMessage" rows="3"></textarea></label>
+              </div>
+            </section>
+
+            <section class="editor-section" data-editor-panel="contact-page-media">
+              <h3>Contact Media</h3>
+              <p class="editor-help">This image appears on the Contact page and behind the homepage contact section.</p>
+              <div class="media-grid" data-section-media="contactPage"></div>
             </section>
           </div>
 
