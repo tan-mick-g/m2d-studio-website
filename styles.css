@@ -703,6 +703,22 @@ h2 {
   text-transform: uppercase;
 }
 
+.form-note.is-success {
+  color: #d8ffdc;
+}
+
+.form-note.is-error {
+  color: #ffd4c9;
+}
+
+.honeypot-field {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
 .page-hero {
   display: grid;
   grid-template-columns: minmax(280px, 0.9fr) minmax(340px, 1.1fr);

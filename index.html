@@ -144,6 +144,10 @@
             Leave A Message
             <textarea name="message" rows="4" required></textarea>
           </label>
+          <label class="honeypot-field" aria-hidden="true">
+            Leave this field blank
+            <input name="website" type="text" tabindex="-1" autocomplete="off" />
+          </label>
           <button class="button light-button" type="submit" data-text="contact.submitLabel">Submit</button>
           <p class="form-note" data-form-message></p>
         </form>

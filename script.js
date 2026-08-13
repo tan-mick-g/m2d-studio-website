@@ -80,6 +80,13 @@ const renderCards = (selector, items, template) => {
   if (container && Array.isArray(items)) container.innerHTML = items.map(template).join("");
 };
 
+const setFormMessage = (element, message, type = "") => {
+  if (!element) return;
+  element.textContent = message || "";
+  element.classList.toggle("is-success", type === "success");
+  element.classList.toggle("is-error", type === "error");
+};
+
 const normalizeNavLink = (value, fallback) => {
   const legacyLinks = {
     "#home": "/",
@@ -390,14 +397,44 @@ document.querySelector("[data-contact-form]")?.addEventListener("submit", async 
   const message = document.querySelector("[data-form-message]");
   const content = await loadContent();
   const formData = new FormData(form);
-  const recipient = content.contact?.recipientEmail || "marketing@madetodance.ph";
-  const subject = encodeURIComponent("Made To Dance Website Inquiry");
-  const body = encodeURIComponent(
-    `Name: ${formData.get("name")}\nEmail: ${formData.get("email")}\n\nMessage:\n${formData.get("message")}`
-  );
+  const submitButton = form.querySelector("button[type='submit']");
+  const successMessage = content.contact?.successMessage || defaultContent.contact?.successMessage || "Thank you. Your message has been sent.";
+  const errorMessage = content.contact?.errorMessage || defaultContent.contact?.errorMessage || "Sorry, something went wrong. Please try again.";
 
-  window.location.href = `mailto:${recipient}?subject=${subject}&body=${body}`;
-  if (message) message.textContent = "Opening your email app...";
+  if (formData.get("website")) {
+    form.reset();
+    setFormMessage(message, successMessage, "success");
+    return;
+  }
+
+  if (!isSupabaseConfigured()) {
+    setFormMessage(message, errorMessage, "error");
+    return;
+  }
+
+  submitButton.disabled = true;
+  setFormMessage(message, "Sending...");
+
+  const client = window.supabase.createClient(config.url, config.anonKey);
+  const { error } = await client.from("contact_submissions").insert({
+    name: String(formData.get("name") || "").trim(),
+    email: String(formData.get("email") || "").trim(),
+    message: String(formData.get("message") || "").trim(),
+    recipient_email: content.contact?.recipientEmail || "marketing@madetodance.ph",
+    source_path: window.location.pathname,
+    user_agent: navigator.userAgent
+  });
+
+  submitButton.disabled = false;
+
+  if (error) {
+    console.warn("Contact submission failed.", error);
+    setFormMessage(message, errorMessage, "error");
+    return;
+  }
+
+  form.reset();
+  setFormMessage(message, successMessage, "success");
 });
 
 loadContent().then((content) => {

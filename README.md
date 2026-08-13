@@ -32,6 +32,8 @@ Only emails in `public.admin_users` can save site content or upload media.
 The setup SQL also creates a public Supabase Storage bucket named `site-media`.
 The admin page can upload images and videos there, then automatically save the public file URL into the homepage content.
 
+The contact form saves inquiries to `public.contact_submissions`. Visitors can submit messages without signing in, but only listed admins can read or manage those submissions in Supabase.
+
 ### Invite Links
 
 In Supabase Dashboard > Authentication > URL Configuration:

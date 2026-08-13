@@ -172,6 +172,8 @@ window.MTD_DEFAULT_CONTENT = {
     body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.",
     formTitle: "Contact Form",
     submitLabel: "Submit",
+    successMessage: "Thank you. Your message has been sent, and we will get back to you soon.",
+    errorMessage: "Sorry, something went wrong. Please try again in a moment.",
     recipientEmail: "marketing@madetodance.ph",
     image: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1800&q=82",
     alt: "Social dancing event"
