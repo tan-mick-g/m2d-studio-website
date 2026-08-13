@@ -28,6 +28,23 @@ const deepMerge = (base, override) => {
   return next;
 };
 
+const normalizeServicesPageContent = (content) => {
+  if (!content?.servicesPage) return content;
+  const servicesPage = content.servicesPage;
+  const defaults = defaultContent.servicesPage || {};
+  const legacyDefaults = {
+    studioTitle: "Studio Services",
+    studioBody:
+      "From beginner-friendly social dance classes to private coaching and group sessions, our studio services are designed to help adults move with more ease, confidence, and joy. Come solo, come with a partner, or gather a small group and we will meet you where you are.",
+    studioAlt: "Adult dancer practicing in studio"
+  };
+
+  if (servicesPage.studioTitle === legacyDefaults.studioTitle) servicesPage.studioTitle = defaults.studioTitle;
+  if (servicesPage.studioBody === legacyDefaults.studioBody) servicesPage.studioBody = defaults.studioBody;
+  if (servicesPage.studioAlt === legacyDefaults.studioAlt) servicesPage.studioAlt = "Celebration dance experience";
+  return content;
+};
+
 const getPath = (object, path) =>
   path.split(".").reduce((value, key) => (value == null ? value : value[key]), object);
 
@@ -296,7 +313,7 @@ const loadContent = async () => {
     return defaultContent;
   }
 
-  return deepMerge(defaultContent, data.content);
+  return normalizeServicesPageContent(deepMerge(defaultContent, data.content));
 };
 
 menuToggle?.addEventListener("click", () => {

@@ -48,6 +48,23 @@ const deepMerge = (base, override) => {
   return next;
 };
 
+const normalizeServicesPageContent = (content) => {
+  if (!content?.servicesPage) return content;
+  const servicesPage = content.servicesPage;
+  const defaults = defaultContentForAdmin.servicesPage || {};
+  const legacyDefaults = {
+    studioTitle: "Studio Services",
+    studioBody:
+      "From beginner-friendly social dance classes to private coaching and group sessions, our studio services are designed to help adults move with more ease, confidence, and joy. Come solo, come with a partner, or gather a small group and we will meet you where you are.",
+    studioAlt: "Adult dancer practicing in studio"
+  };
+
+  if (servicesPage.studioTitle === legacyDefaults.studioTitle) servicesPage.studioTitle = defaults.studioTitle;
+  if (servicesPage.studioBody === legacyDefaults.studioBody) servicesPage.studioBody = defaults.studioBody;
+  if (servicesPage.studioAlt === legacyDefaults.studioAlt) servicesPage.studioAlt = "Celebration dance experience";
+  return content;
+};
+
 const setMessage = (element, message, type = "") => {
   if (!element) return;
   element.textContent = message || "";
@@ -272,8 +289,8 @@ const renderMediaFields = (content) => {
     ]);
   }
   if (servicesPageStudioContainer) {
-    servicesPageStudioContainer.innerHTML = renderMediaGroup("Studio Services Image", "Image shown with the studio services section.", [
-      mediaInput({ path: "servicesPage.studioImage", label: "Studio Services Image", value: content.servicesPage?.studioImage })
+    servicesPageStudioContainer.innerHTML = renderMediaGroup("Celebrations Image", "Image shown with the celebrations section.", [
+      mediaInput({ path: "servicesPage.studioImage", label: "Celebrations Image", value: content.servicesPage?.studioImage })
     ]);
   }
   if (servicesPageWeddingContainer) {
@@ -508,7 +525,7 @@ const loadContent = async () => {
 
   if (error && error.code !== "PGRST116") throw error;
 
-  currentContent = data?.content ? deepMerge(defaultContentForAdmin, data.content) : defaultContentForAdmin;
+  currentContent = normalizeServicesPageContent(data?.content ? deepMerge(defaultContentForAdmin, data.content) : structuredClone(defaultContentForAdmin));
   fillForm(currentContent);
 };
 
@@ -614,7 +631,7 @@ const saveContent = async () => {
     return;
   }
 
-  currentContent = deepMerge(defaultContentForAdmin, data.content);
+  currentContent = normalizeServicesPageContent(deepMerge(defaultContentForAdmin, data.content));
   fillForm(currentContent);
   setEditorMessage(`Saved and published at ${getStatusTime()}. Refresh the public site to see the latest content.`, "success");
   setSavingState(false);
