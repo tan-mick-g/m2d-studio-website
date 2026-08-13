@@ -95,6 +95,7 @@
             <div class="page-tabs" role="tablist" aria-label="Admin pages">
               <button class="is-active" type="button" data-page-tab="homepage">Homepage</button>
               <button type="button" data-page-tab="about-page">About Page</button>
+              <button type="button" data-page-tab="services-page">Services Page</button>
             </div>
 
             <div class="editor-toolbar">
@@ -106,6 +107,7 @@
               <div class="toolbar-actions">
                 <a class="button button-outline" href="index.html" target="_blank">Preview</a>
                 <a class="button button-outline" href="about.html" target="_blank">Preview About</a>
+                <a class="button button-outline" href="services.html" target="_blank">Preview Services</a>
               </div>
             </div>
 
@@ -129,6 +131,14 @@
               <button type="button" data-editor-tab="about-page-audience">Who It Is For</button>
               <button type="button" data-editor-tab="about-page-location">Studio Feel</button>
               <button type="button" data-editor-tab="about-page-cta">CTA</button>
+            </div>
+
+            <div class="editor-tabs" role="tablist" aria-label="Services page sections" data-page-tabs="services-page">
+              <button class="is-active" type="button" data-editor-tab="services-page-hero">Hero</button>
+              <button type="button" data-editor-tab="services-page-studio">Studio Services</button>
+              <button type="button" data-editor-tab="services-page-wedding">Wedding</button>
+              <button type="button" data-editor-tab="services-page-corporate">Corporate Wellness</button>
+              <button type="button" data-editor-tab="services-page-cta">CTA</button>
             </div>
           </div>
 
@@ -312,6 +322,60 @@
                 <label>CTA Button Text <input name="aboutPage.ctaLabel" type="text" /></label>
                 <label class="wide-field">CTA Copy <textarea name="aboutPage.ctaBody" rows="4"></textarea></label>
                 <label class="wide-field">CTA Link <input name="aboutPage.ctaUrl" type="url" /></label>
+              </div>
+            </section>
+          </div>
+
+          <div class="editor-page" data-page-panel="services-page">
+            <section class="editor-section is-active" data-editor-panel="services-page-hero">
+              <h3>Services Page Hero</h3>
+              <p class="editor-help">This is the first section of the Services page.</p>
+              <div class="field-grid">
+                <label>Eyebrow <input name="servicesPage.eyebrow" type="text" /></label>
+                <label>Hero Image Alt Text <input name="servicesPage.heroAlt" type="text" /></label>
+                <label class="wide-field">Headline <textarea name="servicesPage.title" rows="3"></textarea></label>
+                <label class="wide-field">Intro Copy <textarea name="servicesPage.intro" rows="5"></textarea></label>
+              </div>
+              <div class="media-grid" data-section-media="servicesPageHero"></div>
+            </section>
+
+            <section class="editor-section" data-editor-panel="services-page-studio">
+              <h3>Studio Services</h3>
+              <div class="field-grid">
+                <label>Studio Services Headline <input name="servicesPage.studioTitle" type="text" /></label>
+                <label>Studio Image Alt Text <input name="servicesPage.studioAlt" type="text" /></label>
+                <label class="wide-field">Studio Services Copy <textarea name="servicesPage.studioBody" rows="6"></textarea></label>
+              </div>
+              <div class="media-grid" data-section-media="servicesPageStudio"></div>
+            </section>
+
+            <section class="editor-section" data-editor-panel="services-page-wedding">
+              <h3>Wedding Dance</h3>
+              <div class="field-grid">
+                <label>Wedding Headline <input name="servicesPage.weddingTitle" type="text" /></label>
+                <label>Wedding Image Alt Text <input name="servicesPage.weddingAlt" type="text" /></label>
+                <label class="wide-field">Wedding Copy <textarea name="servicesPage.weddingBody" rows="6"></textarea></label>
+              </div>
+              <div class="media-grid" data-section-media="servicesPageWedding"></div>
+            </section>
+
+            <section class="editor-section" data-editor-panel="services-page-corporate">
+              <h3>Corporate Wellness</h3>
+              <div class="field-grid">
+                <label>Corporate Headline <input name="servicesPage.corporateTitle" type="text" /></label>
+                <label>Corporate Image Alt Text <input name="servicesPage.corporateAlt" type="text" /></label>
+                <label class="wide-field">Corporate Copy <textarea name="servicesPage.corporateBody" rows="6"></textarea></label>
+              </div>
+              <div class="media-grid" data-section-media="servicesPageCorporate"></div>
+            </section>
+
+            <section class="editor-section" data-editor-panel="services-page-cta">
+              <h3>Call To Action</h3>
+              <div class="field-grid">
+                <label>CTA Headline <input name="servicesPage.ctaTitle" type="text" /></label>
+                <label>CTA Button Text <input name="servicesPage.ctaLabel" type="text" /></label>
+                <label class="wide-field">CTA Copy <textarea name="servicesPage.ctaBody" rows="4"></textarea></label>
+                <label class="wide-field">CTA Link <input name="servicesPage.ctaUrl" type="url" /></label>
               </div>
             </section>
           </div>

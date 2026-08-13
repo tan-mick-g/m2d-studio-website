@@ -69,7 +69,7 @@ const normalizeNavLink = (value, fallback) => {
     "#about": "/about",
     "#classes": "/#classes",
     "#schedule": "/#schedule",
-    "#packages": "/#packages",
+    "#packages": "/services",
     "#contact": "/#contact"
   };
   return legacyLinks[value] || value || fallback;
@@ -212,7 +212,7 @@ const applyContent = (content) => {
   setHref("[data-nav-link='about']", normalizeNavLink(content.nav?.links?.about, "/about"));
   setHref("[data-nav-link='classes']", normalizeNavLink(content.nav?.links?.classes, "/#classes"));
   setHref("[data-nav-link='schedule']", normalizeNavLink(content.nav?.links?.schedule, "/#schedule"));
-  setHref("[data-nav-link='services']", normalizeNavLink(content.nav?.links?.services, "/#packages"));
+  setHref("[data-nav-link='services']", normalizeNavLink(content.nav?.links?.services, "/services"));
   setHref("[data-nav-link='faq']", normalizeNavLink(content.nav?.links?.faq, "/#contact"));
   setHref("[data-nav-link='login']", content.nav?.links?.login || bookingUrl);
   setText("[data-booking]", content.nav?.cta || "Book Here");
@@ -276,6 +276,7 @@ const applyContent = (content) => {
   setHref("[data-social='facebook']", content.footer?.facebookUrl || "#");
   setHref("[data-terms]", content.footer?.termsUrl || "#");
   setHref("[data-about-page-cta]", resolveUrl(content.aboutPage?.ctaUrl, bookingUrl));
+  setHref("[data-services-page-cta]", resolveUrl(content.servicesPage?.ctaUrl, bookingUrl));
   document.body.classList.remove("content-loading");
 };
 
@@ -342,7 +343,7 @@ window.addEventListener("message", (event) => {
 
 const revealElements = () => {
   const elements = document.querySelectorAll(
-    ".section-pad, .package-band, .contact-section, .package-card, .class-pick, .faculty-photo, .about-copy, .about-photo, .package-band-panel, .contact-copy, .contact-form, .site-footer, .page-hero-copy, .page-hero-image, .about-story-image, .about-story-copy, .about-beliefs article"
+    ".section-pad, .package-band, .contact-section, .package-card, .class-pick, .faculty-photo, .about-copy, .about-photo, .package-band-panel, .contact-copy, .contact-form, .site-footer, .page-hero-copy, .page-hero-image, .about-story-image, .about-story-copy, .about-beliefs article, .service-feature-copy, .service-feature-image"
   );
   if (!("IntersectionObserver" in window)) {
     elements.forEach((element) => element.classList.add("is-visible"));

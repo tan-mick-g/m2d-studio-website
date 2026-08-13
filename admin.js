@@ -214,6 +214,10 @@ const renderMediaFields = (content) => {
   const footerContainer = getSectionContainer(mediaSections, "sectionMedia", "footer");
   const aboutPageHeroContainer = getSectionContainer(mediaSections, "sectionMedia", "aboutPageHero");
   const aboutPageStoryContainer = getSectionContainer(mediaSections, "sectionMedia", "aboutPageStory");
+  const servicesPageHeroContainer = getSectionContainer(mediaSections, "sectionMedia", "servicesPageHero");
+  const servicesPageStudioContainer = getSectionContainer(mediaSections, "sectionMedia", "servicesPageStudio");
+  const servicesPageWeddingContainer = getSectionContainer(mediaSections, "sectionMedia", "servicesPageWedding");
+  const servicesPageCorporateContainer = getSectionContainer(mediaSections, "sectionMedia", "servicesPageCorporate");
 
   const heroImages = (content.hero?.images?.length ? content.hero.images : [content.hero?.image, "", ""]).slice(0, 5);
   while (heroImages.length < 5) heroImages.push("");
@@ -260,6 +264,26 @@ const renderMediaFields = (content) => {
   if (aboutPageStoryContainer) {
     aboutPageStoryContainer.innerHTML = renderMediaGroup("Story Image", "Image shown beside the About Us story.", [
       mediaInput({ path: "aboutPage.storyImage", label: "About Page Story Image", value: content.aboutPage?.storyImage })
+    ]);
+  }
+  if (servicesPageHeroContainer) {
+    servicesPageHeroContainer.innerHTML = renderMediaGroup("Hero Image", "Main image shown at the top of the Services page.", [
+      mediaInput({ path: "servicesPage.heroImage", label: "Services Page Hero Image", value: content.servicesPage?.heroImage })
+    ]);
+  }
+  if (servicesPageStudioContainer) {
+    servicesPageStudioContainer.innerHTML = renderMediaGroup("Studio Services Image", "Image shown with the studio services section.", [
+      mediaInput({ path: "servicesPage.studioImage", label: "Studio Services Image", value: content.servicesPage?.studioImage })
+    ]);
+  }
+  if (servicesPageWeddingContainer) {
+    servicesPageWeddingContainer.innerHTML = renderMediaGroup("Wedding Image", "Image shown with the wedding dance section.", [
+      mediaInput({ path: "servicesPage.weddingImage", label: "Wedding Dance Image", value: content.servicesPage?.weddingImage })
+    ]);
+  }
+  if (servicesPageCorporateContainer) {
+    servicesPageCorporateContainer.innerHTML = renderMediaGroup("Corporate Wellness Image", "Image shown with the corporate wellness section.", [
+      mediaInput({ path: "servicesPage.corporateImage", label: "Corporate Wellness Image", value: content.servicesPage?.corporateImage })
     ]);
   }
 };
@@ -464,7 +488,12 @@ const activatePage = (pageName) => {
     group.classList.toggle("is-active", group.dataset.pageTabs === pageName);
   });
 
-  if (editorPageLabel) editorPageLabel.textContent = pageName === "about-page" ? "About Page" : "Homepage";
+  const pageLabels = {
+    homepage: "Homepage",
+    "about-page": "About Page",
+    "services-page": "Services Page"
+  };
+  if (editorPageLabel) editorPageLabel.textContent = pageLabels[pageName] || "Homepage";
   const activeGroup = [...pageTabGroups].find((group) => group.dataset.pageTabs === pageName);
   const firstTab = activeGroup?.querySelector("[data-editor-tab]");
   if (firstTab) activateEditorTab(firstTab.dataset.editorTab);

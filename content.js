@@ -7,7 +7,7 @@ window.MTD_DEFAULT_CONTENT = {
       about: "/about",
       classes: "/#classes",
       schedule: "/#schedule",
-      services: "/#packages",
+      services: "/services",
       faq: "/#contact",
       login: "https://madetodance.rezerv.co/"
     }
@@ -50,6 +50,29 @@ window.MTD_DEFAULT_CONTENT = {
     ctaBody: "Start with a class, bring your curiosity, and let the rest unfold from there.",
     ctaLabel: "Book A Class",
     ctaUrl: "https://madetodance.rezerv.co/"
+  },
+  servicesPage: {
+    eyebrow: "Services",
+    title: "Dance Experiences For Every Occasion",
+    intro: "Made To Dance brings the same welcoming, polished energy from the studio into private lessons, wedding preparation, and corporate wellness experiences. Whether you are learning for yourself, preparing for a meaningful moment, or helping a team reconnect, we shape the session around people first.",
+    heroImage: "https://images.unsplash.com/photo-1547153760-18fc86324498?auto=format&fit=crop&w=1800&q=82",
+    heroAlt: "Dance class and movement session",
+    studioTitle: "Studio Services",
+    studioBody: "From beginner-friendly social dance classes to private coaching and group sessions, our studio services are designed to help adults move with more ease, confidence, and joy. Come solo, come with a partner, or gather a small group and we will meet you where you are.",
+    studioImage: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=1500&q=82",
+    studioAlt: "Adult dancer practicing in studio",
+    weddingTitle: "Wedding Dance",
+    weddingBody: "Your first dance should feel like you, not like a performance you are trying to survive. We help couples build a natural, memorable wedding dance with simple movement, musicality, and enough polish to feel confident when the moment arrives.",
+    weddingImage: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1500&q=82",
+    weddingAlt: "Wedding couple dancing",
+    corporateTitle: "Corporate Wellness",
+    corporateBody: "Movement can reset a room. Our corporate wellness sessions use accessible dance, rhythm, and social movement to help teams loosen up, connect, and bring energy back into the workday without making anyone feel put on the spot.",
+    corporateImage: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1500&q=82",
+    corporateAlt: "Group dancing together",
+    ctaTitle: "Let Us Shape Something For You",
+    ctaBody: "Tell us what you are planning, and we can recommend the right class, private session, wedding package, or corporate format.",
+    ctaLabel: "Start A Conversation",
+    ctaUrl: "/#contact"
   },
   classes: {
     title: "Pick Your Class",

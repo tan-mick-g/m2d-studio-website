@@ -837,6 +837,61 @@ h2 {
   max-width: 42ch;
 }
 
+.service-feature {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.86fr) minmax(340px, 1.14fr);
+  gap: clamp(34px, 6vw, 86px);
+  align-items: center;
+}
+
+.service-feature-reverse {
+  grid-template-columns: minmax(340px, 1.14fr) minmax(280px, 0.86fr);
+}
+
+.service-feature-reverse .service-feature-copy {
+  order: 2;
+}
+
+.service-feature-copy {
+  display: grid;
+  gap: 24px;
+}
+
+.service-feature-copy p:not(.eyebrow) {
+  max-width: 54ch;
+  margin: 0;
+  color: var(--brown);
+  font-size: clamp(1.02rem, 1.4vw, 1.18rem);
+  font-weight: 700;
+}
+
+.service-feature-image {
+  min-height: clamp(360px, 43vw, 580px);
+  border: 3px solid var(--red);
+  border-radius: 72px;
+}
+
+.service-feature-dark {
+  background: var(--navy);
+}
+
+.service-feature-dark h2,
+.service-feature-dark .eyebrow {
+  color: var(--cream);
+}
+
+.service-feature-dark .service-feature-copy p:not(.eyebrow) {
+  color: rgba(255, 253, 232, 0.9);
+}
+
+.service-feature-dark .service-feature-image {
+  border-color: var(--cream);
+}
+
+.services-cta {
+  background: var(--cream-soft);
+}
+
 .site-footer {
   display: grid;
   grid-template-columns: minmax(230px, 0.72fr) minmax(320px, 1fr) minmax(320px, 1fr);
@@ -930,7 +985,9 @@ h2 {
 .has-js .page-hero-image,
 .has-js .about-story-image,
 .has-js .about-story-copy,
-.has-js .about-beliefs article {
+.has-js .about-beliefs article,
+.has-js .service-feature-copy,
+.has-js .service-feature-image {
   opacity: 0;
   transform: translateY(18px) scale(0.992);
   transition:
@@ -954,7 +1011,9 @@ h2 {
 .has-js .page-hero-image.is-visible,
 .has-js .about-story-image.is-visible,
 .has-js .about-story-copy.is-visible,
-.has-js .about-beliefs article.is-visible {
+.has-js .about-beliefs article.is-visible,
+.has-js .service-feature-copy.is-visible,
+.has-js .service-feature-image.is-visible {
   opacity: 1;
   transform: translateY(0) scale(1);
 }
@@ -1003,7 +1062,9 @@ h2 {
   .has-js .page-hero-image,
   .has-js .about-story-image,
   .has-js .about-story-copy,
-  .has-js .about-beliefs article {
+  .has-js .about-beliefs article,
+  .has-js .service-feature-copy,
+  .has-js .service-feature-image {
     opacity: 1;
     transform: none;
   }
@@ -1024,6 +1085,8 @@ h2 {
   .page-hero,
   .about-story,
   .about-beliefs,
+  .service-feature,
+  .service-feature-reverse,
   .faculty-section,
   .contact-section,
   .site-footer {
@@ -1086,9 +1149,14 @@ h2 {
   }
 
   .page-hero-image,
-  .about-story-image {
+  .about-story-image,
+  .service-feature-image {
     min-height: 330px;
     border-radius: 44px;
+  }
+
+  .service-feature-reverse .service-feature-copy {
+    order: 0;
   }
 
   .decor {
