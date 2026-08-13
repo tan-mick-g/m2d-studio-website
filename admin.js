@@ -13,6 +13,7 @@ const resetPasswordButton = document.querySelector("[data-reset-password]");
 const saveContentButton = document.querySelector("[data-save-content]");
 const changePasswordButton = document.querySelector("[data-change-password-button]");
 const accountToggleButton = document.querySelector("[data-account-toggle]");
+const accountCloseButton = document.querySelector("[data-account-close]");
 const pageTabs = document.querySelectorAll("[data-page-tab]");
 const pagePanels = document.querySelectorAll("[data-page-panel]");
 const pageTabGroups = document.querySelectorAll("[data-page-tabs]");
@@ -738,6 +739,12 @@ accountForm.addEventListener("submit", async (event) => {
 accountToggleButton?.addEventListener("click", () => {
   accountForm.hidden = !accountForm.hidden;
   if (!accountForm.hidden) accountForm.querySelector("input")?.focus();
+});
+
+accountCloseButton?.addEventListener("click", () => {
+  accountForm.hidden = true;
+  accountForm.reset();
+  setMessage(accountMessage, "");
 });
 
 editorForm.addEventListener("submit", async (event) => {

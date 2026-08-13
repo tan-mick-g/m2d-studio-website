@@ -45,6 +45,15 @@
   max-width: 34ch;
 }
 
+.admin-intro {
+  display: grid;
+  gap: 16px;
+}
+
+.admin-intro .sidebar-preview {
+  width: min(220px, 100%);
+}
+
 .admin-actions {
   display: flex;
   align-items: flex-start;
@@ -93,6 +102,29 @@
   margin: 0 0 8px;
   color: var(--white);
   font-size: 1rem;
+}
+
+.account-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.account-close {
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(255, 250, 240, 0.28);
+  border-radius: 999px;
+  color: var(--white);
+  background: rgba(255, 250, 240, 0.08);
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.account-close:hover {
+  border-color: var(--gold-light);
+  color: var(--gold-light);
 }
 
 .account-card label {
