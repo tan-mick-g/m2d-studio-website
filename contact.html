@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Learn about Made To Dance Studio, our story, philosophy, and welcoming social dance community in Metro Manila."
+      content="Contact Made To Dance Studio for class inquiries, private sessions, weddings, celebrations, and corporate wellness bookings."
     />
-    <title>About Us | Made To Dance Studio</title>
+    <title>Contact | Made To Dance Studio</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -16,7 +16,7 @@
     />
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body class="content-loading about-page">
+  <body class="content-loading contact-page">
     <header class="site-header" data-header>
       <a class="brand" href="/" aria-label="Made To Dance home">
         <img src="assets/made-to-dance-logo.png" alt="Made To Dance Studio" />
@@ -54,48 +54,42 @@
     </nav>
 
     <main>
-      <section class="page-hero about-page-hero">
+      <section class="page-hero contact-page-hero">
         <div class="page-hero-copy">
-          <p class="eyebrow" data-text="aboutPage.eyebrow">About Made To Dance</p>
-          <h1 data-text="aboutPage.title">Dance That Feels Like Coming Home</h1>
-          <p data-text="aboutPage.intro"></p>
+          <p class="eyebrow">Contact</p>
+          <h1 data-text="contact.title">Connect With Us</h1>
+          <p data-text="contact.body"></p>
         </div>
-        <div class="image-fill page-hero-image" role="img" data-image="aboutPage.heroImage" data-aria="aboutPage.heroAlt"></div>
+        <div class="image-fill page-hero-image" role="img" data-image="contact.image" data-aria="contact.alt"></div>
       </section>
 
-      <section class="about-story section-pad">
-        <div class="image-fill about-story-image" role="img" data-image="aboutPage.storyImage" data-aria="aboutPage.storyAlt"></div>
-        <div class="about-story-copy">
-          <h2 data-text="aboutPage.storyTitle">Our Story</h2>
-          <p data-text="aboutPage.storyBody"></p>
+      <section class="contact-section contact-page-form" id="contact">
+        <div class="image-fill contact-bg" data-image="contact.image"></div>
+        <div class="contact-copy">
+          <h2 data-text="contact.title">Connect With Us</h2>
+          <p data-text="contact.body"></p>
         </div>
-      </section>
-
-      <section class="about-beliefs section-pad">
-        <article>
-          <p class="eyebrow">Philosophy</p>
-          <h2 data-text="aboutPage.missionTitle">Our Philosophy</h2>
-          <p data-text="aboutPage.missionBody"></p>
-        </article>
-        <article>
-          <p class="eyebrow">Community</p>
-          <h2 data-text="aboutPage.audienceTitle">Who It Is For</h2>
-          <p data-text="aboutPage.audienceBody"></p>
-        </article>
-      </section>
-
-      <section class="about-location section-pad">
-        <div>
-          <p class="eyebrow">Studio</p>
-          <h2 data-text="aboutPage.locationTitle">The Studio Feel</h2>
-          <p data-text="aboutPage.locationBody"></p>
-        </div>
-      </section>
-
-      <section class="about-cta section-pad">
-        <h2 data-text="aboutPage.ctaTitle">Ready To Take The First Step?</h2>
-        <p data-text="aboutPage.ctaBody"></p>
-        <a class="button navy-button" href="https://madetodance.rezerv.co/" data-about-page-cta data-text="aboutPage.ctaLabel">Book A Class</a>
+        <form class="contact-form" data-contact-form>
+          <h2 data-text="contact.formTitle">Contact Form</h2>
+          <label>
+            Name
+            <input name="name" type="text" autocomplete="name" required />
+          </label>
+          <label>
+            Email Address
+            <input name="email" type="email" autocomplete="email" required />
+          </label>
+          <label>
+            Leave A Message
+            <textarea name="message" rows="4" required></textarea>
+          </label>
+          <label class="honeypot-field" aria-hidden="true">
+            Leave this field blank
+            <input name="website" type="text" tabindex="-1" autocomplete="off" />
+          </label>
+          <button class="button light-button" type="submit" data-text="contact.submitLabel">Submit</button>
+          <p class="form-note" data-form-message></p>
+        </form>
       </section>
     </main>
 

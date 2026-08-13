@@ -8,6 +8,7 @@ window.MTD_DEFAULT_CONTENT = {
       classes: "/#classes",
       schedule: "/#schedule",
       services: "/services",
+      contact: "/contact",
       faq: "/#contact",
       login: "https://madetodance.rezerv.co/"
     }
@@ -80,7 +81,7 @@ window.MTD_DEFAULT_CONTENT = {
     ctaTitle: "Let Us Shape Something For You",
     ctaBody: "Tell us what you are planning, and we can recommend the right class, private session, wedding package, or corporate format.",
     ctaLabel: "Start A Conversation",
-    ctaUrl: "/#contact"
+    ctaUrl: "/contact"
   },
   classes: {
     title: "Pick Your Class",
@@ -155,7 +156,7 @@ window.MTD_DEFAULT_CONTENT = {
     title: "Our Faculty",
     body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.",
     cta: "Meet Our Teachers",
-    ctaUrl: "#contact",
+    ctaUrl: "/contact",
     items: [
       { name: "Teacher 1", image: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=700&q=82", alt: "Dance faculty placeholder" },
       { name: "Teacher 2", image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=700&q=82", alt: "Dance faculty placeholder" },

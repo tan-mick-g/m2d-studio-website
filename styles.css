@@ -694,6 +694,16 @@ h2 {
   background: transparent;
 }
 
+.contact-page-hero {
+  background:
+    radial-gradient(circle at 12% 84%, rgba(32, 152, 194, 0.16), transparent 24%),
+    linear-gradient(135deg, var(--cream), var(--white));
+}
+
+.contact-page .contact-section {
+  border-top: 2px solid var(--red);
+}
+
 .form-note {
   min-height: 1.2em;
   margin: 0;
