@@ -407,28 +407,34 @@ document.querySelector("[data-contact-form]")?.addEventListener("submit", async 
     return;
   }
 
-  if (!isSupabaseConfigured()) {
+  submitButton.disabled = true;
+  setFormMessage(message, "Sending...");
+
+  let contactResponse;
+  try {
+    contactResponse = await fetch("/api/contact", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: String(formData.get("name") || "").trim(),
+        email: String(formData.get("email") || "").trim(),
+        message: String(formData.get("message") || "").trim(),
+        website: String(formData.get("website") || ""),
+        recipientEmail: content.contact?.recipientEmail || "marketing@madetodance.ph",
+        sourcePath: window.location.pathname
+      })
+    });
+  } catch (error) {
+    console.warn("Contact submission failed.", error);
+    submitButton.disabled = false;
     setFormMessage(message, errorMessage, "error");
     return;
   }
 
-  submitButton.disabled = true;
-  setFormMessage(message, "Sending...");
-
-  const client = window.supabase.createClient(config.url, config.anonKey);
-  const { error } = await client.from("contact_submissions").insert({
-    name: String(formData.get("name") || "").trim(),
-    email: String(formData.get("email") || "").trim(),
-    message: String(formData.get("message") || "").trim(),
-    recipient_email: content.contact?.recipientEmail || "marketing@madetodance.ph",
-    source_path: window.location.pathname,
-    user_agent: navigator.userAgent
-  });
-
   submitButton.disabled = false;
 
-  if (error) {
-    console.warn("Contact submission failed.", error);
+  if (!contactResponse.ok) {
+    console.warn("Contact submission failed.", await contactResponse.text());
     setFormMessage(message, errorMessage, "error");
     return;
   }

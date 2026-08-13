@@ -34,6 +34,14 @@ The admin page can upload images and videos there, then automatically save the p
 
 The contact form saves inquiries to `public.contact_submissions`. Visitors can submit messages without signing in, but only listed admins can read or manage those submissions in Supabase.
 
+To also send contact form emails through Resend, add these Vercel environment variables:
+
+- `RESEND_API_KEY`: your Resend API key.
+- `CONTACT_FROM_EMAIL`: the verified sender, for example `Made To Dance Website <website@madetodance.ph>`.
+- `CONTACT_TO_EMAIL`: fallback recipient, for example `marketing@madetodance.ph`.
+
+The public contact form calls `/api/contact`, saves the inquiry to Supabase, then sends the email through Resend. The admin-editable recipient email is accepted only for `@madetodance.ph` addresses.
+
 ### Invite Links
 
 In Supabase Dashboard > Authentication > URL Configuration:
