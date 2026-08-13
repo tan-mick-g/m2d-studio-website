@@ -18,6 +18,7 @@ const pageTabs = document.querySelectorAll("[data-page-tab]");
 const pagePanels = document.querySelectorAll("[data-page-panel]");
 const pageTabGroups = document.querySelectorAll("[data-page-tabs]");
 const editorPageLabel = document.querySelector("[data-editor-page-label]");
+const previewCurrentPageLink = document.querySelector("[data-preview-current-page]");
 const editorTabs = document.querySelectorAll("[data-editor-tab]");
 const editorPanels = document.querySelectorAll("[data-editor-panel]");
 const mediaSections = document.querySelectorAll("[data-section-media]");
@@ -528,7 +529,17 @@ const activatePage = (pageName) => {
     "services-page": "Services Page",
     "contact-page": "Contact Page"
   };
+  const previewUrls = {
+    homepage: "index.html",
+    "about-page": "about.html",
+    "services-page": "services.html",
+    "contact-page": "contact.html"
+  };
   if (editorPageLabel) editorPageLabel.textContent = pageLabels[pageName] || "Homepage";
+  if (previewCurrentPageLink) {
+    previewCurrentPageLink.href = previewUrls[pageName] || "index.html";
+    previewCurrentPageLink.textContent = `Preview ${pageLabels[pageName] || "Homepage"}`;
+  }
   const activeGroup = [...pageTabGroups].find((group) => group.dataset.pageTabs === pageName);
   const firstTab = activeGroup?.querySelector("[data-editor-tab]");
   if (firstTab) activateEditorTab(firstTab.dataset.editorTab);

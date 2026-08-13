@@ -76,8 +76,7 @@
   width: min(220px, 100%);
 }
 
-.admin-actions .button-outline,
-.toolbar-actions .button-outline {
+.admin-actions .button-outline {
   border-color: rgba(167, 135, 71, 0.54);
   color: var(--white);
 }
@@ -274,17 +273,6 @@
   gap: 8px;
 }
 
-.toolbar-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: flex-end;
-}
-
-.toolbar-actions .button-outline {
-  color: var(--navy);
-}
-
 .floating-save-bar {
   position: fixed;
   right: clamp(18px, 4vw, 42px);
@@ -297,6 +285,20 @@
   background: rgba(255, 250, 240, 0.98);
   box-shadow: 0 18px 44px rgba(9, 23, 36, 0.18);
   backdrop-filter: blur(14px);
+}
+
+.floating-save-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.floating-save-actions .button {
+  width: auto;
+  white-space: nowrap;
+}
+
+.floating-save-actions .button-outline {
+  color: var(--navy);
 }
 
 .page-tabs {
@@ -643,16 +645,16 @@ button:disabled {
     flex-direction: column;
   }
 
-  .toolbar-actions {
-    justify-content: stretch;
-  }
-
-  .toolbar-actions .button {
-    width: 100%;
-  }
-
   .floating-save-bar {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .floating-save-actions {
+    flex-direction: column;
+  }
+
+  .floating-save-actions .button {
+    width: 100%;
   }
 }
