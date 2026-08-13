@@ -818,6 +818,10 @@ h2 {
   color: var(--cream);
 }
 
+.about-location p:not(.eyebrow) {
+  color: rgba(255, 253, 232, 0.9);
+}
+
 .about-location > div {
   position: relative;
   z-index: 1;
