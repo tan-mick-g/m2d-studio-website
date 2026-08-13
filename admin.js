@@ -12,6 +12,7 @@ const signOutButton = document.querySelector("[data-sign-out]");
 const resetPasswordButton = document.querySelector("[data-reset-password]");
 const saveContentButton = document.querySelector("[data-save-content]");
 const changePasswordButton = document.querySelector("[data-change-password-button]");
+const accountToggleButton = document.querySelector("[data-account-toggle]");
 const pageTabs = document.querySelectorAll("[data-page-tab]");
 const pagePanels = document.querySelectorAll("[data-page-panel]");
 const pageTabGroups = document.querySelectorAll("[data-page-tabs]");
@@ -463,8 +464,9 @@ const readForm = () => {
 const showEditor = (show) => {
   loginForm.hidden = show;
   passwordForm.hidden = true;
-  accountForm.hidden = !show;
+  accountForm.hidden = true;
   editorForm.hidden = !show;
+  if (accountToggleButton) accountToggleButton.hidden = !show;
   signOutButton.hidden = !show;
 };
 
@@ -473,6 +475,7 @@ const showPasswordSetup = () => {
   passwordForm.hidden = false;
   accountForm.hidden = true;
   editorForm.hidden = true;
+  if (accountToggleButton) accountToggleButton.hidden = true;
   signOutButton.hidden = false;
 };
 
@@ -481,6 +484,7 @@ const showLogin = () => {
   passwordForm.hidden = true;
   accountForm.hidden = true;
   editorForm.hidden = true;
+  if (accountToggleButton) accountToggleButton.hidden = true;
   signOutButton.hidden = true;
 };
 
@@ -729,6 +733,11 @@ accountForm.addEventListener("submit", async (event) => {
   accountForm.reset();
   setMessage(accountMessage, "Password updated successfully.", "success");
   changePasswordButton.disabled = false;
+});
+
+accountToggleButton?.addEventListener("click", () => {
+  accountForm.hidden = !accountForm.hidden;
+  if (!accountForm.hidden) accountForm.querySelector("input")?.focus();
 });
 
 editorForm.addEventListener("submit", async (event) => {

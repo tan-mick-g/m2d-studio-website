@@ -47,13 +47,14 @@
 
 .admin-actions {
   display: flex;
-  flex-wrap: wrap;
+  align-items: flex-start;
+  flex-direction: column;
   gap: 12px;
   margin-top: auto;
 }
 
 .admin-actions .button {
-  width: auto;
+  width: min(220px, 100%);
 }
 
 .admin-actions .button-outline,
@@ -69,7 +70,6 @@
 }
 
 .login-card,
-.account-card,
 .editor-form {
   width: min(1160px, 100%);
   margin: 0 auto;
@@ -81,26 +81,42 @@
 
 .account-card {
   display: grid;
-  gap: 18px;
-  margin-bottom: 18px;
-  padding: clamp(18px, 4vw, 28px);
+  gap: 12px;
+  width: 100%;
+  border: 1px solid rgba(167, 135, 71, 0.34);
+  border-radius: 8px;
+  padding: 16px;
+  background: rgba(255, 250, 240, 0.08);
 }
 
 .account-card h3 {
   margin: 0 0 8px;
-  color: var(--navy);
-  font-size: 1.12rem;
+  color: var(--white);
+  font-size: 1rem;
+}
+
+.account-card label {
+  color: var(--white);
+}
+
+.account-card input {
+  min-height: 42px;
+  border-color: rgba(255, 250, 240, 0.28);
+  background: rgba(255, 250, 240, 0.94);
+}
+
+.account-card .editor-help {
+  color: rgba(255, 250, 240, 0.72);
+  font-size: 0.9rem;
 }
 
 .account-actions {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
+  display: grid;
   gap: 12px;
 }
 
 .account-actions .button {
-  width: auto;
+  width: 100%;
 }
 
 .login-card {
@@ -168,6 +184,21 @@
 
 .text-button:hover {
   color: var(--navy);
+}
+
+.sidebar-link {
+  border: 0;
+  padding: 0;
+  color: var(--white);
+  background: transparent;
+  font: inherit;
+  font-weight: 800;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.sidebar-link:hover {
+  color: var(--gold-light);
 }
 
 .editor-form {

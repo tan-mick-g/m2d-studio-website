@@ -26,6 +26,26 @@
         </div>
         <div class="admin-actions">
           <a class="button button-outline" href="index.html" target="_blank">Preview Site</a>
+          <button class="sidebar-link" type="button" data-account-toggle hidden>Change Password</button>
+          <form class="account-card sidebar-account-card" data-account-form hidden>
+            <div>
+              <p class="eyebrow">Account</p>
+              <h3>Change Admin Password</h3>
+              <p class="editor-help">Update the password for the admin account you are currently signed into.</p>
+            </div>
+            <label>
+              New Password
+              <input type="password" name="password" autocomplete="new-password" minlength="8" required />
+            </label>
+            <label>
+              Confirm New Password
+              <input type="password" name="confirmPassword" autocomplete="new-password" minlength="8" required />
+            </label>
+            <div class="account-actions">
+              <button class="button button-gold" type="submit" data-change-password-button>Update Password</button>
+              <p class="admin-message" role="status" aria-live="polite" data-account-message></p>
+            </div>
+          </form>
           <button class="button button-ghost admin-logout" type="button" data-sign-out hidden>Sign Out</button>
         </div>
       </aside>
@@ -66,28 +86,6 @@
           </label>
           <button class="button button-gold" type="submit">Save Password</button>
           <p class="admin-message" data-password-message></p>
-        </form>
-
-        <form class="account-card" data-account-form hidden>
-          <div>
-            <p class="eyebrow">Account</p>
-            <h3>Change Admin Password</h3>
-            <p class="editor-help">Update the password for the admin account you are currently signed into.</p>
-          </div>
-          <div class="field-grid">
-            <label>
-              New Password
-              <input type="password" name="password" autocomplete="new-password" minlength="8" required />
-            </label>
-            <label>
-              Confirm New Password
-              <input type="password" name="confirmPassword" autocomplete="new-password" minlength="8" required />
-            </label>
-          </div>
-          <div class="account-actions">
-            <button class="button button-gold" type="submit" data-change-password-button>Update Password</button>
-            <p class="admin-message" role="status" aria-live="polite" data-account-message></p>
-          </div>
         </form>
 
         <form class="editor-form" data-editor-form hidden>
