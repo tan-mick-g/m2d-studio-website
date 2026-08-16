@@ -915,6 +915,7 @@ h2 {
 .services-page-hero {
   min-height: 0;
   padding-block: clamp(70px, 8vw, 128px);
+  background: var(--cream);
 }
 
 .services-page-hero .page-hero-copy {
