@@ -1064,6 +1064,7 @@ h2 {
 
 .teachers-directory {
   background: var(--cream-soft);
+  padding-top: clamp(48px, 7vw, 88px);
 }
 
 .teachers-directory-heading {
@@ -1144,7 +1145,7 @@ h2 {
 
 .teacher-stage {
   display: grid;
-  grid-template-columns: minmax(420px, 0.62fr) minmax(300px, 0.38fr);
+  grid-template-columns: minmax(440px, 0.68fr) minmax(280px, 0.32fr);
   gap: 0;
   align-items: stretch;
   position: relative;
@@ -1153,20 +1154,12 @@ h2 {
   border: 3px solid var(--red);
   border-radius: 82px;
   padding: clamp(28px, 4vw, 58px);
-  background: linear-gradient(90deg, var(--teacher-panel, var(--teal)) 0 60%, var(--cream) 60% 100%);
+  background: linear-gradient(90deg, var(--teacher-panel, var(--teal)) 0 66%, var(--cream) 66% 100%);
   box-shadow: 0 26px 70px rgba(21, 58, 99, 0.12);
 }
 
 .teacher-stage::before {
-  content: "";
-  position: absolute;
-  z-index: 0;
-  inset: clamp(28px, 4vw, 58px) auto clamp(28px, 4vw, 58px) clamp(28px, 4vw, 58px);
-  width: min(54%, 760px);
-  border-radius: 58px;
-  background: rgba(21, 58, 99, 0.18);
-  mix-blend-mode: multiply;
-  opacity: 0.24;
+  content: none;
 }
 
 .teacher-feature-media {
@@ -1177,7 +1170,7 @@ h2 {
   align-self: end;
   justify-self: stretch;
   min-height: clamp(560px, 52vw, 800px);
-  margin-left: clamp(-90px, -6vw, -42px);
+  margin-left: clamp(-130px, -8vw, -56px);
 }
 
 .teacher-feature-media img,
@@ -1514,11 +1507,6 @@ h2 {
     grid-template-columns: 1fr;
     min-height: clamp(680px, 92vw, 880px);
     background: var(--teacher-panel, var(--teal));
-  }
-
-  .teacher-stage::before {
-    inset: clamp(22px, 4vw, 42px);
-    width: auto;
   }
 
   .teacher-feature-media {
