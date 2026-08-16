@@ -61,11 +61,19 @@ const normalizeFacultyContent = (content) => {
   return content;
 };
 
+const isAnimatedImageMedia = (value = "") => /\.(gif|webp)(\?.*)?$/i.test(String(value));
+
 const normalizeTeachersContent = (content) => {
   if (!Array.isArray(content?.teachersPage?.items)) return content;
   content.teachersPage.items = content.teachersPage.items.map((teacher) => ({
     ...teacher,
     profileImage: teacher.profileImage || teacher.image || teacher.bodyImage || "",
+    bodyStillImage:
+      teacher.bodyStillImage ||
+      (!isAnimatedImageMedia(teacher.bodyImage) ? teacher.bodyImage : "") ||
+      (!isAnimatedImageMedia(teacher.image) ? teacher.image : "") ||
+      teacher.profileImage ||
+      "",
     bodyImage: teacher.bodyImage || teacher.image || teacher.profileImage || ""
   }));
   return content;
@@ -298,8 +306,6 @@ const renderScheduleWidget = (schedule) => {
 
 const isVideoMedia = (value = "") => /\.(webm|mp4|mov)(\?.*)?$/i.test(String(value));
 
-const isAnimatedImageMedia = (value = "") => /\.(gif|webp)(\?.*)?$/i.test(String(value));
-
 const isValidCssColor = (value = "") => /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(String(value).trim());
 
 const usesTouchMotionTrigger = () => window.matchMedia("(hover: none)").matches;
@@ -327,9 +333,13 @@ const applySelectedTeacher = (teacher, index, teachersPage = {}, bookingUrl = ""
 
   const defaultTeacher = defaultContent.teachersPage?.items?.[index] || {};
   const image = teacher.bodyImage || teacher.image || defaultTeacher.bodyImage || defaultTeacher.image || "";
-  const profileImage = teacher.profileImage || teacher.image || defaultTeacher.profileImage || defaultTeacher.image || "";
+  const stillImage =
+    teacher.bodyStillImage ||
+    defaultTeacher.bodyStillImage ||
+    (!isAnimatedImageMedia(teacher.image) ? teacher.image : "") ||
+    (!isAnimatedImageMedia(defaultTeacher.image) ? defaultTeacher.image : "");
   const isAnimatedImage = isAnimatedImageMedia(image);
-  const pausedImage = isAnimatedImage && profileImage && !isAnimatedImageMedia(profileImage) ? profileImage : image;
+  const pausedImage = isAnimatedImage && stillImage && !isAnimatedImageMedia(stillImage) ? stillImage : image;
   const displayImage = isAnimatedImage ? pausedImage : image;
   const panelColor = isValidCssColor(teacher.panelColor) ? teacher.panelColor : "#2098c2";
   const ctaLabel = teachersPage.ctaLabel || "Book A Class";
