@@ -722,8 +722,10 @@ input[type="checkbox"] {
 }
 
 .section-visibility-toggle {
-  display: inline-grid;
-  place-items: center;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex: 0 0 auto;
   width: 34px;
   height: 34px;
@@ -734,11 +736,29 @@ input[type="checkbox"] {
 }
 
 .section-visibility-toggle input {
+  appearance: none;
   width: 18px;
   height: 18px;
   margin: 0;
-  accent-color: var(--navy);
+  border: 2px solid currentColor;
+  border-radius: 4px;
+  background: var(--white);
+  color: var(--navy);
   cursor: pointer;
+}
+
+.section-visibility-toggle::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: 8px;
+  width: 8px;
+  height: 14px;
+  border: solid currentColor;
+  border-width: 0 4px 4px 0;
+  opacity: 0;
+  transform: rotate(45deg);
+  pointer-events: none;
 }
 
 .section-visibility-toggle:has(input:checked) {
@@ -747,7 +767,13 @@ input[type="checkbox"] {
 }
 
 .section-visibility-toggle:has(input:checked) input {
-  accent-color: var(--cream);
+  border-color: var(--cream);
+  background: var(--cream);
+  color: var(--navy);
+}
+
+.section-visibility-toggle:has(input:checked)::after {
+  opacity: 1;
 }
 
 .section-visibility-toggle:hover,
