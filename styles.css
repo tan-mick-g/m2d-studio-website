@@ -96,6 +96,12 @@ textarea {
   color: var(--cream);
 }
 
+.desktop-nav a,
+.login-link,
+.nav-cta {
+  white-space: nowrap;
+}
+
 .header-actions {
   display: flex;
   align-items: center;
@@ -1090,6 +1096,94 @@ h2 {
   .has-js .service-feature-image {
     opacity: 1;
     transform: none;
+  }
+}
+
+@media (max-width: 1320px) {
+  .site-header {
+    gap: 18px;
+    min-height: 96px;
+    padding: 20px clamp(18px, 3vw, 44px);
+  }
+
+  .brand {
+    width: clamp(154px, 14vw, 218px);
+  }
+
+  .desktop-nav {
+    gap: clamp(12px, 1.35vw, 22px);
+    font-size: clamp(0.76rem, 0.76vw, 0.86rem);
+  }
+
+  .header-actions {
+    gap: 14px;
+    font-size: clamp(0.76rem, 0.76vw, 0.86rem);
+  }
+
+  .nav-cta {
+    min-height: 44px;
+    padding-inline: 24px;
+  }
+
+  .hero h1 {
+    font-size: clamp(3.6rem, 8vw, 6.6rem);
+  }
+
+  h2 {
+    font-size: clamp(2.8rem, 5.8vw, 5.6rem);
+  }
+
+  .month-heading h2,
+  .month-heading button {
+    font-size: clamp(2.7rem, 5vw, 4.4rem);
+  }
+
+  .page-hero-copy h1 {
+    font-size: clamp(3.4rem, 7vw, 6.1rem);
+  }
+
+  .about-beliefs h2 {
+    font-size: clamp(2.4rem, 4.8vw, 4.5rem);
+  }
+
+  .page-hero-copy p:not(.eyebrow),
+  .service-feature-copy p:not(.eyebrow),
+  .about-story-copy p,
+  .about-beliefs p:not(.eyebrow),
+  .about-location p:not(.eyebrow),
+  .about-cta p,
+  .contact-copy p {
+    font-size: clamp(1rem, 1.35vw, 1.16rem);
+  }
+
+  .section-pad {
+    padding-inline: clamp(22px, 4.4vw, 58px);
+  }
+}
+
+@media (max-width: 1180px) {
+  .desktop-nav,
+  .header-actions {
+    display: none;
+  }
+
+  .menu-toggle {
+    display: block;
+    margin-left: auto;
+  }
+
+  .site-header {
+    min-height: 90px;
+  }
+
+  .mobile-nav {
+    inset-block-start: 90px;
+  }
+
+  .page-hero,
+  .service-feature,
+  .service-feature-reverse {
+    gap: clamp(30px, 4vw, 52px);
   }
 }
 
