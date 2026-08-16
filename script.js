@@ -284,11 +284,14 @@ const renderScheduleWidget = (schedule) => {
 
 const isVideoMedia = (value = "") => /\.(webm|mp4|mov)(\?.*)?$/i.test(String(value));
 
+const isValidCssColor = (value = "") => /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(String(value).trim());
+
 const applySelectedTeacher = (teacher, index, teachersPage = {}, bookingUrl = "") => {
   const feature = document.querySelector("[data-teacher-feature]");
   if (!feature || !teacher) return;
 
   const image = teacher.image || defaultContent.teachersPage?.items?.[index]?.image || "";
+  const panelColor = isValidCssColor(teacher.panelColor) ? teacher.panelColor : "#2098c2";
   const ctaLabel = teachersPage.ctaLabel || "Book A Class";
   const bookingHref = teacher.bookingUrl || bookingUrl || "#";
   const imageElement = feature.querySelector("[data-teacher-feature-image]");
@@ -298,9 +301,11 @@ const applySelectedTeacher = (teacher, index, teachersPage = {}, bookingUrl = ""
   setText("[data-teacher-name]", teacher.name || `Teacher ${index + 1}`);
   setText("[data-teacher-styles]", teacher.styles || "");
   setText("[data-teacher-bio]", teacher.bio || "");
+  feature.style.setProperty("--teacher-panel", panelColor);
 
   if (imageElement) {
     imageElement.classList.toggle("has-image", Boolean(image));
+    imageElement.classList.toggle("is-video", isVideoMedia(image));
     imageElement.setAttribute("aria-label", teacher.alt || teacher.name || "Dance teacher");
     imageElement.innerHTML = image
       ? isVideoMedia(image)

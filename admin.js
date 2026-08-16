@@ -205,6 +205,7 @@ const getTeacherProfilesFromForm = () => {
     styles: card.querySelector('[data-teacher-field="styles"]')?.value || "",
     bio: card.querySelector('[data-teacher-field="bio"]')?.value || "",
     bookingUrl: card.querySelector('[data-teacher-field="bookingUrl"]')?.value || "",
+    panelColor: card.querySelector('[data-teacher-field="panelColor"]')?.value || "",
     image: card.querySelector('[data-teacher-field="image"]')?.value || "",
     alt: card.querySelector('[data-teacher-field="alt"]')?.value || ""
   }));
@@ -213,7 +214,7 @@ const getTeacherProfilesFromForm = () => {
 const renderTeacherProfiles = (teachers = []) => {
   if (!teacherProfilesContainer) return;
 
-  const profiles = Array.isArray(teachers) && teachers.length ? teachers : [{ name: "", role: "", styles: "", bio: "", bookingUrl: "", image: "", alt: "" }];
+  const profiles = Array.isArray(teachers) && teachers.length ? teachers : [{ name: "", role: "", styles: "", bio: "", bookingUrl: "", panelColor: "#2098c2", image: "", alt: "" }];
   teacherProfilesContainer.innerHTML = profiles
     .map((teacher, index) => {
       const image = teacher.image || "";
@@ -239,6 +240,10 @@ const renderTeacherProfiles = (teachers = []) => {
             <label>
               Booking Link
               <input name="teachersPage.items.${index}.bookingUrl" type="url" value="${escapeHtml(teacher.bookingUrl || "")}" data-teacher-field="bookingUrl" />
+            </label>
+            <label>
+              Panel Color
+              <input name="teachersPage.items.${index}.panelColor" type="color" value="${escapeHtml(teacher.panelColor || "#2098c2")}" data-teacher-field="panelColor" />
             </label>
             <label class="wide-field">
               Short Bio
@@ -963,6 +968,7 @@ addTeacherProfileButton?.addEventListener("click", () => {
     styles: "Social Dance",
     bio: "Add a short teacher bio here.",
     bookingUrl: currentContent.bookingUrl || defaultContentForAdmin.bookingUrl || "",
+    panelColor: "#2098c2",
     image: "",
     alt: "Dance teacher"
   });

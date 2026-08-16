@@ -1144,18 +1144,16 @@ h2 {
 
 .teacher-stage {
   display: grid;
-  grid-template-columns: minmax(340px, 0.92fr) minmax(340px, 1.08fr);
-  gap: clamp(16px, 2vw, 28px);
-  align-items: end;
+  grid-template-columns: minmax(420px, 0.62fr) minmax(300px, 0.38fr);
+  gap: 0;
+  align-items: stretch;
   position: relative;
   overflow: hidden;
-  min-height: clamp(640px, 58vw, 860px);
+  min-height: clamp(640px, 56vw, 840px);
   border: 3px solid var(--red);
   border-radius: 82px;
-  padding: clamp(28px, 5vw, 64px);
-  background:
-    radial-gradient(circle at 76% 18%, rgba(255, 253, 232, 0.72), transparent 30%),
-    linear-gradient(90deg, var(--teal) 0 46%, var(--cream) 46% 100%);
+  padding: clamp(28px, 4vw, 58px);
+  background: linear-gradient(90deg, var(--teacher-panel, var(--teal)) 0 60%, var(--cream) 60% 100%);
   box-shadow: 0 26px 70px rgba(21, 58, 99, 0.12);
 }
 
@@ -1163,47 +1161,56 @@ h2 {
   content: "";
   position: absolute;
   z-index: 0;
-  left: clamp(22px, 4vw, 54px);
-  top: clamp(22px, 4vw, 54px);
-  width: min(36%, 420px);
-  height: calc(100% - clamp(44px, 8vw, 108px));
+  inset: clamp(28px, 4vw, 58px) auto clamp(28px, 4vw, 58px) clamp(28px, 4vw, 58px);
+  width: min(54%, 760px);
   border-radius: 58px;
   background: rgba(21, 58, 99, 0.18);
+  mix-blend-mode: multiply;
+  opacity: 0.24;
 }
 
 .teacher-feature-media {
   position: relative;
-  z-index: 2;
+  z-index: 3;
+  grid-column: 2;
+  grid-row: 1;
   align-self: end;
-  min-height: clamp(560px, 56vw, 820px);
+  justify-self: stretch;
+  min-height: clamp(560px, 52vw, 800px);
+  margin-left: clamp(-90px, -6vw, -42px);
 }
 
 .teacher-feature-media img,
 .teacher-feature-media video {
   display: block;
   width: 100%;
-  height: clamp(560px, 56vw, 820px);
-  object-fit: contain;
+  height: clamp(560px, 52vw, 800px);
+  object-fit: cover;
   object-position: center bottom;
   filter: drop-shadow(0 24px 28px rgba(21, 58, 99, 0.22));
 }
 
+.teacher-feature-media.is-video video {
+  object-fit: contain;
+}
+
 .teacher-feature-copy {
   position: relative;
-  z-index: 1;
+  z-index: 2;
+  grid-column: 1;
+  grid-row: 1;
   display: grid;
   gap: 18px;
   align-content: center;
   align-self: stretch;
-  padding: clamp(30px, 5vw, 64px);
-  background: rgba(255, 253, 232, 0.58);
-  border-left: 2px solid rgba(237, 31, 47, 0.58);
-  backdrop-filter: blur(4px);
+  max-width: 720px;
+  padding: clamp(36px, 5vw, 76px);
+  color: var(--cream);
 }
 
 .teacher-feature-copy h3 {
   margin: 0;
-  color: var(--navy);
+  color: var(--cream);
   font-family: var(--display);
   font-size: clamp(3rem, 6vw, 6.2rem);
   line-height: 0.95;
@@ -1212,14 +1219,15 @@ h2 {
 
 .teacher-feature-copy p {
   margin: 0;
-  color: var(--brown);
+  color: rgba(255, 253, 232, 0.92);
   font-weight: 700;
   line-height: 1.5;
 }
 
 .teacher-feature-copy > p:first-child,
 .teacher-styles {
-  color: var(--teal);
+  color: var(--cream);
+  opacity: 0.9;
   font-size: 0.9rem;
   font-weight: 900;
   text-transform: uppercase;
@@ -1233,6 +1241,8 @@ h2 {
 .teacher-feature-copy .button {
   justify-self: start;
   margin-top: 8px;
+  background: var(--cream);
+  color: var(--navy);
 }
 
 .site-footer {
@@ -1502,24 +1512,35 @@ h2 {
 
   .teacher-stage {
     grid-template-columns: 1fr;
-    min-height: 0;
-    background:
-      radial-gradient(circle at 76% 18%, rgba(255, 253, 232, 0.72), transparent 30%),
-      linear-gradient(180deg, var(--teal) 0 48%, var(--cream) 48% 100%);
+    min-height: clamp(680px, 92vw, 880px);
+    background: var(--teacher-panel, var(--teal));
+  }
+
+  .teacher-stage::before {
+    inset: clamp(22px, 4vw, 42px);
+    width: auto;
   }
 
   .teacher-feature-media {
-    min-height: clamp(500px, 78vw, 720px);
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: end;
+    align-self: end;
+    width: min(58%, 520px);
+    min-height: clamp(430px, 60vw, 620px);
+    margin-left: 0;
   }
 
   .teacher-feature-media img,
   .teacher-feature-media video {
-    height: clamp(500px, 78vw, 720px);
+    height: clamp(430px, 60vw, 620px);
   }
 
   .teacher-feature-copy {
-    border-top: 2px solid rgba(237, 31, 47, 0.58);
-    border-left: 0;
+    grid-column: 1;
+    grid-row: 1;
+    max-width: min(62%, 620px);
+    padding-bottom: clamp(42px, 7vw, 82px);
   }
 }
 
@@ -1655,15 +1676,24 @@ h2 {
   .teacher-stage {
     border-radius: 42px;
     padding: 22px;
+    min-height: 720px;
   }
 
   .teacher-feature-media {
-    min-height: 430px;
+    width: min(86%, 390px);
+    min-height: 410px;
   }
 
   .teacher-feature-media img,
   .teacher-feature-media video {
-    height: 430px;
+    height: 410px;
+  }
+
+  .teacher-feature-copy {
+    max-width: none;
+    align-content: start;
+    padding: 30px;
+    padding-bottom: 430px;
   }
 
   .contact-form {
