@@ -8,6 +8,7 @@ window.MTD_DEFAULT_CONTENT = {
       classes: "/#classes",
       schedule: "/#schedule",
       services: "/services",
+      teachers: "/teachers",
       contact: "/contact",
       faq: "/#contact",
       login: "https://madetodance.rezerv.co/"

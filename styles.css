@@ -1480,6 +1480,32 @@ h2 {
   .section-pad {
     padding-inline: clamp(22px, 4.4vw, 58px);
   }
+
+  .teacher-stage {
+    grid-template-columns: minmax(390px, 0.62fr) minmax(300px, 0.38fr);
+    min-height: clamp(590px, 54vw, 760px);
+    border-radius: 68px;
+    padding: clamp(24px, 3.2vw, 48px);
+    background: linear-gradient(90deg, var(--teacher-panel, var(--teal)) 0 62%, var(--cream) 62% 100%);
+  }
+
+  .teacher-feature-copy {
+    padding: clamp(30px, 4vw, 58px);
+  }
+
+  .teacher-feature-copy h3 {
+    font-size: clamp(3rem, 5.6vw, 5.35rem);
+  }
+
+  .teacher-feature-media {
+    min-height: clamp(500px, 50vw, 700px);
+    margin-left: clamp(-100px, -7vw, -44px);
+  }
+
+  .teacher-feature-media img,
+  .teacher-feature-media video {
+    height: clamp(500px, 50vw, 700px);
+  }
 }
 
 @media (max-width: 1180px) {
@@ -1510,6 +1536,7 @@ h2 {
   .teacher-stage {
     grid-template-columns: 1fr;
     min-height: clamp(680px, 92vw, 880px);
+    border-radius: 58px;
     background: var(--teacher-panel, var(--teal));
   }
 
@@ -1703,15 +1730,99 @@ h2 {
   }
 
   .site-footer {
-    padding-inline: 28px;
+    justify-items: center;
+    min-height: auto;
+    padding: 46px 28px;
+    text-align: center;
+  }
+
+  .footer-booking,
+  .footer-socials {
+    justify-items: center;
+    gap: 18px;
+  }
+
+  .footer-socials {
+    text-align: center;
+  }
+
+  .footer-booking p,
+  .footer-socials p {
+    max-width: 28ch;
+    font-size: 1rem;
   }
 
   .footer-mark {
-    width: min(320px, 78vw);
+    width: min(360px, 82vw);
   }
 
   .footer-mark img {
     width: 100%;
     height: auto;
+  }
+
+  .footer-socials div {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .teachers-directory-heading {
+    text-align: left;
+  }
+
+  .teachers-directory-heading p:not(.eyebrow) {
+    margin-inline: 0;
+  }
+
+  .teacher-avatar-grid {
+    justify-content: flex-start;
+    margin-inline: -22px;
+    padding-inline: 22px;
+  }
+
+  .teacher-stage {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    min-height: auto;
+    border-width: 2px;
+    border-radius: 34px;
+    padding: 20px;
+    background: var(--teacher-panel, var(--teal));
+  }
+
+  .teacher-feature-copy {
+    grid-column: 1;
+    grid-row: 1;
+    max-width: none;
+    padding: 24px 20px 10px;
+  }
+
+  .teacher-feature-copy h3 {
+    font-size: clamp(2.75rem, 15vw, 4.7rem);
+  }
+
+  .teacher-feature-copy [data-teacher-bio] {
+    max-width: none;
+  }
+
+  .teacher-feature-copy .button {
+    width: 100%;
+    justify-self: stretch;
+  }
+
+  .teacher-feature-media {
+    grid-column: 1;
+    grid-row: 2;
+    justify-self: center;
+    align-self: end;
+    width: min(100%, 390px);
+    min-height: clamp(320px, 92vw, 480px);
+    margin: 0;
+  }
+
+  .teacher-feature-media img,
+  .teacher-feature-media video {
+    height: clamp(320px, 92vw, 480px);
   }
 }
