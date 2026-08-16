@@ -310,10 +310,19 @@ const isValidCssColor = (value = "") => /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(Str
 
 const usesTouchMotionTrigger = () => window.matchMedia("(hover: none)").matches;
 
+const renderTeacherMotionMedia = (src = "", isVideo = false) => {
+  if (!src) return "";
+  return isVideo
+    ? `<video src="${escapeHtml(src)}" autoplay muted loop playsinline aria-hidden="true"></video>`
+    : `<img src="${escapeHtml(src)}" alt="" aria-hidden="true" />`;
+};
+
 const setTeacherGifMotion = (container, shouldPlay) => {
-  const image = container?.querySelector("img");
-  if (!image || !container.dataset.animatedSrc || !container.dataset.pausedSrc) return;
-  image.src = shouldPlay ? container.dataset.animatedSrc : container.dataset.pausedSrc;
+  if (!container?.dataset.animatedSrc || !container.dataset.pausedSrc) return;
+  const nextSrc = shouldPlay ? container.dataset.animatedSrc : container.dataset.pausedSrc;
+  const nextIsVideo = shouldPlay && container.dataset.animatedType === "video";
+  container.classList.toggle("is-video", nextIsVideo);
+  container.innerHTML = renderTeacherMotionMedia(nextSrc, nextIsVideo);
 };
 
 const observeTeacherGifMotion = (container) => {
@@ -332,15 +341,14 @@ const applySelectedTeacher = (teacher, index, teachersPage = {}, bookingUrl = ""
   if (!feature || !teacher) return;
 
   const defaultTeacher = defaultContent.teachersPage?.items?.[index] || {};
-  const image = teacher.bodyImage || teacher.image || defaultTeacher.bodyImage || defaultTeacher.image || "";
+  const activeImage = teacher.bodyImage || teacher.image || defaultTeacher.bodyImage || defaultTeacher.image || "";
   const stillImage =
     teacher.bodyStillImage ||
     defaultTeacher.bodyStillImage ||
     (!isAnimatedImageMedia(teacher.image) ? teacher.image : "") ||
     (!isAnimatedImageMedia(defaultTeacher.image) ? defaultTeacher.image : "");
-  const isAnimatedImage = isAnimatedImageMedia(image);
-  const pausedImage = isAnimatedImage && stillImage && !isAnimatedImageMedia(stillImage) ? stillImage : image;
-  const displayImage = isAnimatedImage ? pausedImage : image;
+  const pausedImage = stillImage || activeImage;
+  const shouldSwapBodyShot = Boolean(activeImage && pausedImage && activeImage !== pausedImage);
   const panelColor = isValidCssColor(teacher.panelColor) ? teacher.panelColor : "#2098c2";
   const ctaLabel = teachersPage.ctaLabel || "Book A Class";
   const bookingHref = teacher.bookingUrl || bookingUrl || "#";
@@ -354,20 +362,18 @@ const applySelectedTeacher = (teacher, index, teachersPage = {}, bookingUrl = ""
   feature.style.setProperty("--teacher-panel", panelColor);
 
   if (imageElement) {
-    imageElement.classList.toggle("has-image", Boolean(image));
-    imageElement.classList.toggle("is-video", isVideoMedia(image));
-    imageElement.classList.toggle("is-cutout", isAnimatedImage);
+    imageElement.classList.toggle("has-image", Boolean(pausedImage));
+    imageElement.classList.toggle("is-video", false);
+    imageElement.classList.toggle("is-cutout", shouldSwapBodyShot);
     imageElement.setAttribute("aria-label", teacher.name || "Dance teacher");
     delete imageElement.dataset.animatedSrc;
     delete imageElement.dataset.pausedSrc;
-    imageElement.innerHTML = image
-      ? isVideoMedia(image)
-        ? `<video src="${escapeHtml(image)}" autoplay muted loop playsinline aria-hidden="true"></video>`
-        : `<img src="${escapeHtml(displayImage)}" alt="" aria-hidden="true" />`
-      : "";
-    if (isAnimatedImage && pausedImage && pausedImage !== image) {
-      imageElement.dataset.animatedSrc = image;
+    delete imageElement.dataset.animatedType;
+    imageElement.innerHTML = renderTeacherMotionMedia(pausedImage);
+    if (shouldSwapBodyShot) {
+      imageElement.dataset.animatedSrc = activeImage;
       imageElement.dataset.pausedSrc = pausedImage;
+      imageElement.dataset.animatedType = isVideoMedia(activeImage) ? "video" : "image";
       observeTeacherGifMotion(imageElement);
     } else {
       teacherGifObserver?.disconnect();
