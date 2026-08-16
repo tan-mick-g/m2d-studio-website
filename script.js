@@ -757,8 +757,9 @@ const revealElements = () => {
   const elements = document.querySelectorAll(
     ".section-pad, .package-band, .contact-section, .package-card, .class-pick, .teacher-selector, .about-copy, .about-photo, .package-band-panel, .contact-copy, .contact-form, .site-footer, .page-hero-copy, .page-hero-image, .about-story-image, .about-story-copy, .about-beliefs article, .service-feature-copy, .service-feature-image"
   );
+  const revealTargets = [...elements].filter((element) => !element.classList.contains("faq-browser"));
   if (!("IntersectionObserver" in window)) {
-    elements.forEach((element) => element.classList.add("is-visible"));
+    revealTargets.forEach((element) => element.classList.add("is-visible"));
     return;
   }
 
@@ -773,7 +774,7 @@ const revealElements = () => {
     { rootMargin: "0px 0px -12% 0px", threshold: 0.08 }
   );
 
-  elements.forEach((element, index) => {
+  revealTargets.forEach((element, index) => {
     element.style.setProperty("--reveal-delay", `${Math.min(index % 8, 5) * 55}ms`);
     observer.observe(element);
   });

@@ -1640,6 +1640,11 @@ h2 {
     transform 740ms var(--ease-out) var(--reveal-delay, 0ms);
 }
 
+.has-js .faq-browser {
+  opacity: 1;
+  transform: none;
+}
+
 .has-js .section-pad.is-visible,
 .has-js .package-band.is-visible,
 .has-js .contact-section.is-visible,
@@ -1829,7 +1834,7 @@ h2 {
   }
 }
 
-@media (max-width: 1180px) {
+@media (max-width: 1280px) {
   .desktop-nav,
   .header-actions {
     display: none;
@@ -1914,16 +1919,6 @@ h2 {
 }
 
 @media (max-width: 1050px) {
-  .desktop-nav,
-  .header-actions {
-    display: none;
-  }
-
-  .menu-toggle {
-    display: block;
-    margin-left: auto;
-  }
-
   .about-section,
   .page-hero,
   .about-story,
