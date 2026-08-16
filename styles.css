@@ -1144,35 +1144,35 @@ h2 {
 .faq-hero {
   display: grid;
   justify-items: center;
-  gap: 16px;
-  padding-top: clamp(38px, 6vw, 72px);
-  padding-bottom: clamp(20px, 3vw, 42px);
+  gap: 12px;
+  padding-top: clamp(24px, 4vw, 46px);
+  padding-bottom: clamp(10px, 2vw, 22px);
   text-align: center;
 }
 
 .faq-hero h1 {
-  max-width: 16ch;
+  max-width: 18ch;
   margin: 0;
   color: var(--navy);
   font-family: var(--display);
-  font-size: clamp(3rem, 6.6vw, 5.9rem);
-  line-height: 0.9;
+  font-size: clamp(2.65rem, 5.2vw, 4.8rem);
+  line-height: 0.92;
   text-transform: uppercase;
   text-wrap: balance;
 }
 
 .faq-hero p {
-  max-width: 68ch;
+  max-width: 58ch;
   margin: 0;
   color: var(--brown);
-  font-size: clamp(1.04rem, 1.45vw, 1.25rem);
+  font-size: clamp(0.98rem, 1.25vw, 1.12rem);
   font-weight: 700;
 }
 
 .faq-browser {
   display: grid;
-  gap: clamp(22px, 3vw, 38px);
-  padding-top: clamp(20px, 3vw, 38px);
+  gap: clamp(18px, 2.6vw, 32px);
+  padding-top: clamp(14px, 2vw, 24px);
   background: var(--cream-soft);
 }
 
