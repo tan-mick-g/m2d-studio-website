@@ -65,9 +65,34 @@
 
       <section class="contact-section contact-page-form" id="contact">
         <div class="image-fill contact-bg" data-image="contact.image"></div>
-        <div class="contact-copy">
-          <h2 data-text="contact.title">Connect With Us</h2>
-          <p data-text="contact.body"></p>
+        <div class="contact-page-details">
+          <div>
+            <p class="eyebrow" data-text="contact.eyebrow">Contact</p>
+            <h2 data-text="contact.title">Connect With Us</h2>
+            <p data-text="contact.body"></p>
+          </div>
+          <div class="contact-info-block">
+            <h3 data-text="contact.businessTitle">Business Information</h3>
+            <a href="mailto:marketing@madetodance.ph" data-contact-email>
+              <span>Email</span>
+              <strong data-text="contact.businessEmail">marketing@madetodance.ph</strong>
+            </a>
+            <a href="tel:+639473773828" data-contact-phone>
+              <span>Phone</span>
+              <strong data-text="contact.businessPhone">+63 947 377 3828</strong>
+            </a>
+            <p>
+              <span>Address</span>
+              <strong data-text="contact.businessAddress">2/F East Wing, Estancia Mall</strong>
+            </p>
+          </div>
+          <div class="contact-info-block">
+            <h3 data-text="contact.socialTitle">Connect With Us</h3>
+            <div class="contact-social-links">
+              <a href="#" data-social="instagram">Instagram</a>
+              <a href="#" data-social="facebook">Facebook</a>
+            </div>
+          </div>
         </div>
         <form class="contact-form" data-contact-form>
           <h2 data-text="contact.formTitle">Contact Form</h2>
@@ -80,8 +105,18 @@
             <input name="email" type="email" autocomplete="email" required />
           </label>
           <label>
-            Leave A Message
-            <textarea name="message" rows="4" required></textarea>
+            Mobile Number
+            <input name="phone" type="tel" autocomplete="tel" placeholder="+63" required />
+          </label>
+          <label>
+            Subject
+            <select name="subject" data-contact-subject required>
+              <option value="General Inquiry">General Inquiry</option>
+            </select>
+          </label>
+          <label>
+            Description
+            <textarea name="message" rows="6" data-contact-message required></textarea>
           </label>
           <label class="honeypot-field" aria-hidden="true">
             Leave this field blank

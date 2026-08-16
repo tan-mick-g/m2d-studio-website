@@ -67,6 +67,11 @@ const setHref = (selector, value) => {
   });
 };
 
+const normalizePhoneHref = (value = "") => {
+  const phone = String(value || "").trim().replace(/[^\d+]/g, "");
+  return phone ? `tel:${phone}` : "#";
+};
+
 const setImage = (selector, value) => {
   document.querySelectorAll(selector).forEach((element) => {
     if (value) {
@@ -92,6 +97,44 @@ const setFormMessage = (element, message, type = "") => {
   element.textContent = message || "";
   element.classList.toggle("is-success", type === "success");
   element.classList.toggle("is-error", type === "error");
+};
+
+const getContactSubjects = (contact = {}) =>
+  Array.isArray(contact.subjects) && contact.subjects.length
+    ? contact.subjects
+    : defaultContent.contact?.subjects || [];
+
+const getSubjectTemplate = (contact = {}, label = "") => {
+  const subject = getContactSubjects(contact).find((item) => item.label === label);
+  return subject?.template || "";
+};
+
+const applySubjectTemplate = (select, force = false) => {
+  const form = select?.closest("form");
+  const textarea = form?.querySelector("[data-contact-message]");
+  if (!textarea) return;
+
+  const contact = window.MTD_SITE_CONTENT?.contact || defaultContent.contact || {};
+  const template = getSubjectTemplate(contact, select.value);
+  const canReplace = force || !textarea.value.trim() || textarea.dataset.templateOwned === "true";
+  textarea.placeholder = template || "Tell us a little more about what you need.";
+
+  if (canReplace && template) {
+    textarea.value = template;
+    textarea.dataset.templateOwned = "true";
+  }
+};
+
+const renderContactSubjects = (contact = {}) => {
+  document.querySelectorAll("[data-contact-subject]").forEach((select) => {
+    const currentValue = select.value;
+    const subjects = getContactSubjects(contact);
+    select.innerHTML = subjects
+      .map((subject) => `<option value="${escapeHtml(subject.label)}">${escapeHtml(subject.label)}</option>`)
+      .join("");
+    select.value = subjects.some((subject) => subject.label === currentValue) ? currentValue : subjects[0]?.label || "";
+    applySubjectTemplate(select, true);
+  });
 };
 
 const normalizeNavLink = (value, fallback) => {
@@ -235,6 +278,7 @@ const renderScheduleWidget = (schedule) => {
 };
 
 const applyContent = (content) => {
+  window.MTD_SITE_CONTENT = content;
   const bookingUrl = content.bookingUrl || defaultContent.bookingUrl;
   const resolveUrl = (value, fallback = bookingUrl) => value || fallback || "#";
 
@@ -262,6 +306,9 @@ const applyContent = (content) => {
     const value = getPath(content, element.dataset.aria);
     if (value) element.setAttribute("aria-label", value);
   });
+  renderContactSubjects(content.contact);
+  setHref("[data-contact-email]", `mailto:${content.contact?.businessEmail || content.contact?.recipientEmail || "marketing@madetodance.ph"}`);
+  setHref("[data-contact-phone]", normalizePhoneHref(content.contact?.businessPhone || ""));
   applyHeroMedia(content);
 
   renderCards("[data-class-cards]", content.classes?.items, (item, index) => {
@@ -426,6 +473,8 @@ document.querySelector("[data-contact-form]")?.addEventListener("submit", async 
       body: JSON.stringify({
         name: String(formData.get("name") || "").trim(),
         email: String(formData.get("email") || "").trim(),
+        phone: String(formData.get("phone") || "").trim(),
+        subject: String(formData.get("subject") || "General Inquiry").trim(),
         message: String(formData.get("message") || "").trim(),
         website: String(formData.get("website") || ""),
         recipientEmail: content.contact?.recipientEmail || "marketing@madetodance.ph",
@@ -448,7 +497,20 @@ document.querySelector("[data-contact-form]")?.addEventListener("submit", async 
   }
 
   form.reset();
+  form.querySelectorAll("[data-contact-subject]").forEach((select) => applySubjectTemplate(select, true));
   setFormMessage(message, successMessage, "success");
+});
+
+document.querySelectorAll("[data-contact-subject]").forEach((select) => {
+  select.addEventListener("change", () => applySubjectTemplate(select));
+});
+
+document.querySelectorAll("[data-contact-message]").forEach((textarea) => {
+  textarea.addEventListener("input", () => {
+    const select = textarea.closest("form")?.querySelector("[data-contact-subject]");
+    const template = getSubjectTemplate(window.MTD_SITE_CONTENT?.contact || defaultContent.contact || {}, select?.value || "");
+    textarea.dataset.templateOwned = textarea.value === template ? "true" : "false";
+  });
 });
 
 loadContent().then((content) => {

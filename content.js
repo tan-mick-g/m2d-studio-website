@@ -171,12 +171,39 @@ window.MTD_DEFAULT_CONTENT = {
   contact: {
     eyebrow: "Contact",
     title: "Connect With Us",
-    body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.",
-    formTitle: "Contact Form",
+    body: "Have a question about classes, private sessions, weddings, celebrations, or corporate wellness? Send us a note and we will help you find the right next step.",
+    formTitle: "What Can We Help You With?",
     submitLabel: "Submit",
     successMessage: "Thank you. Your message has been sent, and we will get back to you soon.",
     errorMessage: "Sorry, something went wrong. Please try again in a moment.",
     recipientEmail: "marketing@madetodance.ph",
+    businessTitle: "Business Information",
+    businessEmail: "marketing@madetodance.ph",
+    businessPhone: "+63 947 377 3828",
+    businessAddress: "2/F East Wing, Estancia Mall\nCapitol Commons, Meralco Ave.,\nPasig City, 1605\nMetro Manila",
+    socialTitle: "Connect With Us",
+    subjects: [
+      {
+        label: "General Inquiry",
+        template: "Hi Made To Dance,\n\nI would like to ask about...\n\nThank you!"
+      },
+      {
+        label: "Classes",
+        template: "Hi Made To Dance,\n\nI am interested in your classes. I would like to know more about the schedule, level, and what class would be best for me.\n\nThank you!"
+      },
+      {
+        label: "Wedding Dance",
+        template: "Hi Made To Dance,\n\nWe are interested in wedding dance lessons. Our wedding date is [date], and we would like help with...\n\nThank you!"
+      },
+      {
+        label: "Celebrations",
+        template: "Hi Made To Dance,\n\nI am planning a celebration or private event. The date is [date], and I would like to ask about...\n\nThank you!"
+      },
+      {
+        label: "Corporate Wellness",
+        template: "Hi Made To Dance,\n\nI am interested in a corporate wellness or team session. Our company/group size is [number], and we would like to know more about...\n\nThank you!"
+      }
+    ],
     image: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1800&q=82",
     alt: "Social dancing event"
   },

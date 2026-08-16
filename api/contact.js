@@ -57,6 +57,8 @@ module.exports = async (request, response) => {
 
   const name = String(payload.name || "").trim();
   const email = String(payload.email || "").trim();
+  const phone = String(payload.phone || "").trim();
+  const inquirySubject = String(payload.subject || "General Inquiry").trim();
   const message = String(payload.message || "").trim();
   const recipientEmail = getRecipientEmail(payload.recipientEmail);
 
@@ -73,7 +75,7 @@ module.exports = async (request, response) => {
   const submission = {
     name,
     email,
-    message,
+    message: [`Subject: ${inquirySubject}`, ...(phone ? [`Mobile: ${phone}`] : []), "", message].join("\n"),
     recipient_email: recipientEmail,
     source_path: String(payload.sourcePath || "/"),
     user_agent: request.headers["user-agent"] || ""
@@ -95,12 +97,14 @@ module.exports = async (request, response) => {
     return;
   }
 
-  const subject = `New Made To Dance inquiry from ${name}`;
+  const subject = `New Made To Dance ${inquirySubject} inquiry from ${name}`;
   const text = [
     "New website inquiry",
     "",
     `Name: ${name}`,
     `Email: ${email}`,
+    ...(phone ? [`Mobile: ${phone}`] : []),
+    `Subject: ${inquirySubject}`,
     "",
     "Message:",
     message
@@ -110,6 +114,8 @@ module.exports = async (request, response) => {
       <h2>New website inquiry</h2>
       <p><strong>Name:</strong> ${escapeHtml(name)}</p>
       <p><strong>Email:</strong> ${escapeHtml(email)}</p>
+      ${phone ? `<p><strong>Mobile:</strong> ${escapeHtml(phone)}</p>` : ""}
+      <p><strong>Subject:</strong> ${escapeHtml(inquirySubject)}</p>
       <p><strong>Message:</strong></p>
       <p style="white-space: pre-wrap;">${escapeHtml(message)}</p>
     </div>
