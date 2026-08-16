@@ -72,7 +72,7 @@ textarea {
 
 .brand {
   display: inline-flex;
-  width: clamp(170px, 16vw, 235px);
+  width: clamp(190px, 18vw, 300px);
   flex: 0 0 auto;
 }
 
