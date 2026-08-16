@@ -282,6 +282,63 @@ const renderScheduleWidget = (schedule) => {
   });
 };
 
+const applySelectedTeacher = (teacher, index, teachersPage = {}, bookingUrl = "") => {
+  const feature = document.querySelector("[data-teacher-feature]");
+  if (!feature || !teacher) return;
+
+  const image = teacher.image || defaultContent.teachersPage?.items?.[index]?.image || "";
+  const ctaLabel = teachersPage.ctaLabel || "Book A Class";
+  const bookingHref = teacher.bookingUrl || bookingUrl || "#";
+  const imageElement = feature.querySelector("[data-teacher-feature-image]");
+  const bookingElement = feature.querySelector("[data-teacher-booking]");
+
+  setText("[data-teacher-role]", teacher.role || "Dance Teacher");
+  setText("[data-teacher-name]", teacher.name || `Teacher ${index + 1}`);
+  setText("[data-teacher-styles]", teacher.styles || "");
+  setText("[data-teacher-bio]", teacher.bio || "");
+
+  if (imageElement) {
+    imageElement.style.backgroundImage = image ? `url("${image}")` : "";
+    imageElement.classList.toggle("has-image", Boolean(image));
+    imageElement.setAttribute("aria-label", teacher.alt || teacher.name || "Dance teacher");
+  }
+
+  if (bookingElement) {
+    bookingElement.href = bookingHref;
+    bookingElement.textContent = ctaLabel;
+  }
+
+  document.querySelectorAll("[data-teacher-avatar]").forEach((button) => {
+    const isSelected = Number(button.dataset.teacherAvatar) === index;
+    button.classList.toggle("is-selected", isSelected);
+    button.setAttribute("aria-pressed", String(isSelected));
+  });
+};
+
+const renderTeacherSelector = (teachersPage = {}, bookingUrl = "") => {
+  const avatars = document.querySelector("[data-teacher-avatars]");
+  const teachers = Array.isArray(teachersPage.items) ? teachersPage.items : [];
+  if (!avatars || !teachers.length) return;
+
+  avatars.innerHTML = teachers
+    .map((teacher, index) => {
+      const image = teacher.image || defaultContent.teachersPage?.items?.[index]?.image || "";
+      return `
+        <button class="teacher-avatar" type="button" data-teacher-avatar="${index}" aria-pressed="${index === 0 ? "true" : "false"}">
+          <span class="teacher-avatar-image image-fill ${image ? "has-image" : ""}" style="${image ? `background-image:url('${escapeHtml(image)}')` : ""}" aria-hidden="true"></span>
+          <span>${escapeHtml(teacher.name || `Teacher ${index + 1}`)}</span>
+        </button>
+      `;
+    })
+    .join("");
+
+  avatars.querySelectorAll("[data-teacher-avatar]").forEach((button) => {
+    button.addEventListener("click", () => applySelectedTeacher(teachers[Number(button.dataset.teacherAvatar)], Number(button.dataset.teacherAvatar), teachersPage, bookingUrl));
+  });
+
+  applySelectedTeacher(teachers[0], 0, teachersPage, bookingUrl);
+};
+
 const applyContent = (content) => {
   window.MTD_SITE_CONTENT = content;
   const bookingUrl = content.bookingUrl || defaultContent.bookingUrl;
@@ -351,21 +408,7 @@ const applyContent = (content) => {
     </article>
   `);
 
-  renderCards("[data-teacher-cards]", content.teachersPage?.items, (item, index) => {
-    const image = item.image || defaultContent.teachersPage?.items?.[index]?.image || "";
-    return `
-      <article class="teacher-card">
-        <div class="teacher-card-image image-fill ${image ? "has-image" : ""}" style="${image ? `background-image:url('${escapeHtml(image)}')` : ""}" role="img" aria-label="${escapeHtml(item.alt || item.name || "Dance teacher")}"></div>
-        <div class="teacher-card-copy">
-          <p>${escapeHtml(item.role || "Dance Teacher")}</p>
-          <h3>${escapeHtml(item.name || `Teacher ${index + 1}`)}</h3>
-          <p class="teacher-styles">${escapeHtml(item.styles || "")}</p>
-          <p>${escapeHtml(item.bio || "")}</p>
-          <a class="button navy-button" href="${escapeHtml(resolveUrl(item.bookingUrl, bookingUrl))}">${escapeHtml(content.teachersPage?.ctaLabel || "Book A Class")}</a>
-        </div>
-      </article>
-    `;
-  });
+  renderTeacherSelector(content.teachersPage, bookingUrl);
 
   setHref("[data-footer-booking]", resolveUrl(content.footer?.bookUrl, bookingUrl));
   setText("[data-footer-booking]", content.footer?.bookLabel || "Book Now");
@@ -443,7 +486,7 @@ window.addEventListener("message", (event) => {
 
 const revealElements = () => {
   const elements = document.querySelectorAll(
-    ".section-pad, .package-band, .contact-section, .package-card, .class-pick, .faculty-photo, .teacher-card, .about-copy, .about-photo, .package-band-panel, .contact-copy, .contact-form, .site-footer, .page-hero-copy, .page-hero-image, .about-story-image, .about-story-copy, .about-beliefs article, .service-feature-copy, .service-feature-image"
+    ".section-pad, .package-band, .contact-section, .package-card, .class-pick, .faculty-photo, .teacher-selector, .about-copy, .about-photo, .package-band-panel, .contact-copy, .contact-form, .site-footer, .page-hero-copy, .page-hero-image, .about-story-image, .about-story-copy, .about-beliefs article, .service-feature-copy, .service-feature-image"
   );
   if (!("IntersectionObserver" in window)) {
     elements.forEach((element) => element.classList.add("is-visible"));
