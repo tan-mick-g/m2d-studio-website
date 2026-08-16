@@ -1,6 +1,17 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
+  "rewrites": [
+    { "source": "/", "destination": "/api/page?path=/" },
+    { "source": "/about", "destination": "/api/page?path=/about" },
+    { "source": "/services", "destination": "/api/page?path=/services" },
+    { "source": "/teachers", "destination": "/api/page?path=/teachers" },
+    { "source": "/contact", "destination": "/api/page?path=/contact" },
+    { "source": "/faq", "destination": "/api/page?path=/faq" },
+    { "source": "/terms", "destination": "/api/page?path=/terms" },
+    { "source": "/waiver", "destination": "/api/page?path=/waiver" },
+    { "source": "/privacy", "destination": "/api/page?path=/privacy" }
+  ],
   "headers": [
     {
       "source": "/(.*)",

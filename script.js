@@ -152,7 +152,7 @@ const applySeo = (content = {}) => {
   const pageSeo = content.seo?.pages?.[pageKey] || {};
   const title = pageSeo.title || content.seo?.siteName || document.title;
   const description = pageSeo.description || document.querySelector('meta[name="description"]')?.content || "";
-  const image = pageSeo.image || content.seo?.defaultImage || "assets/m2d-icon.png";
+  const image = content.seo?.defaultImage || "assets/m2d-icon.png";
   const currentUrl = window.location.href.split("#")[0].split("?")[0];
 
   document.title = title;
