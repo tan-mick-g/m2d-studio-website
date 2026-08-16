@@ -23,6 +23,8 @@ const editorTabs = document.querySelectorAll("[data-editor-tab]");
 const editorPanels = document.querySelectorAll("[data-editor-panel]");
 const mediaSections = document.querySelectorAll("[data-section-media]");
 const cardSections = document.querySelectorAll("[data-section-cards]");
+const subjectTemplatesContainer = document.querySelector("[data-subject-templates]");
+const addSubjectTemplateButton = document.querySelector("[data-add-subject-template]");
 
 let supabaseClient;
 let currentContent = defaultContentForAdmin;
@@ -151,6 +153,40 @@ const renderCardGroup = (title, description, cards) => `
     <div class="content-card-grid">${cards.join("")}</div>
   </div>
 `;
+
+const getSubjectTemplatesFromForm = () => {
+  if (!subjectTemplatesContainer) return [];
+  return [...subjectTemplatesContainer.querySelectorAll("[data-subject-template-card]")].map((card) => ({
+    label: card.querySelector('[data-subject-field="label"]')?.value || "",
+    template: card.querySelector('[data-subject-field="template"]')?.value || ""
+  }));
+};
+
+const renderSubjectTemplates = (subjects = []) => {
+  if (!subjectTemplatesContainer) return;
+
+  const templates = Array.isArray(subjects) && subjects.length ? subjects : [{ label: "", template: "" }];
+  subjectTemplatesContainer.innerHTML = templates
+    .map(
+      (subject, index) => `
+        <article class="subject-template-card" data-subject-template-card>
+          <div class="subject-template-card-heading">
+            <h4>Subject ${index + 1}</h4>
+            <button class="text-button subject-delete-button" type="button" data-delete-subject-template="${index}" ${templates.length <= 1 ? "disabled" : ""}>Delete</button>
+          </div>
+          <label>
+            Subject Label
+            <input name="contact.subjects.${index}.label" type="text" value="${escapeHtml(subject.label || "")}" data-subject-field="label" />
+          </label>
+          <label>
+            Description Template
+            <textarea name="contact.subjects.${index}.template" rows="5" data-subject-field="template">${escapeHtml(subject.template || "")}</textarea>
+          </label>
+        </article>
+      `
+    )
+    .join("");
+};
 
 const getSectionContainer = (containers, attribute, name) =>
   [...containers].find((container) => container.dataset[attribute] === name);
@@ -428,6 +464,7 @@ const parseRezervEmbedCode = (embedCode = "") => {
 const fillForm = (content) => {
   renderCardFields(content);
   renderMediaFields(content);
+  renderSubjectTemplates(content.contact?.subjects);
 
   editorForm.querySelectorAll("[name]").forEach((field) => {
     const value = getPath(content, field.name);
@@ -472,6 +509,8 @@ const readForm = () => {
   if (Array.isArray(nextContent.hero?.images)) {
     nextContent.hero.image = nextContent.hero.images.find(Boolean) || nextContent.hero.image || "";
   }
+
+  nextContent.contact.subjects = getSubjectTemplatesFromForm().filter((subject) => subject.label.trim() || subject.template.trim());
 
   return nextContent;
 };
@@ -792,6 +831,29 @@ pageTabs.forEach((tab) => {
 
 editorTabs.forEach((tab) => {
   tab.addEventListener("click", () => activateEditorTab(tab.dataset.editorTab));
+});
+
+addSubjectTemplateButton?.addEventListener("click", () => {
+  const subjects = getSubjectTemplatesFromForm();
+  subjects.push({
+    label: `Subject ${subjects.length + 1}`,
+    template: "Hi Made To Dance,\n\nI would like to ask about...\n\nThank you!"
+  });
+  renderSubjectTemplates(subjects);
+  subjectTemplatesContainer?.querySelector(`[name="contact.subjects.${subjects.length - 1}.label"]`)?.focus();
+  setEditorMessage("New subject template added. Save changes to publish it.");
+});
+
+subjectTemplatesContainer?.addEventListener("click", (event) => {
+  const deleteButton = event.target.closest("[data-delete-subject-template]");
+  if (!deleteButton) return;
+
+  const subjects = getSubjectTemplatesFromForm();
+  if (subjects.length <= 1) return;
+
+  subjects.splice(Number(deleteButton.dataset.deleteSubjectTemplate), 1);
+  renderSubjectTemplates(subjects);
+  setEditorMessage("Subject template removed. Save changes to publish this update.");
 });
 
 editorForm.addEventListener("input", (event) => {
