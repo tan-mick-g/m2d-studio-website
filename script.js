@@ -417,12 +417,6 @@ const applyContent = (content) => {
   setHref("[data-packages-band-cta]", resolveUrl(content.packagesBand?.ctaUrl, "#packages"));
   setText("[data-packages-band-cta]", content.packagesBand?.cta || "Get Started");
 
-  renderCards("[data-faculty-grid]", content.faculty?.items, (item, index) => {
-    const image = getItemImage(content, "faculty", index, item);
-    return `
-      <div class="faculty-photo image-fill ${image ? "has-image" : ""}" style="${image ? `background-image:url('${escapeHtml(image)}')` : ""}" role="img" aria-label="${escapeHtml(item.alt || item.name)}"></div>
-    `;
-  });
   setHref("[data-faculty-cta]", "/teachers");
   setText("[data-faculty-cta]", content.faculty?.cta || "Meet Our Teachers");
 
@@ -514,7 +508,7 @@ window.addEventListener("message", (event) => {
 
 const revealElements = () => {
   const elements = document.querySelectorAll(
-    ".section-pad, .package-band, .contact-section, .package-card, .class-pick, .faculty-photo, .teacher-selector, .about-copy, .about-photo, .package-band-panel, .contact-copy, .contact-form, .site-footer, .page-hero-copy, .page-hero-image, .about-story-image, .about-story-copy, .about-beliefs article, .service-feature-copy, .service-feature-image"
+    ".section-pad, .package-band, .contact-section, .package-card, .class-pick, .teacher-selector, .about-copy, .about-photo, .package-band-panel, .contact-copy, .contact-form, .site-footer, .page-hero-copy, .page-hero-image, .about-story-image, .about-story-copy, .about-beliefs article, .service-feature-copy, .service-feature-image"
   );
   if (!("IntersectionObserver" in window)) {
     elements.forEach((element) => element.classList.add("is-visible"));

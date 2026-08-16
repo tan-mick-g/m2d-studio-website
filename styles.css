@@ -545,31 +545,14 @@ h2 {
 
 .faculty-section {
   display: grid;
-  grid-template-columns: 1.25fr 0.75fr;
-  gap: clamp(34px, 5vw, 76px);
-  align-items: center;
-}
-
-.faculty-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: clamp(22px, 3vw, 44px);
-}
-
-.faculty-photo {
-  aspect-ratio: 0.72;
-  border: 3px solid var(--red);
-  border-radius: 999px;
-  transition: transform 240ms var(--ease-out), box-shadow 240ms var(--ease-out);
-}
-
-.faculty-photo:hover {
-  transform: translateY(-5px) rotate(0.8deg);
-  box-shadow: 0 16px 36px rgba(21, 58, 99, 0.14);
+  place-items: center;
+  text-align: center;
 }
 
 .faculty-copy {
-  text-align: center;
+  display: grid;
+  justify-items: center;
+  max-width: 760px;
 }
 
 .faculty-copy p,
@@ -1315,7 +1298,6 @@ h2 {
 .has-js .contact-section,
 .has-js .package-card,
 .has-js .class-pick,
-.has-js .faculty-photo,
 .has-js .teacher-selector,
 .has-js .about-copy,
 .has-js .about-photo,
@@ -1342,7 +1324,6 @@ h2 {
 .has-js .contact-section.is-visible,
 .has-js .package-card.is-visible,
 .has-js .class-pick.is-visible,
-.has-js .faculty-photo.is-visible,
 .has-js .teacher-selector.is-visible,
 .has-js .about-copy.is-visible,
 .has-js .about-photo.is-visible,
@@ -1361,8 +1342,7 @@ h2 {
   transform: translateY(0) scale(1);
 }
 
-.has-js .package-card.is-visible:hover,
-.has-js .faculty-photo.is-visible:hover {
+.has-js .package-card.is-visible:hover {
   transform: translateY(-5px);
 }
 
@@ -1394,7 +1374,6 @@ h2 {
   .has-js .contact-section,
   .has-js .package-card,
   .has-js .class-pick,
-  .has-js .faculty-photo,
   .has-js .teacher-selector,
   .has-js .about-copy,
   .has-js .about-photo,
@@ -1631,10 +1610,6 @@ h2 {
   .class-picks,
   .package-cards {
     grid-template-columns: 1fr;
-  }
-
-  .faculty-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .calendar-placeholder {

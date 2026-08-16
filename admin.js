@@ -322,7 +322,6 @@ const getSectionContainer = (containers, attribute, name) =>
 const renderCardFields = (content) => {
   const classesContainer = getSectionContainer(cardSections, "sectionCards", "classes");
   const packagesContainer = getSectionContainer(cardSections, "sectionCards", "packages");
-  const facultyContainer = getSectionContainer(cardSections, "sectionCards", "faculty");
 
   const classCards = (content.classes?.items || []).map((item, index) =>
     renderContentCard(`Class ${index + 1}`, [
@@ -344,22 +343,11 @@ const renderCardFields = (content) => {
     ])
   );
 
-  const facultyCards = (content.faculty?.items || []).map((item, index) =>
-    renderContentCard(`Faculty ${index + 1}`, [
-      textField({ path: `faculty.items.${index}.name`, label: "Name", value: item.name }),
-      textField({ path: `faculty.items.${index}.alt`, label: "Image Alt Text", value: item.alt }),
-      mediaInput({ path: `faculty.items.${index}.image`, label: "Faculty Image", value: item.image })
-    ])
-  );
-
   if (classesContainer) {
     classesContainer.innerHTML = renderCardGroup("Class Cards", "Three class cards shown above the calendar.", classCards);
   }
   if (packagesContainer) {
     packagesContainer.innerHTML = renderCardGroup("Package Cards", "Temporary package cards until Rezerv is connected.", packageCards);
-  }
-  if (facultyContainer) {
-    facultyContainer.innerHTML = renderCardGroup("Faculty Placeholders", "Names, photos, and image descriptions for the faculty grid.", facultyCards);
   }
 };
 
@@ -491,7 +479,7 @@ const renderMediaFields = (content) => {
 };
 
 const syncJsonTextareaFromPath = (path, value) => {
-  const itemMatch = path.match(/^(classes|packages|faculty)\.items\.(\d+)\.(.+)$/);
+  const itemMatch = path.match(/^(classes|packages)\.items\.(\d+)\.(.+)$/);
   const heroImageMatch = path.match(/^hero\.images\.(\d+)$/);
   const highlightedMatch = path.match(/^schedule\.highlightedDays$/);
   const jsonPath = itemMatch ? `${itemMatch[1]}.items` : heroImageMatch ? "hero.images" : highlightedMatch ? "schedule.highlightedDays" : "";
