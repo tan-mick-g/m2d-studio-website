@@ -191,6 +191,28 @@
   color: var(--navy);
 }
 
+.section-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-heading-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
 .auth-heading h2,
 .editor-form h2 {
   font-size: clamp(2rem, 5vw, 3.3rem);
@@ -662,6 +684,41 @@ textarea {
 input[type="checkbox"] {
   width: auto;
   justify-self: start;
+}
+
+.section-visibility-toggle {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(21, 58, 99, 0.22);
+  border-radius: 999px;
+  background: rgba(255, 253, 248, 0.8);
+  cursor: pointer;
+}
+
+.section-visibility-toggle input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--navy);
+  cursor: pointer;
+}
+
+.section-visibility-toggle:has(input:checked) {
+  border-color: rgba(21, 58, 99, 0.36);
+  background: var(--navy);
+}
+
+.section-visibility-toggle:has(input:checked) input {
+  accent-color: var(--cream);
+}
+
+.section-visibility-toggle:hover,
+.section-visibility-toggle:focus-within {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 4px rgba(167, 135, 71, 0.12);
 }
 
 .checkbox-field {

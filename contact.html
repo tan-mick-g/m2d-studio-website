@@ -63,7 +63,7 @@
     </nav>
 
     <main>
-      <section class="page-hero contact-page-hero">
+      <section class="page-hero contact-page-hero" data-visible="contact.heroVisible">
         <div class="page-hero-copy">
           <p class="eyebrow" data-text="contact.eyebrow">Contact</p>
           <h1 data-text="contact.title">Connect With Us</h1>
@@ -73,8 +73,8 @@
       </section>
 
       <section class="contact-section contact-page-form" id="contact">
-        <div class="image-fill contact-bg" data-image="contact.image"></div>
-        <div class="contact-page-details">
+        <div class="image-fill contact-bg" data-image="contact.image" data-visible="contact.mediaVisible"></div>
+        <div class="contact-page-details" data-visible="contact.detailsVisible">
           <div>
             <p class="eyebrow" data-text="contact.eyebrow">Contact</p>
             <h2 data-text="contact.title">Connect With Us</h2>
@@ -103,7 +103,7 @@
             </div>
           </div>
         </div>
-        <form class="contact-form" data-contact-form>
+        <form class="contact-form" data-contact-form data-visible="contact.formVisible">
           <h2 data-text="contact.formTitle">Contact Form</h2>
           <label>
             Name
