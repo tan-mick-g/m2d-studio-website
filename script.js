@@ -53,7 +53,19 @@ const normalizeFooterContent = (content) => {
 };
 
 const normalizeFacultyContent = (content) => {
-  if (content?.faculty?.ctaUrl === "/contact") content.faculty.ctaUrl = "/teachers";
+  if (content?.faculty) {
+    content.faculty.ctaUrl = "/teachers";
+  }
+  return content;
+};
+
+const normalizeTeachersContent = (content) => {
+  if (!Array.isArray(content?.teachersPage?.items)) return content;
+  content.teachersPage.items = content.teachersPage.items.map((teacher) => ({
+    ...teacher,
+    profileImage: teacher.profileImage || teacher.image || teacher.bodyImage || "",
+    bodyImage: teacher.bodyImage || teacher.image || teacher.profileImage || ""
+  }));
   return content;
 };
 
@@ -292,7 +304,8 @@ const applySelectedTeacher = (teacher, index, teachersPage = {}, bookingUrl = ""
   const feature = document.querySelector("[data-teacher-feature]");
   if (!feature || !teacher) return;
 
-  const image = teacher.image || defaultContent.teachersPage?.items?.[index]?.image || "";
+  const defaultTeacher = defaultContent.teachersPage?.items?.[index] || {};
+  const image = teacher.bodyImage || teacher.image || defaultTeacher.bodyImage || defaultTeacher.image || "";
   const panelColor = isValidCssColor(teacher.panelColor) ? teacher.panelColor : "#2098c2";
   const ctaLabel = teachersPage.ctaLabel || "Book A Class";
   const bookingHref = teacher.bookingUrl || bookingUrl || "#";
@@ -336,10 +349,11 @@ const renderTeacherSelector = (teachersPage = {}, bookingUrl = "") => {
 
   avatars.innerHTML = teachers
     .map((teacher, index) => {
-      const image = teacher.image || defaultContent.teachersPage?.items?.[index]?.image || "";
+      const defaultTeacher = defaultContent.teachersPage?.items?.[index] || {};
+      const avatarImage = teacher.profileImage || teacher.image || teacher.bodyImage || defaultTeacher.profileImage || defaultTeacher.image || "";
       return `
         <button class="teacher-avatar" type="button" data-teacher-avatar="${index}" aria-label="Select ${escapeHtml(teacher.name || `Teacher ${index + 1}`)}" aria-pressed="${index === 0 ? "true" : "false"}">
-          <span class="teacher-avatar-image image-fill ${image ? "has-image" : ""}" style="${image ? `background-image:url('${escapeHtml(image)}')` : ""}" aria-hidden="true"></span>
+          <span class="teacher-avatar-image image-fill ${avatarImage ? "has-image" : ""}" style="${avatarImage ? `background-image:url('${escapeHtml(avatarImage)}')` : ""}" aria-hidden="true"></span>
           <span class="teacher-avatar-label">${escapeHtml(teacher.name || `Teacher ${index + 1}`)}</span>
         </button>
       `;
@@ -409,7 +423,7 @@ const applyContent = (content) => {
       <div class="faculty-photo image-fill ${image ? "has-image" : ""}" style="${image ? `background-image:url('${escapeHtml(image)}')` : ""}" role="img" aria-label="${escapeHtml(item.alt || item.name)}"></div>
     `;
   });
-  setHref("[data-faculty-cta]", resolveUrl(content.faculty?.ctaUrl, "#contact"));
+  setHref("[data-faculty-cta]", "/teachers");
   setText("[data-faculty-cta]", content.faculty?.cta || "Meet Our Teachers");
 
   renderCards("[data-package-cards]", content.packages?.items, (item) => `
@@ -453,7 +467,7 @@ const loadContent = async () => {
     return defaultContent;
   }
 
-  return normalizeFacultyContent(normalizeFooterContent(normalizeServicesPageContent(deepMerge(defaultContent, data.content))));
+  return normalizeTeachersContent(normalizeFacultyContent(normalizeFooterContent(normalizeServicesPageContent(deepMerge(defaultContent, data.content)))));
 };
 
 menuToggle?.addEventListener("click", () => {

@@ -482,6 +482,12 @@
   grid-template-columns: minmax(220px, 0.4fr) minmax(280px, 0.6fr);
 }
 
+.teacher-media-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
 .teacher-profile-card .media-preview {
   min-height: 220px;
 }
@@ -703,6 +709,7 @@ button:disabled {
   .field-grid,
   .json-grid,
   .media-card-grid,
+  .teacher-media-grid,
   .link-card-grid,
   .content-card-grid,
   .subject-template-grid {

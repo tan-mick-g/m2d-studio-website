@@ -143,8 +143,7 @@
             </div>
 
             <div class="editor-tabs" role="tablist" aria-label="Teachers page sections" data-page-tabs="teachers-page">
-              <button class="is-active" type="button" data-editor-tab="teachers-page-hero">Hero</button>
-              <button type="button" data-editor-tab="teachers-page-profiles">Teacher Profiles</button>
+              <button class="is-active" type="button" data-editor-tab="teachers-page-profiles">Teacher Profiles</button>
             </div>
 
             <div class="editor-tabs" role="tablist" aria-label="Contact page sections" data-page-tabs="contact-page">
@@ -235,7 +234,6 @@
             <div class="field-grid">
               <label>Faculty Headline <input name="faculty.title" type="text" /></label>
               <label>Faculty Button Text <input name="faculty.cta" type="text" /></label>
-              <label>Faculty Button Link <input name="faculty.ctaUrl" type="text" /></label>
               <label class="wide-field">Faculty Copy <textarea name="faculty.body" rows="4"></textarea></label>
             </div>
             <div class="content-card-editor" data-section-cards="faculty"></div>
@@ -401,24 +399,14 @@
           </div>
 
           <div class="editor-page" data-page-panel="teachers-page">
-            <section class="editor-section is-active" data-editor-panel="teachers-page-hero">
-              <h3>Teachers Page Hero</h3>
-              <p class="editor-help">This is the first section of the Teachers page.</p>
+            <section class="editor-section is-active" data-editor-panel="teachers-page-profiles">
+              <h3>Teacher Profiles</h3>
+              <p class="editor-help">Edit the main Teachers page copy, then add, remove, and update individual teacher profiles.</p>
               <div class="field-grid">
-                <label>Eyebrow <input name="teachersPage.eyebrow" type="text" /></label>
-                <label>Hero Image Alt Text <input name="teachersPage.heroAlt" type="text" /></label>
-                <label class="wide-field">Headline <textarea name="teachersPage.title" rows="3"></textarea></label>
-                <label class="wide-field">Intro Copy <textarea name="teachersPage.intro" rows="5"></textarea></label>
                 <label>Directory Headline <input name="teachersPage.sectionTitle" type="text" /></label>
-                <label>Card Button Text <input name="teachersPage.ctaLabel" type="text" /></label>
+                <label>Button Text <input name="teachersPage.ctaLabel" type="text" /></label>
                 <label class="wide-field">Directory Copy <textarea name="teachersPage.sectionBody" rows="4"></textarea></label>
               </div>
-              <div class="media-grid" data-section-media="teachersPageHero"></div>
-            </section>
-
-            <section class="editor-section" data-editor-panel="teachers-page-profiles">
-              <h3>Teacher Profiles</h3>
-              <p class="editor-help">Add, remove, and edit the teacher profiles shown on the Teachers page.</p>
               <div class="teacher-profile-manager">
                 <div class="teacher-profile-grid" data-teacher-profiles></div>
                 <button class="button button-outline subject-add-button" type="button" data-add-teacher-profile>Add Teacher Profile</button>

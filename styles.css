@@ -1056,12 +1056,6 @@ h2 {
   background: var(--cream-soft);
 }
 
-.teachers-page-hero {
-  background:
-    radial-gradient(circle at 10% 78%, rgba(32, 152, 194, 0.16), transparent 24%),
-    linear-gradient(135deg, var(--cream), var(--white));
-}
-
 .teachers-directory {
   background: var(--cream-soft);
   padding-top: clamp(48px, 7vw, 88px);

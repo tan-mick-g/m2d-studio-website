@@ -80,7 +80,19 @@ const normalizeFooterContent = (content) => {
 };
 
 const normalizeFacultyContent = (content) => {
-  if (content?.faculty?.ctaUrl === "/contact") content.faculty.ctaUrl = "/teachers";
+  if (content?.faculty) {
+    content.faculty.ctaUrl = "/teachers";
+  }
+  return content;
+};
+
+const normalizeTeachersContent = (content) => {
+  if (!Array.isArray(content?.teachersPage?.items)) return content;
+  content.teachersPage.items = content.teachersPage.items.map((teacher) => ({
+    ...teacher,
+    profileImage: teacher.profileImage || teacher.image || teacher.bodyImage || "",
+    bodyImage: teacher.bodyImage || teacher.image || teacher.profileImage || ""
+  }));
   return content;
 };
 
@@ -206,18 +218,44 @@ const getTeacherProfilesFromForm = () => {
     bio: card.querySelector('[data-teacher-field="bio"]')?.value || "",
     bookingUrl: card.querySelector('[data-teacher-field="bookingUrl"]')?.value || "",
     panelColor: card.querySelector('[data-teacher-field="panelColor"]')?.value || "",
-    image: card.querySelector('[data-teacher-field="image"]')?.value || "",
+    profileImage: card.querySelector('[data-teacher-field="profileImage"]')?.value || "",
+    bodyImage: card.querySelector('[data-teacher-field="bodyImage"]')?.value || "",
     alt: card.querySelector('[data-teacher-field="alt"]')?.value || ""
   }));
 };
 
+const renderTeacherMediaInput = ({ index, field, label, value, note, alt }) => `
+  <article class="media-card" data-media-card>
+    <div class="media-preview ${isVideoMedia(value) ? "is-video" : ""}">
+      ${
+        isVideoMedia(value)
+          ? `<video src="${escapeHtml(value)}" muted controls playsinline></video>`
+          : `<img src="${escapeHtml(value)}" alt="${escapeHtml(alt || label)}" />`
+      }
+    </div>
+    <div class="media-fields">
+      <label>
+        ${escapeHtml(label)}
+        <input name="teachersPage.items.${index}.${field}" type="url" value="${escapeHtml(value || "")}" data-media-url data-teacher-field="${escapeHtml(field)}" />
+      </label>
+      <label class="upload-field">
+        Upload ${escapeHtml(label)}
+        <input type="file" accept="image/*,video/*" data-media-upload data-target-path="teachersPage.items.${index}.${field}" />
+      </label>
+      ${note ? `<p>${escapeHtml(note)}</p>` : ""}
+      <a href="${escapeHtml(value || "#")}" target="_blank" rel="noreferrer" data-media-link>Open media</a>
+    </div>
+  </article>
+`;
+
 const renderTeacherProfiles = (teachers = []) => {
   if (!teacherProfilesContainer) return;
 
-  const profiles = Array.isArray(teachers) && teachers.length ? teachers : [{ name: "", role: "", styles: "", bio: "", bookingUrl: "", panelColor: "#2098c2", image: "", alt: "" }];
+  const profiles = Array.isArray(teachers) && teachers.length ? teachers : [{ name: "", role: "", styles: "", bio: "", bookingUrl: "", panelColor: "#2098c2", profileImage: "", bodyImage: "", alt: "" }];
   teacherProfilesContainer.innerHTML = profiles
     .map((teacher, index) => {
-      const image = teacher.image || "";
+      const profileImage = teacher.profileImage || teacher.image || teacher.bodyImage || "";
+      const bodyImage = teacher.bodyImage || teacher.image || teacher.profileImage || "";
       return `
         <article class="teacher-profile-card" data-teacher-profile-card>
           <div class="subject-template-card-heading">
@@ -254,26 +292,24 @@ const renderTeacherProfiles = (teachers = []) => {
               <input name="teachersPage.items.${index}.alt" type="text" value="${escapeHtml(teacher.alt || "")}" data-teacher-field="alt" />
             </label>
           </div>
-          <article class="media-card" data-media-card>
-            <div class="media-preview ${isVideoMedia(image) ? "is-video" : ""}">
-              ${
-                isVideoMedia(image)
-                  ? `<video src="${escapeHtml(image)}" muted controls playsinline></video>`
-                  : `<img src="${escapeHtml(image)}" alt="${escapeHtml(teacher.alt || teacher.name || "Teacher image")}" />`
-              }
-            </div>
-            <div class="media-fields">
-              <label>
-                Teacher Image URL
-                <input name="teachersPage.items.${index}.image" type="url" value="${escapeHtml(image)}" data-media-url data-teacher-field="image" />
-              </label>
-              <label class="upload-field">
-                Upload Image / GIF / Video
-                <input type="file" accept="image/*,video/*" data-media-upload data-target-path="teachersPage.items.${index}.image" />
-              </label>
-              <a href="${escapeHtml(image || "#")}" target="_blank" rel="noreferrer" data-media-link>Open media</a>
-            </div>
-          </article>
+          <div class="teacher-media-grid">
+            ${renderTeacherMediaInput({
+              index,
+              field: "profileImage",
+              label: "Profile Photo",
+              value: profileImage,
+              note: "Small photo used in the teacher selector circles.",
+              alt: teacher.alt || teacher.name || "Teacher profile photo"
+            })}
+            ${renderTeacherMediaInput({
+              index,
+              field: "bodyImage",
+              label: "Body Shot / GIF",
+              value: bodyImage,
+              note: "Large image, transparent GIF, or video shown in the spotlight.",
+              alt: teacher.alt || teacher.name || "Teacher body shot"
+            })}
+          </div>
         </article>
       `;
     })
@@ -375,8 +411,6 @@ const renderMediaFields = (content) => {
   const servicesPageWeddingContainer = getSectionContainer(mediaSections, "sectionMedia", "servicesPageWedding");
   const servicesPageCorporateContainer = getSectionContainer(mediaSections, "sectionMedia", "servicesPageCorporate");
   const servicesPageOtherContainer = getSectionContainer(mediaSections, "sectionMedia", "servicesPageOther");
-  const teachersPageHeroContainer = getSectionContainer(mediaSections, "sectionMedia", "teachersPageHero");
-
   const heroImages = (content.hero?.images?.length ? content.hero.images : [content.hero?.image, "", ""]).slice(0, 5);
   while (heroImages.length < 5) heroImages.push("");
   const heroImageFields = heroImages.map((image, index) =>
@@ -454,11 +488,6 @@ const renderMediaFields = (content) => {
       mediaInput({ path: "servicesPage.otherImage", label: "Other Services Image", value: content.servicesPage?.otherImage })
     ]);
   }
-  if (teachersPageHeroContainer) {
-    teachersPageHeroContainer.innerHTML = renderMediaGroup("Hero Image", "Main image shown at the top of the Teachers page.", [
-      mediaInput({ path: "teachersPage.heroImage", label: "Teachers Page Hero Image", value: content.teachersPage?.heroImage })
-    ]);
-  }
 };
 
 const syncJsonTextareaFromPath = (path, value) => {
@@ -490,8 +519,20 @@ const syncJsonTextareaFromPath = (path, value) => {
 
 const updateMediaPreview = (input) => {
   const card = input.closest("[data-media-card]");
-  const media = card?.querySelector("img, video");
+  const preview = card?.querySelector(".media-preview");
   const link = card?.querySelector("[data-media-link]");
+  const shouldUseVideo = isVideoMedia(input.value);
+  let media = card?.querySelector("img, video");
+  if (preview) {
+    preview.classList.toggle("is-video", shouldUseVideo);
+    if (shouldUseVideo && media?.tagName !== "VIDEO") {
+      preview.innerHTML = `<video src="${escapeHtml(input.value)}" muted controls playsinline></video>`;
+      media = preview.querySelector("video");
+    } else if (!shouldUseVideo && media?.tagName !== "IMG") {
+      preview.innerHTML = `<img src="${escapeHtml(input.value)}" alt="" />`;
+      media = preview.querySelector("img");
+    }
+  }
   if (media) {
     media.setAttribute("src", input.value);
     if (media.tagName === "VIDEO") media.load();
@@ -608,9 +649,12 @@ const readForm = () => {
   if (Array.isArray(nextContent.hero?.images)) {
     nextContent.hero.image = nextContent.hero.images.find(Boolean) || nextContent.hero.image || "";
   }
+  if (nextContent.faculty) nextContent.faculty.ctaUrl = "/teachers";
 
   nextContent.contact.subjects = getSubjectTemplatesFromForm().filter((subject) => subject.label.trim() || subject.template.trim());
-  nextContent.teachersPage.items = getTeacherProfilesFromForm().filter((teacher) => teacher.name.trim() || teacher.bio.trim() || teacher.image.trim());
+  nextContent.teachersPage.items = getTeacherProfilesFromForm().filter(
+    (teacher) => teacher.name.trim() || teacher.bio.trim() || teacher.profileImage.trim() || teacher.bodyImage.trim()
+  );
 
   return nextContent;
 };
@@ -702,9 +746,11 @@ const loadContent = async () => {
 
   if (error && error.code !== "PGRST116") throw error;
 
-  currentContent = normalizeFacultyContent(
-    normalizeFooterContent(
-      normalizeServicesPageContent(data?.content ? deepMerge(defaultContentForAdmin, data.content) : structuredClone(defaultContentForAdmin))
+  currentContent = normalizeTeachersContent(
+    normalizeFacultyContent(
+      normalizeFooterContent(
+        normalizeServicesPageContent(data?.content ? deepMerge(defaultContentForAdmin, data.content) : structuredClone(defaultContentForAdmin))
+      )
     )
   );
   fillForm(currentContent);
@@ -812,7 +858,7 @@ const saveContent = async () => {
     return;
   }
 
-  currentContent = normalizeFacultyContent(normalizeFooterContent(normalizeServicesPageContent(deepMerge(defaultContentForAdmin, data.content))));
+  currentContent = normalizeTeachersContent(normalizeFacultyContent(normalizeFooterContent(normalizeServicesPageContent(deepMerge(defaultContentForAdmin, data.content)))));
   fillForm(currentContent);
   setEditorMessage(`Saved and published at ${getStatusTime()}. Refresh the public site to see the latest content.`, "success");
   setSavingState(false);
@@ -969,7 +1015,8 @@ addTeacherProfileButton?.addEventListener("click", () => {
     bio: "Add a short teacher bio here.",
     bookingUrl: currentContent.bookingUrl || defaultContentForAdmin.bookingUrl || "",
     panelColor: "#2098c2",
-    image: "",
+    profileImage: "",
+    bodyImage: "",
     alt: "Dance teacher"
   });
   renderTeacherProfiles(teachers);
