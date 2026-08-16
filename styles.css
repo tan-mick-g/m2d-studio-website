@@ -886,6 +886,22 @@ h2 {
     var(--cream);
 }
 
+.page-hero-text-only {
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  text-align: center;
+}
+
+.page-hero-text-only .page-hero-copy {
+  max-width: 1080px;
+  justify-items: center;
+}
+
+.page-hero-text-only .page-hero-copy p:not(.eyebrow) {
+  max-width: 62ch;
+  margin-inline: auto;
+}
+
 .page-hero-copy {
   display: grid;
   gap: 24px;

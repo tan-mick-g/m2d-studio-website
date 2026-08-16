@@ -235,7 +235,7 @@ const getTeacherProfilesFromForm = () => {
 
 const renderTeacherMediaInput = ({ index, field, label, value, note, alt, allowVideo = true }) => `
   <article class="media-card" data-media-card>
-    <div class="media-preview ${allowVideo && isVideoMedia(value) ? "is-video" : ""}">
+    <div class="media-preview ${allowVideo && isVideoMedia(value) ? "is-video" : ""} ${value ? "" : "is-empty"}">
       ${
         allowVideo && isVideoMedia(value)
           ? `<video src="${escapeHtml(value)}" muted controls playsinline></video>`
@@ -252,7 +252,10 @@ const renderTeacherMediaInput = ({ index, field, label, value, note, alt, allowV
         <input type="file" accept="${allowVideo ? "image/*,video/*" : "image/*"}" data-media-upload data-target-path="teachersPage.items.${index}.${field}" />
       </label>
       ${note ? `<p>${escapeHtml(note)}</p>` : ""}
-      <a href="${escapeHtml(value || "#")}" target="_blank" rel="noreferrer" data-media-link>Open media</a>
+      <div class="media-actions">
+        <a href="${escapeHtml(value || "#")}" target="_blank" rel="noreferrer" data-media-link>Open media</a>
+        <button class="text-button media-remove-button" type="button" data-remove-media ${value ? "" : "disabled"}>Remove media</button>
+      </div>
     </div>
   </article>
 `;
@@ -369,7 +372,7 @@ const renderCardFields = (content) => {
 
 const mediaInput = ({ path, label, value = "", note = "", kind = "image" }) => `
   <article class="media-card" data-media-card>
-    <div class="media-preview ${kind === "video" ? "is-video" : ""}">
+    <div class="media-preview ${kind === "video" ? "is-video" : ""} ${value ? "" : "is-empty"}">
       ${
         kind === "video"
           ? `<video src="${escapeHtml(value)}" muted controls playsinline></video>`
@@ -386,7 +389,10 @@ const mediaInput = ({ path, label, value = "", note = "", kind = "image" }) => `
         <input type="file" accept="${kind === "video" ? "video/*" : "image/*"}" data-media-upload data-target-path="${escapeHtml(path)}" />
       </label>
       ${note ? `<p>${escapeHtml(note)}</p>` : ""}
-      <a href="${escapeHtml(value || "#")}" target="_blank" rel="noreferrer" data-media-link>Open media</a>
+      <div class="media-actions">
+        <a href="${escapeHtml(value || "#")}" target="_blank" rel="noreferrer" data-media-link>Open media</a>
+        <button class="text-button media-remove-button" type="button" data-remove-media ${value ? "" : "disabled"}>Remove media</button>
+      </div>
     </div>
   </article>
 `;
@@ -410,7 +416,6 @@ const renderMediaFields = (content) => {
   const footerContainer = getSectionContainer(mediaSections, "sectionMedia", "footer");
   const aboutPageHeroContainer = getSectionContainer(mediaSections, "sectionMedia", "aboutPageHero");
   const aboutPageStoryContainer = getSectionContainer(mediaSections, "sectionMedia", "aboutPageStory");
-  const servicesPageHeroContainer = getSectionContainer(mediaSections, "sectionMedia", "servicesPageHero");
   const servicesPageStudioContainer = getSectionContainer(mediaSections, "sectionMedia", "servicesPageStudio");
   const servicesPageWeddingContainer = getSectionContainer(mediaSections, "sectionMedia", "servicesPageWedding");
   const servicesPageCorporateContainer = getSectionContainer(mediaSections, "sectionMedia", "servicesPageCorporate");
@@ -467,11 +472,6 @@ const renderMediaFields = (content) => {
       mediaInput({ path: "aboutPage.storyImage", label: "About Page Story Image", value: content.aboutPage?.storyImage })
     ]);
   }
-  if (servicesPageHeroContainer) {
-    servicesPageHeroContainer.innerHTML = renderMediaGroup("Hero Image", "Main image shown at the top of the Services page.", [
-      mediaInput({ path: "servicesPage.heroImage", label: "Services Page Hero Image", value: content.servicesPage?.heroImage })
-    ]);
-  }
   if (servicesPageStudioContainer) {
     servicesPageStudioContainer.innerHTML = renderMediaGroup("Service 2 Image", "Image shown with the second service section.", [
       mediaInput({ path: "servicesPage.studioImage", label: "Service 2 Image", value: content.servicesPage?.studioImage })
@@ -525,10 +525,12 @@ const updateMediaPreview = (input) => {
   const card = input.closest("[data-media-card]");
   const preview = card?.querySelector(".media-preview");
   const link = card?.querySelector("[data-media-link]");
+  const removeButton = card?.querySelector("[data-remove-media]");
   const shouldUseVideo = isVideoMedia(input.value);
   let media = card?.querySelector("img, video");
   if (preview) {
     preview.classList.toggle("is-video", shouldUseVideo);
+    preview.classList.toggle("is-empty", !input.value);
     if (shouldUseVideo && media?.tagName !== "VIDEO") {
       preview.innerHTML = `<video src="${escapeHtml(input.value)}" muted controls playsinline></video>`;
       media = preview.querySelector("video");
@@ -542,6 +544,7 @@ const updateMediaPreview = (input) => {
     if (media.tagName === "VIDEO") media.load();
   }
   if (link) link.setAttribute("href", input.value || "#");
+  if (removeButton) removeButton.disabled = !input.value;
 };
 
 const uploadMediaFile = async (file, targetPath) => {
@@ -1053,6 +1056,24 @@ editorForm.addEventListener("input", (event) => {
   }
   syncJsonTextareaFromPath(input.name, input.value);
   updateMediaPreview(input);
+});
+
+editorForm.addEventListener("click", (event) => {
+  const removeButton = event.target.closest("[data-remove-media]");
+  if (!removeButton) return;
+
+  const card = removeButton.closest("[data-media-card]");
+  const input = card?.querySelector("[data-media-url]");
+  if (!input) return;
+
+  input.value = "";
+  if (input.name === "hero.images.0") {
+    const fallbackInput = editorForm.querySelector('[name="hero.image"][data-media-url]');
+    if (fallbackInput) fallbackInput.value = "";
+  }
+  syncJsonTextareaFromPath(input.name, input.value);
+  updateMediaPreview(input);
+  setEditorMessage("Media removed. Save changes to publish this update.");
 });
 
 editorForm.addEventListener("change", async (event) => {

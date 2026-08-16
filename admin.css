@@ -621,6 +621,20 @@
     var(--mist);
 }
 
+.media-preview.is-empty::before {
+  content: "No media selected";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  color: rgba(15, 31, 47, 0.54);
+  font-size: 0.85rem;
+  font-weight: 900;
+  text-align: center;
+  text-transform: uppercase;
+}
+
 .media-preview img,
 .media-preview video,
 .media-preview iframe {
@@ -654,11 +668,28 @@
   padding: 14px;
 }
 
+.media-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
 .media-fields a {
   width: max-content;
   color: var(--gold-deep);
   font-size: 0.86rem;
   font-weight: 800;
+}
+
+.media-remove-button {
+  color: #9a3412;
+  font-size: 0.86rem;
+}
+
+.media-remove-button:disabled {
+  color: rgba(15, 31, 47, 0.36);
+  cursor: not-allowed;
 }
 
 label {
