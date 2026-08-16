@@ -82,6 +82,7 @@ const normalizeFooterContent = (content) => {
 const normalizeFacultyContent = (content) => {
   if (content?.faculty) {
     content.faculty.ctaUrl = "/teachers";
+    if (content.faculty.title === "Our Faculty") content.faculty.title = "Our Teachers";
   }
   return content;
 };

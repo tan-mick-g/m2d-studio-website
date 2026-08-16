@@ -153,7 +153,7 @@ window.MTD_DEFAULT_CONTENT = {
     ]
   },
   faculty: {
-    title: "Our Faculty",
+    title: "Our Teachers",
     body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.",
     cta: "Meet Our Teachers",
     ctaUrl: "/teachers",

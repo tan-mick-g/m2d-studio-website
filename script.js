@@ -4,6 +4,7 @@ const menuToggle = document.querySelector("[data-menu-toggle]");
 const mobileNav = document.querySelector("[data-mobile-nav]");
 let heroCarouselTimer;
 let heroCarouselResetTimer;
+let teacherGifObserver;
 
 document.documentElement.classList.add("has-js");
 
@@ -55,6 +56,7 @@ const normalizeFooterContent = (content) => {
 const normalizeFacultyContent = (content) => {
   if (content?.faculty) {
     content.faculty.ctaUrl = "/teachers";
+    if (content.faculty.title === "Our Faculty") content.faculty.title = "Our Teachers";
   }
   return content;
 };
@@ -300,12 +302,35 @@ const isAnimatedImageMedia = (value = "") => /\.(gif|webp)(\?.*)?$/i.test(String
 
 const isValidCssColor = (value = "") => /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(String(value).trim());
 
+const usesTouchMotionTrigger = () => window.matchMedia("(hover: none)").matches;
+
+const setTeacherGifMotion = (container, shouldPlay) => {
+  const image = container?.querySelector("img");
+  if (!image || !container.dataset.animatedSrc || !container.dataset.pausedSrc) return;
+  image.src = shouldPlay ? container.dataset.animatedSrc : container.dataset.pausedSrc;
+};
+
+const observeTeacherGifMotion = (container) => {
+  teacherGifObserver?.disconnect();
+  if (!container?.dataset.animatedSrc || !usesTouchMotionTrigger() || !("IntersectionObserver" in window)) return;
+
+  teacherGifObserver = new IntersectionObserver(
+    ([entry]) => setTeacherGifMotion(container, entry.isIntersecting && entry.intersectionRatio > 0.45),
+    { threshold: [0, 0.45, 1] }
+  );
+  teacherGifObserver.observe(container);
+};
+
 const applySelectedTeacher = (teacher, index, teachersPage = {}, bookingUrl = "") => {
   const feature = document.querySelector("[data-teacher-feature]");
   if (!feature || !teacher) return;
 
   const defaultTeacher = defaultContent.teachersPage?.items?.[index] || {};
   const image = teacher.bodyImage || teacher.image || defaultTeacher.bodyImage || defaultTeacher.image || "";
+  const profileImage = teacher.profileImage || teacher.image || defaultTeacher.profileImage || defaultTeacher.image || "";
+  const isAnimatedImage = isAnimatedImageMedia(image);
+  const pausedImage = isAnimatedImage && profileImage && !isAnimatedImageMedia(profileImage) ? profileImage : image;
+  const displayImage = isAnimatedImage ? pausedImage : image;
   const panelColor = isValidCssColor(teacher.panelColor) ? teacher.panelColor : "#2098c2";
   const ctaLabel = teachersPage.ctaLabel || "Book A Class";
   const bookingHref = teacher.bookingUrl || bookingUrl || "#";
@@ -321,13 +346,22 @@ const applySelectedTeacher = (teacher, index, teachersPage = {}, bookingUrl = ""
   if (imageElement) {
     imageElement.classList.toggle("has-image", Boolean(image));
     imageElement.classList.toggle("is-video", isVideoMedia(image));
-    imageElement.classList.toggle("is-cutout", isAnimatedImageMedia(image));
+    imageElement.classList.toggle("is-cutout", isAnimatedImage);
     imageElement.setAttribute("aria-label", teacher.alt || teacher.name || "Dance teacher");
+    delete imageElement.dataset.animatedSrc;
+    delete imageElement.dataset.pausedSrc;
     imageElement.innerHTML = image
       ? isVideoMedia(image)
         ? `<video src="${escapeHtml(image)}" autoplay muted loop playsinline aria-hidden="true"></video>`
-        : `<img src="${escapeHtml(image)}" alt="" aria-hidden="true" />`
+        : `<img src="${escapeHtml(displayImage)}" alt="" aria-hidden="true" />`
       : "";
+    if (isAnimatedImage && pausedImage && pausedImage !== image) {
+      imageElement.dataset.animatedSrc = image;
+      imageElement.dataset.pausedSrc = pausedImage;
+      observeTeacherGifMotion(imageElement);
+    } else {
+      teacherGifObserver?.disconnect();
+    }
   }
 
   if (bookingElement) {
@@ -417,6 +451,13 @@ const applyContent = (content) => {
   setHref("[data-packages-band-cta]", resolveUrl(content.packagesBand?.ctaUrl, "#packages"));
   setText("[data-packages-band-cta]", content.packagesBand?.cta || "Get Started");
 
+  renderCards("[data-teachers-preview-grid]", content.teachersPage?.items, (teacher, index) => {
+    const defaultTeacher = defaultContent.teachersPage?.items?.[index] || {};
+    const image = teacher.profileImage || teacher.image || teacher.bodyImage || defaultTeacher.profileImage || defaultTeacher.image || "";
+    return `
+      <div class="teacher-preview-photo image-fill ${image ? "has-image" : ""}" style="${image ? `background-image:url('${escapeHtml(image)}')` : ""}" role="img" aria-label="${escapeHtml(teacher.alt || teacher.name || "Dance teacher")}"></div>
+    `;
+  });
   setHref("[data-faculty-cta]", "/teachers");
   setText("[data-faculty-cta]", content.faculty?.cta || "Meet Our Teachers");
 
@@ -506,9 +547,23 @@ window.addEventListener("message", (event) => {
   sendRezervUtms(document.querySelector("[data-schedule-widget]"));
 });
 
+document.addEventListener("mouseover", (event) => {
+  if (usesTouchMotionTrigger()) return;
+  const target = event.target.closest(".teacher-feature-media.is-cutout");
+  if (!target || target.contains(event.relatedTarget)) return;
+  setTeacherGifMotion(target, true);
+});
+
+document.addEventListener("mouseout", (event) => {
+  if (usesTouchMotionTrigger()) return;
+  const target = event.target.closest(".teacher-feature-media.is-cutout");
+  if (!target || target.contains(event.relatedTarget)) return;
+  setTeacherGifMotion(target, false);
+});
+
 const revealElements = () => {
   const elements = document.querySelectorAll(
-    ".section-pad, .package-band, .contact-section, .package-card, .class-pick, .teacher-selector, .about-copy, .about-photo, .package-band-panel, .contact-copy, .contact-form, .site-footer, .page-hero-copy, .page-hero-image, .about-story-image, .about-story-copy, .about-beliefs article, .service-feature-copy, .service-feature-image"
+    ".section-pad, .package-band, .contact-section, .package-card, .class-pick, .teacher-preview-photo, .teacher-selector, .about-copy, .about-photo, .package-band-panel, .contact-copy, .contact-form, .site-footer, .page-hero-copy, .page-hero-image, .about-story-image, .about-story-copy, .about-beliefs article, .service-feature-copy, .service-feature-image"
   );
   if (!("IntersectionObserver" in window)) {
     elements.forEach((element) => element.classList.add("is-visible"));
