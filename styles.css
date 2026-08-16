@@ -72,7 +72,7 @@ textarea {
 
 .brand {
   display: inline-flex;
-  width: clamp(190px, 18vw, 300px);
+  width: clamp(170px, 16vw, 260px);
   flex: 0 0 auto;
 }
 
@@ -931,7 +931,7 @@ h2 {
 }
 
 .footer-mark {
-  width: clamp(160px, 18vw, 230px);
+  width: clamp(210px, 22vw, 310px);
 }
 
 .footer-mark img {
@@ -1151,7 +1151,7 @@ h2 {
   }
 
   .brand {
-    width: 170px;
+    width: 150px;
   }
 
   .hero {
@@ -1226,7 +1226,7 @@ h2 {
   }
 
   .footer-mark {
-    width: 170px;
+    width: 220px;
   }
 
   .footer-mark img {
