@@ -152,8 +152,18 @@
             <input name="email" type="email" autocomplete="email" required />
           </label>
           <label>
-            Leave A Message
-            <textarea name="message" rows="4" required></textarea>
+            Mobile Number
+            <input name="phone" type="tel" autocomplete="tel" placeholder="+63" required />
+          </label>
+          <label>
+            Subject
+            <select name="subject" data-contact-subject required>
+              <option value="General Inquiry">General Inquiry</option>
+            </select>
+          </label>
+          <label>
+            Description
+            <textarea name="message" rows="6" data-contact-message required></textarea>
           </label>
           <label class="honeypot-field" aria-hidden="true">
             Leave this field blank
