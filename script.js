@@ -357,7 +357,7 @@ const applySelectedTeacher = (teacher, index, teachersPage = {}, bookingUrl = ""
     imageElement.classList.toggle("has-image", Boolean(image));
     imageElement.classList.toggle("is-video", isVideoMedia(image));
     imageElement.classList.toggle("is-cutout", isAnimatedImage);
-    imageElement.setAttribute("aria-label", teacher.alt || teacher.name || "Dance teacher");
+    imageElement.setAttribute("aria-label", teacher.name || "Dance teacher");
     delete imageElement.dataset.animatedSrc;
     delete imageElement.dataset.pausedSrc;
     imageElement.innerHTML = image
@@ -465,7 +465,7 @@ const applyContent = (content) => {
     const defaultTeacher = defaultContent.teachersPage?.items?.[index] || {};
     const image = teacher.profileImage || teacher.image || teacher.bodyImage || defaultTeacher.profileImage || defaultTeacher.image || "";
     return `
-      <div class="teacher-preview-photo image-fill ${image ? "has-image" : ""}" style="${image ? `background-image:url('${escapeHtml(image)}')` : ""}" role="img" aria-label="${escapeHtml(teacher.alt || teacher.name || "Dance teacher")}"></div>
+      <div class="teacher-preview-photo image-fill ${image ? "has-image" : ""}" style="${image ? `background-image:url('${escapeHtml(image)}')` : ""}" role="img" aria-label="${escapeHtml(teacher.name || "Dance teacher")}"></div>
     `;
   });
   setHref("[data-faculty-cta]", "/teachers");

@@ -479,7 +479,7 @@
 }
 
 .teacher-profile-card .media-card {
-  grid-template-columns: minmax(220px, 0.4fr) minmax(280px, 0.6fr);
+  grid-template-columns: minmax(220px, 320px) minmax(0, 1fr);
 }
 
 .teacher-media-grid {
@@ -490,6 +490,27 @@
 
 .teacher-profile-card .media-preview {
   min-height: 220px;
+}
+
+.teacher-profile-card input[type="color"] {
+  width: 100%;
+  min-height: 58px;
+  padding: 6px;
+  cursor: pointer;
+}
+
+.teacher-profile-card input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.teacher-profile-card input[type="color"]::-webkit-color-swatch {
+  border: 0;
+  border-radius: 6px;
+}
+
+.teacher-profile-card input[type="color"]::-moz-color-swatch {
+  border: 0;
+  border-radius: 6px;
 }
 
 .media-group-heading {
@@ -607,6 +628,7 @@
 .media-fields {
   display: grid;
   gap: 12px;
+  min-width: 0;
   padding: 14px;
 }
 
@@ -721,7 +743,7 @@ button:disabled {
   }
 
   .teacher-media-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: 1fr;
   }
 
   .wide-field {

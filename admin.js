@@ -229,8 +229,7 @@ const getTeacherProfilesFromForm = () => {
     panelColor: card.querySelector('[data-teacher-field="panelColor"]')?.value || "",
     profileImage: card.querySelector('[data-teacher-field="profileImage"]')?.value || "",
     bodyStillImage: card.querySelector('[data-teacher-field="bodyStillImage"]')?.value || "",
-    bodyImage: card.querySelector('[data-teacher-field="bodyImage"]')?.value || "",
-    alt: card.querySelector('[data-teacher-field="alt"]')?.value || ""
+    bodyImage: card.querySelector('[data-teacher-field="bodyImage"]')?.value || ""
   }));
 };
 
@@ -261,7 +260,7 @@ const renderTeacherMediaInput = ({ index, field, label, value, note, alt, allowV
 const renderTeacherProfiles = (teachers = []) => {
   if (!teacherProfilesContainer) return;
 
-  const profiles = Array.isArray(teachers) && teachers.length ? teachers : [{ name: "", role: "", styles: "", bio: "", bookingUrl: "", panelColor: "#2098c2", profileImage: "", bodyStillImage: "", bodyImage: "", alt: "" }];
+  const profiles = Array.isArray(teachers) && teachers.length ? teachers : [{ name: "", role: "", styles: "", bio: "", bookingUrl: "", panelColor: "#2098c2", profileImage: "", bodyStillImage: "", bodyImage: "" }];
   teacherProfilesContainer.innerHTML = profiles
     .map((teacher, index) => {
       const profileImage = teacher.profileImage || teacher.image || teacher.bodyImage || "";
@@ -298,10 +297,6 @@ const renderTeacherProfiles = (teachers = []) => {
               Short Bio
               <textarea name="teachersPage.items.${index}.bio" rows="4" data-teacher-field="bio">${escapeHtml(teacher.bio || "")}</textarea>
             </label>
-            <label>
-              Image Alt Text
-              <input name="teachersPage.items.${index}.alt" type="text" value="${escapeHtml(teacher.alt || "")}" data-teacher-field="alt" />
-            </label>
           </div>
           <div class="teacher-media-grid">
             ${renderTeacherMediaInput({
@@ -310,7 +305,7 @@ const renderTeacherProfiles = (teachers = []) => {
               label: "Profile Photo",
               value: profileImage,
               note: "Small photo used in the teacher selector circles.",
-              alt: teacher.alt || teacher.name || "Teacher profile photo",
+              alt: teacher.name || "Teacher profile photo",
               allowVideo: false
             })}
             ${renderTeacherMediaInput({
@@ -319,7 +314,7 @@ const renderTeacherProfiles = (teachers = []) => {
               label: "Body Still Image",
               value: bodyStillImage,
               note: "Still full-body image shown before the GIF plays.",
-              alt: teacher.alt || teacher.name || "Teacher body still",
+              alt: teacher.name || "Teacher body still",
               allowVideo: false
             })}
             ${renderTeacherMediaInput({
@@ -328,7 +323,7 @@ const renderTeacherProfiles = (teachers = []) => {
               label: "Animated Body Shot / GIF",
               value: bodyImage,
               note: "GIF or video that plays on hover, or when visible on mobile.",
-              alt: teacher.alt || teacher.name || "Teacher animated body shot"
+              alt: teacher.name || "Teacher animated body shot"
             })}
           </div>
         </article>
@@ -1027,7 +1022,6 @@ addTeacherProfileButton?.addEventListener("click", () => {
     profileImage: "",
     bodyStillImage: "",
     bodyImage: "",
-    alt: "Dance teacher"
   });
   renderTeacherProfiles(teachers);
   teacherProfilesContainer?.querySelector(`[name="teachersPage.items.${teachers.length - 1}.name"]`)?.focus();
