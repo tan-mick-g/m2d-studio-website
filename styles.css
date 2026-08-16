@@ -1144,28 +1144,61 @@ h2 {
 
 .teacher-stage {
   display: grid;
-  grid-template-columns: minmax(360px, 1.1fr) minmax(320px, 0.9fr);
-  gap: clamp(28px, 5vw, 72px);
-  align-items: center;
-}
-
-.teacher-feature-image {
-  min-height: clamp(640px, 62vw, 920px);
+  grid-template-columns: minmax(340px, 0.92fr) minmax(340px, 1.08fr);
+  gap: clamp(16px, 2vw, 28px);
+  align-items: end;
+  position: relative;
+  overflow: hidden;
+  min-height: clamp(640px, 58vw, 860px);
   border: 3px solid var(--red);
-  border-radius: 120px 120px 36px 36px;
-  background-position: center top;
+  border-radius: 82px;
+  padding: clamp(28px, 5vw, 64px);
+  background:
+    radial-gradient(circle at 76% 18%, rgba(255, 253, 232, 0.72), transparent 30%),
+    linear-gradient(90deg, var(--teal) 0 46%, var(--cream) 46% 100%);
   box-shadow: 0 26px 70px rgba(21, 58, 99, 0.12);
 }
 
+.teacher-stage::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  left: clamp(22px, 4vw, 54px);
+  top: clamp(22px, 4vw, 54px);
+  width: min(36%, 420px);
+  height: calc(100% - clamp(44px, 8vw, 108px));
+  border-radius: 58px;
+  background: rgba(21, 58, 99, 0.18);
+}
+
+.teacher-feature-media {
+  position: relative;
+  z-index: 2;
+  align-self: end;
+  min-height: clamp(560px, 56vw, 820px);
+}
+
+.teacher-feature-media img,
+.teacher-feature-media video {
+  display: block;
+  width: 100%;
+  height: clamp(560px, 56vw, 820px);
+  object-fit: contain;
+  object-position: center bottom;
+  filter: drop-shadow(0 24px 28px rgba(21, 58, 99, 0.22));
+}
+
 .teacher-feature-copy {
+  position: relative;
+  z-index: 1;
   display: grid;
   gap: 18px;
-  align-content: start;
-  border: 3px solid var(--red);
-  border-radius: 46px;
-  padding: clamp(30px, 5vw, 58px);
-  background: var(--white);
-  box-shadow: 0 18px 46px rgba(21, 58, 99, 0.08);
+  align-content: center;
+  align-self: stretch;
+  padding: clamp(30px, 5vw, 64px);
+  background: rgba(255, 253, 232, 0.58);
+  border-left: 2px solid rgba(237, 31, 47, 0.58);
+  backdrop-filter: blur(4px);
 }
 
 .teacher-feature-copy h3 {
@@ -1469,10 +1502,24 @@ h2 {
 
   .teacher-stage {
     grid-template-columns: 1fr;
+    min-height: 0;
+    background:
+      radial-gradient(circle at 76% 18%, rgba(255, 253, 232, 0.72), transparent 30%),
+      linear-gradient(180deg, var(--teal) 0 48%, var(--cream) 48% 100%);
   }
 
-  .teacher-feature-image {
-    min-height: clamp(560px, 78vw, 760px);
+  .teacher-feature-media {
+    min-height: clamp(500px, 78vw, 720px);
+  }
+
+  .teacher-feature-media img,
+  .teacher-feature-media video {
+    height: clamp(500px, 78vw, 720px);
+  }
+
+  .teacher-feature-copy {
+    border-top: 2px solid rgba(237, 31, 47, 0.58);
+    border-left: 0;
   }
 }
 
@@ -1605,13 +1652,18 @@ h2 {
     min-height: 0;
   }
 
-  .teacher-feature-image {
-    min-height: 520px;
-    border-radius: 72px 72px 28px 28px;
+  .teacher-stage {
+    border-radius: 42px;
+    padding: 22px;
   }
 
-  .teacher-feature-copy {
-    border-radius: 32px;
+  .teacher-feature-media {
+    min-height: 430px;
+  }
+
+  .teacher-feature-media img,
+  .teacher-feature-media video {
+    height: 430px;
   }
 
   .contact-form {

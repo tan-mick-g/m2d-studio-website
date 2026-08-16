@@ -282,6 +282,8 @@ const renderScheduleWidget = (schedule) => {
   });
 };
 
+const isVideoMedia = (value = "") => /\.(webm|mp4|mov)(\?.*)?$/i.test(String(value));
+
 const applySelectedTeacher = (teacher, index, teachersPage = {}, bookingUrl = "") => {
   const feature = document.querySelector("[data-teacher-feature]");
   if (!feature || !teacher) return;
@@ -298,9 +300,13 @@ const applySelectedTeacher = (teacher, index, teachersPage = {}, bookingUrl = ""
   setText("[data-teacher-bio]", teacher.bio || "");
 
   if (imageElement) {
-    imageElement.style.backgroundImage = image ? `url("${image}")` : "";
     imageElement.classList.toggle("has-image", Boolean(image));
     imageElement.setAttribute("aria-label", teacher.alt || teacher.name || "Dance teacher");
+    imageElement.innerHTML = image
+      ? isVideoMedia(image)
+        ? `<video src="${escapeHtml(image)}" autoplay muted loop playsinline aria-hidden="true"></video>`
+        : `<img src="${escapeHtml(image)}" alt="" aria-hidden="true" />`
+      : "";
   }
 
   if (bookingElement) {

@@ -115,6 +115,8 @@ const getAdminErrorMessage = (error, email = "") => {
 const getPath = (object, path) =>
   path.split(".").reduce((value, key) => (value == null ? value : value[key]), object);
 
+const isVideoMedia = (value = "") => /\.(webm|mp4|mov)(\?.*)?$/i.test(String(value));
+
 const setPath = (object, path, value) => {
   const keys = path.split(".");
   const last = keys.pop();
@@ -248,8 +250,12 @@ const renderTeacherProfiles = (teachers = []) => {
             </label>
           </div>
           <article class="media-card" data-media-card>
-            <div class="media-preview">
-              <img src="${escapeHtml(image)}" alt="${escapeHtml(teacher.alt || teacher.name || "Teacher image")}" />
+            <div class="media-preview ${isVideoMedia(image) ? "is-video" : ""}">
+              ${
+                isVideoMedia(image)
+                  ? `<video src="${escapeHtml(image)}" muted controls playsinline></video>`
+                  : `<img src="${escapeHtml(image)}" alt="${escapeHtml(teacher.alt || teacher.name || "Teacher image")}" />`
+              }
             </div>
             <div class="media-fields">
               <label>
@@ -257,8 +263,8 @@ const renderTeacherProfiles = (teachers = []) => {
                 <input name="teachersPage.items.${index}.image" type="url" value="${escapeHtml(image)}" data-media-url data-teacher-field="image" />
               </label>
               <label class="upload-field">
-                Upload Image
-                <input type="file" accept="image/*" data-media-upload data-target-path="teachersPage.items.${index}.image" />
+                Upload Image / GIF / Video
+                <input type="file" accept="image/*,video/*" data-media-upload data-target-path="teachersPage.items.${index}.image" />
               </label>
               <a href="${escapeHtml(image || "#")}" target="_blank" rel="noreferrer" data-media-link>Open media</a>
             </div>
