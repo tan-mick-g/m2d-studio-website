@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Made To Dance Admin</title>
+    <link rel="icon" type="image/png" href="assets/m2d-icon.png" />
+    <link rel="apple-touch-icon" href="assets/m2d-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -101,6 +103,7 @@
               <button type="button" data-page-tab="services-page">Services Page</button>
               <button type="button" data-page-tab="teachers-page">Teachers Page</button>
               <button type="button" data-page-tab="contact-page">Contact Page</button>
+              <button type="button" data-page-tab="seo-settings">SEO Settings</button>
             </div>
 
             <div class="editor-toolbar">
@@ -150,6 +153,10 @@
               <button class="is-active" type="button" data-editor-tab="contact-page-copy">Copy</button>
               <button type="button" data-editor-tab="contact-page-form">Form & Email</button>
               <button type="button" data-editor-tab="contact-page-media">Media</button>
+            </div>
+
+            <div class="editor-tabs" role="tablist" aria-label="SEO settings" data-page-tabs="seo-settings">
+              <button class="is-active" type="button" data-editor-tab="seo-settings-meta">Page Metadata</button>
             </div>
           </div>
 
@@ -452,6 +459,49 @@
               <h3>Contact Media</h3>
               <p class="editor-help">This image appears on the Contact page and behind the homepage contact section.</p>
               <div class="media-grid" data-section-media="contactPage"></div>
+            </section>
+          </div>
+
+          <div class="editor-page" data-page-panel="seo-settings">
+            <section class="editor-section is-active" data-editor-panel="seo-settings-meta">
+              <h3>SEO Settings</h3>
+              <p class="editor-help">Edit browser titles, search descriptions, and social preview images. Keep titles around 50-60 characters and descriptions around 140-160 characters.</p>
+              <div class="field-grid">
+                <label>Site Name <input name="seo.siteName" type="text" /></label>
+                <label>Default Social Image URL <input name="seo.defaultImage" type="text" /></label>
+              </div>
+              <div class="content-card-grid">
+                <article class="content-card">
+                  <h5>Homepage</h5>
+                  <label>SEO Title <input name="seo.pages.home.title" type="text" /></label>
+                  <label>Description <textarea name="seo.pages.home.description" rows="4"></textarea></label>
+                  <label>Social Image URL <input name="seo.pages.home.image" type="text" /></label>
+                </article>
+                <article class="content-card">
+                  <h5>About Page</h5>
+                  <label>SEO Title <input name="seo.pages.about.title" type="text" /></label>
+                  <label>Description <textarea name="seo.pages.about.description" rows="4"></textarea></label>
+                  <label>Social Image URL <input name="seo.pages.about.image" type="text" /></label>
+                </article>
+                <article class="content-card">
+                  <h5>Services Page</h5>
+                  <label>SEO Title <input name="seo.pages.services.title" type="text" /></label>
+                  <label>Description <textarea name="seo.pages.services.description" rows="4"></textarea></label>
+                  <label>Social Image URL <input name="seo.pages.services.image" type="text" /></label>
+                </article>
+                <article class="content-card">
+                  <h5>Teachers Page</h5>
+                  <label>SEO Title <input name="seo.pages.teachers.title" type="text" /></label>
+                  <label>Description <textarea name="seo.pages.teachers.description" rows="4"></textarea></label>
+                  <label>Social Image URL <input name="seo.pages.teachers.image" type="text" /></label>
+                </article>
+                <article class="content-card">
+                  <h5>Contact Page</h5>
+                  <label>SEO Title <input name="seo.pages.contact.title" type="text" /></label>
+                  <label>Description <textarea name="seo.pages.contact.description" rows="4"></textarea></label>
+                  <label>Social Image URL <input name="seo.pages.contact.image" type="text" /></label>
+                </article>
+              </div>
             </section>
           </div>
 

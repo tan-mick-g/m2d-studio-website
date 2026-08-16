@@ -14,6 +14,37 @@ window.MTD_DEFAULT_CONTENT = {
       login: "https://madetodance.rezerv.co/"
     }
   },
+  seo: {
+    siteName: "Made To Dance Studio",
+    defaultImage: "assets/m2d-icon.png",
+    pages: {
+      home: {
+        title: "Made To Dance Studio",
+        description: "Made To Dance Studio offers social dance classes, schedules, packages, and community events in Metro Manila.",
+        image: "assets/m2d-icon.png"
+      },
+      about: {
+        title: "About Us | Made To Dance Studio",
+        description: "Learn about Made To Dance Studio, our story, philosophy, and welcoming social dance community in Metro Manila.",
+        image: "assets/m2d-icon.png"
+      },
+      services: {
+        title: "Services | Made To Dance Studio",
+        description: "Explore Made To Dance Studio services, including weddings, celebrations, and corporate wellness experiences.",
+        image: "assets/m2d-icon.png"
+      },
+      teachers: {
+        title: "Teachers | Made To Dance Studio",
+        description: "Meet the Made To Dance Studio teachers and learn about their styles, roles, and class approach.",
+        image: "assets/m2d-icon.png"
+      },
+      contact: {
+        title: "Contact | Made To Dance Studio",
+        description: "Contact Made To Dance Studio for class inquiries, private sessions, weddings, celebrations, and corporate wellness bookings.",
+        image: "assets/m2d-icon.png"
+      }
+    }
+  },
   hero: {
     title: "Lorem Ipsum",
     image: "https://images.unsplash.com/photo-1524594152303-9fd13543fe6e?auto=format&fit=crop&w=1800&q=82",

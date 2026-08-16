@@ -722,14 +722,16 @@ const activatePage = (pageName) => {
     "about-page": "About Page",
     "services-page": "Services Page",
     "teachers-page": "Teachers Page",
-    "contact-page": "Contact Page"
+    "contact-page": "Contact Page",
+    "seo-settings": "SEO Settings"
   };
   const previewUrls = {
     homepage: "index.html",
     "about-page": "about.html",
     "services-page": "services.html",
     "teachers-page": "teachers.html",
-    "contact-page": "contact.html"
+    "contact-page": "contact.html",
+    "seo-settings": "index.html"
   };
   if (editorPageLabel) editorPageLabel.textContent = pageLabels[pageName] || "Homepage";
   if (previewCurrentPageLink) {

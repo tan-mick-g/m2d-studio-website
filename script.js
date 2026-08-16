@@ -94,6 +94,65 @@ const setHref = (selector, value) => {
   });
 };
 
+const getCurrentSeoPageKey = () => {
+  const path = window.location.pathname.replace(/\/$/, "");
+  if (!path || path === "/index.html") return "home";
+  if (path.endsWith("/about") || path.endsWith("/about.html")) return "about";
+  if (path.endsWith("/services") || path.endsWith("/services.html")) return "services";
+  if (path.endsWith("/teachers") || path.endsWith("/teachers.html")) return "teachers";
+  if (path.endsWith("/contact") || path.endsWith("/contact.html")) return "contact";
+  return "home";
+};
+
+const ensureMeta = (attribute, name) => {
+  let element = document.head.querySelector(`meta[${attribute}="${name}"]`);
+  if (!element) {
+    element = document.createElement("meta");
+    element.setAttribute(attribute, name);
+    document.head.appendChild(element);
+  }
+  return element;
+};
+
+const setMetaContent = (attribute, name, value) => {
+  if (!value) return;
+  ensureMeta(attribute, name).setAttribute("content", value);
+};
+
+const setCanonical = () => {
+  const href = window.location.href.split("#")[0].split("?")[0];
+  let link = document.head.querySelector('link[rel="canonical"]');
+  if (!link) {
+    link = document.createElement("link");
+    link.rel = "canonical";
+    document.head.appendChild(link);
+  }
+  link.href = href;
+};
+
+const applySeo = (content = {}) => {
+  const pageKey = getCurrentSeoPageKey();
+  const pageSeo = content.seo?.pages?.[pageKey] || {};
+  const title = pageSeo.title || content.seo?.siteName || document.title;
+  const description = pageSeo.description || document.querySelector('meta[name="description"]')?.content || "";
+  const image = pageSeo.image || content.seo?.defaultImage || "assets/m2d-icon.png";
+  const currentUrl = window.location.href.split("#")[0].split("?")[0];
+
+  document.title = title;
+  setMetaContent("name", "description", description);
+  setMetaContent("property", "og:title", title);
+  setMetaContent("property", "og:description", description);
+  setMetaContent("property", "og:image", image);
+  setMetaContent("property", "og:type", "website");
+  setMetaContent("property", "og:site_name", content.seo?.siteName || "Made To Dance Studio");
+  setMetaContent("property", "og:url", currentUrl);
+  setMetaContent("name", "twitter:card", "summary_large_image");
+  setMetaContent("name", "twitter:title", title);
+  setMetaContent("name", "twitter:description", description);
+  setMetaContent("name", "twitter:image", image);
+  setCanonical();
+};
+
 const normalizePhoneHref = (value = "") => {
   const phone = String(value || "").trim().replace(/[^\d+]/g, "");
   return phone ? `tel:${phone}` : "#";
@@ -422,6 +481,7 @@ const renderTeacherSelector = (teachersPage = {}, bookingUrl = "") => {
 
 const applyContent = (content) => {
   window.MTD_SITE_CONTENT = content;
+  applySeo(content);
   const bookingUrl = content.bookingUrl || defaultContent.bookingUrl;
   const resolveUrl = (value, fallback = bookingUrl) => value || fallback || "#";
 
