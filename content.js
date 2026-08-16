@@ -181,7 +181,7 @@ window.MTD_DEFAULT_CONTENT = {
     alt: "Social dancing event"
   },
   footer: {
-    logoUrl: "assets/made-to-dance-logo.png",
+    logoUrl: "assets/m2d-icon-cream.png",
     bookLabel: "Book Now",
     bookUrl: "https://madetodance.rezerv.co/",
     address: "2/F East Wing, Estancia Mall\nCapitol Commons, Meralco Ave.,\nPasig City, 1605\nMetro Manila",

@@ -45,6 +45,13 @@ const normalizeServicesPageContent = (content) => {
   return content;
 };
 
+const normalizeFooterContent = (content) => {
+  if (content?.footer?.logoUrl === "assets/made-to-dance-logo.png") {
+    content.footer.logoUrl = defaultContent.footer?.logoUrl || "assets/m2d-icon-cream.png";
+  }
+  return content;
+};
+
 const getPath = (object, path) =>
   path.split(".").reduce((value, key) => (value == null ? value : value[key]), object);
 
@@ -321,7 +328,7 @@ const loadContent = async () => {
     return defaultContent;
   }
 
-  return normalizeServicesPageContent(deepMerge(defaultContent, data.content));
+  return normalizeFooterContent(normalizeServicesPageContent(deepMerge(defaultContent, data.content)));
 };
 
 menuToggle?.addEventListener("click", () => {

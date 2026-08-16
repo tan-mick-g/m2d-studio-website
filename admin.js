@@ -68,6 +68,13 @@ const normalizeServicesPageContent = (content) => {
   return content;
 };
 
+const normalizeFooterContent = (content) => {
+  if (content?.footer?.logoUrl === "assets/made-to-dance-logo.png") {
+    content.footer.logoUrl = defaultContentForAdmin.footer?.logoUrl || "assets/m2d-icon-cream.png";
+  }
+  return content;
+};
+
 const setMessage = (element, message, type = "") => {
   if (!element) return;
   element.textContent = message || "";
@@ -554,7 +561,9 @@ const loadContent = async () => {
 
   if (error && error.code !== "PGRST116") throw error;
 
-  currentContent = normalizeServicesPageContent(data?.content ? deepMerge(defaultContentForAdmin, data.content) : structuredClone(defaultContentForAdmin));
+  currentContent = normalizeFooterContent(
+    normalizeServicesPageContent(data?.content ? deepMerge(defaultContentForAdmin, data.content) : structuredClone(defaultContentForAdmin))
+  );
   fillForm(currentContent);
 };
 
@@ -660,7 +669,7 @@ const saveContent = async () => {
     return;
   }
 
-  currentContent = normalizeServicesPageContent(deepMerge(defaultContentForAdmin, data.content));
+  currentContent = normalizeFooterContent(normalizeServicesPageContent(deepMerge(defaultContentForAdmin, data.content)));
   fillForm(currentContent);
   setEditorMessage(`Saved and published at ${getStatusTime()}. Refresh the public site to see the latest content.`, "success");
   setSavingState(false);

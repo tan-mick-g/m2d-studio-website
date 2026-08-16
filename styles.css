@@ -931,16 +931,13 @@ h2 {
 }
 
 .footer-mark {
-  width: clamp(220px, 18vw, 330px);
-  overflow: hidden;
+  width: clamp(160px, 18vw, 230px);
 }
 
 .footer-mark img {
-  width: 580px;
-  max-width: none;
-  height: clamp(150px, 14vw, 230px);
-  object-fit: cover;
-  object-position: left center;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
 }
 
 .footer-booking,
@@ -1229,11 +1226,11 @@ h2 {
   }
 
   .footer-mark {
-    width: 220px;
+    width: 170px;
   }
 
   .footer-mark img {
-    width: 420px;
-    height: 150px;
+    width: 100%;
+    height: auto;
   }
 }
