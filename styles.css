@@ -889,6 +889,7 @@ h2 {
 .page-hero-copy {
   display: grid;
   gap: 24px;
+  min-width: 0;
 }
 
 .page-hero-copy h1 {
@@ -898,6 +899,8 @@ h2 {
   font-size: clamp(4rem, 9vw, 8rem);
   line-height: 0.9;
   text-transform: uppercase;
+  overflow-wrap: break-word;
+  text-wrap: balance;
 }
 
 .page-hero-copy p:not(.eyebrow) {
@@ -932,6 +935,7 @@ h2 {
 .about-cta {
   display: grid;
   gap: 24px;
+  min-width: 0;
 }
 
 .about-story-copy p,
@@ -1031,6 +1035,16 @@ h2 {
 .service-feature-copy {
   display: grid;
   gap: 24px;
+  min-width: 0;
+}
+
+.service-feature-copy h2,
+.about-story-copy h2,
+.about-beliefs h2,
+.about-location h2,
+.about-cta h2 {
+  overflow-wrap: break-word;
+  text-wrap: balance;
 }
 
 .service-feature-copy p:not(.eyebrow) {
@@ -1480,6 +1494,29 @@ h2 {
     font-size: clamp(3.4rem, 7vw, 6.1rem);
   }
 
+  .page-hero,
+  .service-feature,
+  .service-feature-reverse,
+  .about-story {
+    gap: clamp(28px, 4vw, 58px);
+  }
+
+  .page-hero {
+    grid-template-columns: minmax(0, 0.92fr) minmax(340px, 1.08fr);
+  }
+
+  .service-feature {
+    grid-template-columns: minmax(0, 0.9fr) minmax(330px, 1.1fr);
+  }
+
+  .service-feature-reverse {
+    grid-template-columns: minmax(330px, 1.1fr) minmax(0, 0.9fr);
+  }
+
+  .about-story {
+    grid-template-columns: minmax(320px, 1fr) minmax(0, 1fr);
+  }
+
   .about-beliefs h2 {
     font-size: clamp(2.4rem, 4.8vw, 4.5rem);
   }
@@ -1548,6 +1585,31 @@ h2 {
   .service-feature,
   .service-feature-reverse {
     gap: clamp(30px, 4vw, 52px);
+  }
+
+  .page-hero,
+  .about-story,
+  .service-feature,
+  .service-feature-reverse {
+    grid-template-columns: 1fr;
+  }
+
+  .page-hero {
+    min-height: 0;
+  }
+
+  .page-hero-copy {
+    max-width: 760px;
+  }
+
+  .page-hero-image,
+  .about-story-image,
+  .service-feature-image {
+    min-height: clamp(360px, 54vw, 560px);
+  }
+
+  .service-feature-reverse .service-feature-copy {
+    order: 0;
   }
 
   .teacher-stage {
