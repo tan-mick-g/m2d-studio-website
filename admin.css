@@ -408,6 +408,25 @@
   background: rgba(255, 253, 248, 0.7);
 }
 
+.subject-template-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.subject-template-card {
+  display: grid;
+  gap: 14px;
+  border: 1px solid rgba(15, 31, 47, 0.12);
+  border-radius: 8px;
+  padding: 16px;
+  background: #fffdf8;
+}
+
+.subject-template-card textarea {
+  min-height: 190px;
+  resize: vertical;
+}
+
 .media-group-heading {
   display: grid;
   gap: 4px;
@@ -626,7 +645,8 @@ button:disabled {
   .json-grid,
   .media-card-grid,
   .link-card-grid,
-  .content-card-grid {
+  .content-card-grid,
+  .subject-template-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
