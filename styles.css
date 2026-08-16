@@ -1187,6 +1187,10 @@ h2 {
   object-fit: contain;
 }
 
+.teacher-feature-media.is-cutout img {
+  object-fit: contain;
+}
+
 .teacher-feature-copy {
   position: relative;
   z-index: 2;

@@ -284,6 +284,8 @@ const renderScheduleWidget = (schedule) => {
 
 const isVideoMedia = (value = "") => /\.(webm|mp4|mov)(\?.*)?$/i.test(String(value));
 
+const isAnimatedImageMedia = (value = "") => /\.(gif|webp)(\?.*)?$/i.test(String(value));
+
 const isValidCssColor = (value = "") => /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(String(value).trim());
 
 const applySelectedTeacher = (teacher, index, teachersPage = {}, bookingUrl = "") => {
@@ -306,6 +308,7 @@ const applySelectedTeacher = (teacher, index, teachersPage = {}, bookingUrl = ""
   if (imageElement) {
     imageElement.classList.toggle("has-image", Boolean(image));
     imageElement.classList.toggle("is-video", isVideoMedia(image));
+    imageElement.classList.toggle("is-cutout", isAnimatedImageMedia(image));
     imageElement.setAttribute("aria-label", teacher.alt || teacher.name || "Dance teacher");
     imageElement.innerHTML = image
       ? isVideoMedia(image)
