@@ -1470,6 +1470,26 @@ h2 {
   padding-top: clamp(8px, 2vw, 18px);
 }
 
+.legal-actions .button {
+  min-width: min(100%, 280px);
+  text-decoration: none;
+}
+
+.legal-actions .navy-button {
+  color: var(--cream);
+}
+
+.legal-actions .light-button {
+  color: var(--navy);
+}
+
+.has-js .legal-page .section-pad,
+.has-js .legal-page .site-footer {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
 .teacher-selector {
   display: grid;
   gap: clamp(28px, 4vw, 52px);
