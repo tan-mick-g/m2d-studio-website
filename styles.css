@@ -1087,6 +1087,10 @@ h2 {
   gap: clamp(28px, 4vw, 52px);
 }
 
+.teacher-avatar-scroll {
+  position: relative;
+}
+
 .teacher-avatar-grid {
   display: flex;
   gap: clamp(10px, 1.4vw, 18px);
@@ -1094,6 +1098,16 @@ h2 {
   overflow-x: auto;
   padding: 6px 4px 18px;
   scroll-snap-type: x proximity;
+}
+
+.teacher-avatar-hint {
+  display: none;
+  margin: -18px 0 0;
+  color: rgba(67, 45, 43, 0.72);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-align: center;
+  text-transform: uppercase;
 }
 
 .teacher-avatar {
@@ -1534,32 +1548,36 @@ h2 {
   }
 
   .teacher-stage {
-    grid-template-columns: 1fr;
-    min-height: clamp(680px, 92vw, 880px);
-    border-radius: 58px;
+    grid-template-columns: minmax(0, 0.52fr) minmax(250px, 0.48fr);
+    align-items: center;
+    min-height: clamp(520px, 62vw, 680px);
+    border-radius: 54px;
+    padding: clamp(24px, 4vw, 42px);
     background: var(--teacher-panel, var(--teal));
   }
 
   .teacher-feature-media {
-    grid-column: 1;
+    grid-column: 2;
     grid-row: 1;
-    justify-self: end;
+    justify-self: stretch;
     align-self: end;
-    width: min(58%, 520px);
-    min-height: clamp(430px, 60vw, 620px);
+    width: 100%;
+    min-height: clamp(410px, 56vw, 590px);
     margin-left: 0;
   }
 
   .teacher-feature-media img,
   .teacher-feature-media video {
-    height: clamp(430px, 60vw, 620px);
+    height: clamp(410px, 56vw, 590px);
   }
 
   .teacher-feature-copy {
     grid-column: 1;
     grid-row: 1;
-    max-width: min(62%, 620px);
-    padding-bottom: clamp(42px, 7vw, 82px);
+    align-content: center;
+    max-width: none;
+    padding: clamp(26px, 3.5vw, 46px);
+    padding-right: clamp(18px, 3vw, 34px);
   }
 }
 
@@ -1612,6 +1630,37 @@ h2 {
 
   .footer-socials div {
     justify-content: flex-start;
+  }
+}
+
+@media (max-width: 900px) {
+  .teacher-stage {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    min-height: auto;
+    border-radius: 46px;
+    padding: 24px;
+    background: var(--teacher-panel, var(--teal));
+  }
+
+  .teacher-feature-copy {
+    grid-column: 1;
+    grid-row: 1;
+    max-width: none;
+    padding: 28px 26px 4px;
+  }
+
+  .teacher-feature-media {
+    grid-column: 1;
+    grid-row: 2;
+    justify-self: center;
+    width: min(88%, 520px);
+    min-height: clamp(360px, 62vw, 540px);
+  }
+
+  .teacher-feature-media img,
+  .teacher-feature-media video {
+    height: clamp(360px, 62vw, 540px);
   }
 }
 
@@ -1695,11 +1744,11 @@ h2 {
   .teacher-stage {
     border-radius: 42px;
     padding: 22px;
-    min-height: 720px;
+    min-height: auto;
   }
 
   .teacher-feature-media {
-    width: min(86%, 390px);
+    width: min(100%, 390px);
     min-height: 410px;
   }
 
@@ -1712,7 +1761,6 @@ h2 {
     max-width: none;
     align-content: start;
     padding: 30px;
-    padding-bottom: 430px;
   }
 
   .contact-form {
@@ -1779,6 +1827,31 @@ h2 {
     justify-content: flex-start;
     margin-inline: -22px;
     padding-inline: 22px;
+  }
+
+  .teacher-avatar-scroll::before,
+  .teacher-avatar-scroll::after {
+    content: "";
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    bottom: 18px;
+    width: 36px;
+    pointer-events: none;
+  }
+
+  .teacher-avatar-scroll::before {
+    left: -22px;
+    background: linear-gradient(90deg, var(--cream-soft), rgba(254, 255, 233, 0));
+  }
+
+  .teacher-avatar-scroll::after {
+    right: -22px;
+    background: linear-gradient(270deg, var(--cream-soft), rgba(254, 255, 233, 0));
+  }
+
+  .teacher-avatar-hint {
+    display: block;
   }
 
   .teacher-stage {

@@ -411,7 +411,10 @@ const renderTeacherSelector = (teachersPage = {}, bookingUrl = "") => {
     .join("");
 
   avatars.querySelectorAll("[data-teacher-avatar]").forEach((button) => {
-    button.addEventListener("click", () => applySelectedTeacher(teachers[Number(button.dataset.teacherAvatar)], Number(button.dataset.teacherAvatar), teachersPage, bookingUrl));
+    button.addEventListener("click", () => {
+      applySelectedTeacher(teachers[Number(button.dataset.teacherAvatar)], Number(button.dataset.teacherAvatar), teachersPage, bookingUrl);
+      button.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    });
   });
 
   applySelectedTeacher(teachers[0], 0, teachersPage, bookingUrl);
