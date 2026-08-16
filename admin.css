@@ -459,6 +459,33 @@
   justify-self: start;
 }
 
+.teacher-profile-manager {
+  display: grid;
+  gap: 18px;
+}
+
+.teacher-profile-grid {
+  display: grid;
+  gap: 18px;
+}
+
+.teacher-profile-card {
+  display: grid;
+  gap: 18px;
+  border: 1px solid rgba(15, 31, 47, 0.12);
+  border-radius: 8px;
+  padding: 16px;
+  background: #fffdf8;
+}
+
+.teacher-profile-card .media-card {
+  grid-template-columns: minmax(220px, 0.4fr) minmax(280px, 0.6fr);
+}
+
+.teacher-profile-card .media-preview {
+  min-height: 220px;
+}
+
 .media-group-heading {
   display: grid;
   gap: 4px;
@@ -680,6 +707,10 @@ button:disabled {
   .content-card-grid,
   .subject-template-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .teacher-profile-grid {
+    grid-template-columns: 1fr;
   }
 
   .wide-field {

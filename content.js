@@ -156,7 +156,7 @@ window.MTD_DEFAULT_CONTENT = {
     title: "Our Faculty",
     body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.",
     cta: "Meet Our Teachers",
-    ctaUrl: "/contact",
+    ctaUrl: "/teachers",
     items: [
       { name: "Teacher 1", image: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=700&q=82", alt: "Dance faculty placeholder" },
       { name: "Teacher 2", image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=700&q=82", alt: "Dance faculty placeholder" },
@@ -166,6 +166,29 @@ window.MTD_DEFAULT_CONTENT = {
       { name: "Teacher 6", image: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=700&q=82", alt: "Dance faculty placeholder" },
       { name: "Teacher 7", image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=700&q=82", alt: "Dance faculty placeholder" },
       { name: "Teacher 8", image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=700&q=82", alt: "Dance faculty placeholder" }
+    ]
+  },
+  teachersPage: {
+    eyebrow: "Teachers",
+    title: "Meet The People Who Make The Room Feel Easy",
+    intro: "Get to know the teachers behind Made To Dance. Each one brings a different mix of rhythm, warmth, clarity, and personality, so students can find the class and coach that feels right for them.",
+    heroImage: "https://images.unsplash.com/photo-1547153760-18fc86324498?auto=format&fit=crop&w=1800&q=82",
+    heroAlt: "Dance teachers posing together",
+    sectionTitle: "Our Teachers",
+    sectionBody: "Use these profiles to learn about each teacher's style, favorite dances, and what kind of class experience they create.",
+    ctaLabel: "Book A Class",
+    items: [
+      { name: "Teacher 1", role: "Dance Teacher", styles: "Social Dance, Beginner Foundations", bio: "A welcoming teacher who helps students feel comfortable from the first count.", bookingUrl: "https://madetodance.rezerv.co/", image: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=82", alt: "Dance teacher placeholder" },
+      { name: "Teacher 2", role: "Dance Teacher", styles: "Latin, Partner Dance", bio: "Brings clear technique, playful energy, and a steady sense of musicality to class.", bookingUrl: "https://madetodance.rezerv.co/", image: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=900&q=82", alt: "Dance teacher placeholder" },
+      { name: "Teacher 3", role: "Dance Teacher", styles: "Salsa, Bachata", bio: "Keeps classes lively, social, and easy to follow for new and returning dancers.", bookingUrl: "https://madetodance.rezerv.co/", image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=900&q=82", alt: "Dance teacher placeholder" },
+      { name: "Teacher 4", role: "Dance Teacher", styles: "Ballroom, Social Dance", bio: "Focuses on confidence, connection, and movement that feels natural.", bookingUrl: "https://madetodance.rezerv.co/", image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=900&q=82", alt: "Dance teacher placeholder" },
+      { name: "Teacher 5", role: "Dance Teacher", styles: "Wedding Dance, Partnering", bio: "Helps students find ease and polish without losing their own personality.", bookingUrl: "https://madetodance.rezerv.co/", image: "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=900&q=82", alt: "Dance teacher placeholder" },
+      { name: "Teacher 6", role: "Dance Teacher", styles: "Urban Social, Rhythm Training", bio: "Makes rhythm approachable and gives students permission to enjoy the process.", bookingUrl: "https://madetodance.rezerv.co/", image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=900&q=82", alt: "Dance teacher placeholder" },
+      { name: "Teacher 7", role: "Dance Teacher", styles: "Social Dance, Styling", bio: "Balances structure with expressive movement so students can grow with joy.", bookingUrl: "https://madetodance.rezerv.co/", image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=900&q=82", alt: "Dance teacher placeholder" },
+      { name: "Teacher 8", role: "Dance Teacher", styles: "Beginner Classes, Partner Dance", bio: "Known for patient teaching, friendly corrections, and a relaxed class mood.", bookingUrl: "https://madetodance.rezerv.co/", image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=82", alt: "Dance teacher placeholder" },
+      { name: "Teacher 9", role: "Dance Teacher", styles: "Latin Social, Performance Basics", bio: "Helps students build presence, timing, and confidence one layer at a time.", bookingUrl: "https://madetodance.rezerv.co/", image: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=900&q=82", alt: "Dance teacher placeholder" },
+      { name: "Teacher 10", role: "Dance Teacher", styles: "Community Classes, Social Dance", bio: "Creates a room where students can laugh, learn, and keep coming back.", bookingUrl: "https://madetodance.rezerv.co/", image: "https://images.unsplash.com/photo-1512316609839-ce289d3eba0a?auto=format&fit=crop&w=900&q=82", alt: "Dance teacher placeholder" },
+      { name: "Teacher 11", role: "Dance Teacher", styles: "Private Coaching, Foundations", bio: "Supports students with clear feedback and a calm, encouraging teaching style.", bookingUrl: "https://madetodance.rezerv.co/", image: "https://images.unsplash.com/photo-1524250502761-1ac6f2e30d43?auto=format&fit=crop&w=900&q=82", alt: "Dance teacher placeholder" }
     ]
   },
   contact: {

@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Meet the Made To Dance Studio teachers and learn about their styles, roles, and class approach."
+    />
+    <title>Teachers | Made To Dance Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="content-loading teachers-page">
+    <header class="site-header" data-header>
+      <a class="brand" href="/" aria-label="Made To Dance home">
+        <img src="assets/m2d-horizontal-cream.png" alt="Made To Dance Studio" />
+      </a>
+      <nav class="desktop-nav" aria-label="Primary navigation">
+        <a href="/" data-nav-link="home">Home</a>
+        <a href="/about" data-nav-link="about">About</a>
+        <a href="/#classes" data-nav-link="classes">Classes</a>
+        <a href="/#schedule" data-nav-link="schedule">Schedule</a>
+        <a href="/services" data-nav-link="services">Services</a>
+        <a href="/contact" data-nav-link="contact">Contact</a>
+        <a href="/#contact" data-nav-link="faq">FAQ</a>
+      </nav>
+      <div class="header-actions">
+        <a class="login-link" href="https://madetodance.rezerv.co/" data-nav-link="login">Login / Sign Up</a>
+        <a class="nav-cta" href="https://madetodance.rezerv.co/" data-booking>Book Here</a>
+      </div>
+      <button class="menu-toggle" type="button" aria-label="Open menu" data-menu-toggle>
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </header>
+
+    <nav class="mobile-nav" aria-label="Mobile navigation" data-mobile-nav>
+      <a href="/" data-nav-link="home">Home</a>
+      <a href="/about" data-nav-link="about">About</a>
+      <a href="/#classes" data-nav-link="classes">Classes</a>
+      <a href="/#schedule" data-nav-link="schedule">Schedule</a>
+      <a href="/services" data-nav-link="services">Services</a>
+      <a href="/contact" data-nav-link="contact">Contact</a>
+      <a href="/#contact" data-nav-link="faq">FAQ</a>
+      <a href="https://madetodance.rezerv.co/" data-nav-link="login">Login / Sign Up</a>
+      <a class="nav-cta" href="https://madetodance.rezerv.co/" data-booking>Book Here</a>
+    </nav>
+
+    <main>
+      <section class="page-hero teachers-page-hero">
+        <div class="page-hero-copy">
+          <p class="eyebrow" data-text="teachersPage.eyebrow">Teachers</p>
+          <h1 data-text="teachersPage.title">Meet The People Who Make The Room Feel Easy</h1>
+          <p data-text="teachersPage.intro"></p>
+        </div>
+        <div class="image-fill page-hero-image" role="img" data-image="teachersPage.heroImage" data-aria="teachersPage.heroAlt"></div>
+      </section>
+
+      <section class="teachers-directory section-pad">
+        <div class="teachers-directory-heading">
+          <p class="eyebrow">Faculty</p>
+          <h2 data-text="teachersPage.sectionTitle">Our Teachers</h2>
+          <p data-text="teachersPage.sectionBody"></p>
+        </div>
+        <div class="teacher-grid" data-teacher-cards></div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-mark">
+        <img src="assets/m2d-icon-cream.png" alt="Made To Dance" data-footer-logo />
+      </div>
+      <div class="footer-booking">
+        <a class="button light-button" href="https://madetodance.rezerv.co/" data-footer-booking>Book Now</a>
+        <p data-footer-address></p>
+      </div>
+      <div class="footer-socials">
+        <div>
+          <a aria-label="Instagram" href="#" data-social="instagram">◎</a>
+          <a aria-label="Facebook" href="#" data-social="facebook">f</a>
+        </div>
+        <p data-text="footer.copyright">Copyright 2026 Made To Dance. All Rights Reserved</p>
+        <a href="#" data-terms>Terms and Conditions</a>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="content.js"></script>
+    <script src="supabase-config.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

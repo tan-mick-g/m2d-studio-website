@@ -52,6 +52,11 @@ const normalizeFooterContent = (content) => {
   return content;
 };
 
+const normalizeFacultyContent = (content) => {
+  if (content?.faculty?.ctaUrl === "/contact") content.faculty.ctaUrl = "/teachers";
+  return content;
+};
+
 const getPath = (object, path) =>
   path.split(".").reduce((value, key) => (value == null ? value : value[key]), object);
 
@@ -346,6 +351,22 @@ const applyContent = (content) => {
     </article>
   `);
 
+  renderCards("[data-teacher-cards]", content.teachersPage?.items, (item, index) => {
+    const image = item.image || defaultContent.teachersPage?.items?.[index]?.image || "";
+    return `
+      <article class="teacher-card">
+        <div class="teacher-card-image image-fill ${image ? "has-image" : ""}" style="${image ? `background-image:url('${escapeHtml(image)}')` : ""}" role="img" aria-label="${escapeHtml(item.alt || item.name || "Dance teacher")}"></div>
+        <div class="teacher-card-copy">
+          <p>${escapeHtml(item.role || "Dance Teacher")}</p>
+          <h3>${escapeHtml(item.name || `Teacher ${index + 1}`)}</h3>
+          <p class="teacher-styles">${escapeHtml(item.styles || "")}</p>
+          <p>${escapeHtml(item.bio || "")}</p>
+          <a class="button navy-button" href="${escapeHtml(resolveUrl(item.bookingUrl, bookingUrl))}">${escapeHtml(content.teachersPage?.ctaLabel || "Book A Class")}</a>
+        </div>
+      </article>
+    `;
+  });
+
   setHref("[data-footer-booking]", resolveUrl(content.footer?.bookUrl, bookingUrl));
   setText("[data-footer-booking]", content.footer?.bookLabel || "Book Now");
   setText("[data-footer-address]", content.footer?.address || "");
@@ -375,7 +396,7 @@ const loadContent = async () => {
     return defaultContent;
   }
 
-  return normalizeFooterContent(normalizeServicesPageContent(deepMerge(defaultContent, data.content)));
+  return normalizeFacultyContent(normalizeFooterContent(normalizeServicesPageContent(deepMerge(defaultContent, data.content))));
 };
 
 menuToggle?.addEventListener("click", () => {
@@ -422,7 +443,7 @@ window.addEventListener("message", (event) => {
 
 const revealElements = () => {
   const elements = document.querySelectorAll(
-    ".section-pad, .package-band, .contact-section, .package-card, .class-pick, .faculty-photo, .about-copy, .about-photo, .package-band-panel, .contact-copy, .contact-form, .site-footer, .page-hero-copy, .page-hero-image, .about-story-image, .about-story-copy, .about-beliefs article, .service-feature-copy, .service-feature-image"
+    ".section-pad, .package-band, .contact-section, .package-card, .class-pick, .faculty-photo, .teacher-card, .about-copy, .about-photo, .package-band-panel, .contact-copy, .contact-form, .site-footer, .page-hero-copy, .page-hero-image, .about-story-image, .about-story-copy, .about-beliefs article, .service-feature-copy, .service-feature-image"
   );
   if (!("IntersectionObserver" in window)) {
     elements.forEach((element) => element.classList.add("is-visible"));

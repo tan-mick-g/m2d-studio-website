@@ -25,6 +25,8 @@ const mediaSections = document.querySelectorAll("[data-section-media]");
 const cardSections = document.querySelectorAll("[data-section-cards]");
 const subjectTemplatesContainer = document.querySelector("[data-subject-templates]");
 const addSubjectTemplateButton = document.querySelector("[data-add-subject-template]");
+const teacherProfilesContainer = document.querySelector("[data-teacher-profiles]");
+const addTeacherProfileButton = document.querySelector("[data-add-teacher-profile]");
 
 let supabaseClient;
 let currentContent = defaultContentForAdmin;
@@ -74,6 +76,11 @@ const normalizeFooterContent = (content) => {
   if (content?.footer?.logoUrl === "assets/made-to-dance-logo.png") {
     content.footer.logoUrl = defaultContentForAdmin.footer?.logoUrl || "assets/m2d-icon-cream.png";
   }
+  return content;
+};
+
+const normalizeFacultyContent = (content) => {
+  if (content?.faculty?.ctaUrl === "/contact") content.faculty.ctaUrl = "/teachers";
   return content;
 };
 
@@ -188,6 +195,80 @@ const renderSubjectTemplates = (subjects = []) => {
     .join("");
 };
 
+const getTeacherProfilesFromForm = () => {
+  if (!teacherProfilesContainer) return [];
+  return [...teacherProfilesContainer.querySelectorAll("[data-teacher-profile-card]")].map((card) => ({
+    name: card.querySelector('[data-teacher-field="name"]')?.value || "",
+    role: card.querySelector('[data-teacher-field="role"]')?.value || "",
+    styles: card.querySelector('[data-teacher-field="styles"]')?.value || "",
+    bio: card.querySelector('[data-teacher-field="bio"]')?.value || "",
+    bookingUrl: card.querySelector('[data-teacher-field="bookingUrl"]')?.value || "",
+    image: card.querySelector('[data-teacher-field="image"]')?.value || "",
+    alt: card.querySelector('[data-teacher-field="alt"]')?.value || ""
+  }));
+};
+
+const renderTeacherProfiles = (teachers = []) => {
+  if (!teacherProfilesContainer) return;
+
+  const profiles = Array.isArray(teachers) && teachers.length ? teachers : [{ name: "", role: "", styles: "", bio: "", bookingUrl: "", image: "", alt: "" }];
+  teacherProfilesContainer.innerHTML = profiles
+    .map((teacher, index) => {
+      const image = teacher.image || "";
+      return `
+        <article class="teacher-profile-card" data-teacher-profile-card>
+          <div class="subject-template-card-heading">
+            <h4>Teacher ${index + 1}</h4>
+            <button class="text-button subject-delete-button" type="button" data-delete-teacher-profile="${index}" ${profiles.length <= 1 ? "disabled" : ""}>Delete</button>
+          </div>
+          <div class="field-grid">
+            <label>
+              Name
+              <input name="teachersPage.items.${index}.name" type="text" value="${escapeHtml(teacher.name || "")}" data-teacher-field="name" />
+            </label>
+            <label>
+              Role / Title
+              <input name="teachersPage.items.${index}.role" type="text" value="${escapeHtml(teacher.role || "")}" data-teacher-field="role" />
+            </label>
+            <label>
+              Dance Styles
+              <input name="teachersPage.items.${index}.styles" type="text" value="${escapeHtml(teacher.styles || "")}" data-teacher-field="styles" />
+            </label>
+            <label>
+              Booking Link
+              <input name="teachersPage.items.${index}.bookingUrl" type="url" value="${escapeHtml(teacher.bookingUrl || "")}" data-teacher-field="bookingUrl" />
+            </label>
+            <label class="wide-field">
+              Short Bio
+              <textarea name="teachersPage.items.${index}.bio" rows="4" data-teacher-field="bio">${escapeHtml(teacher.bio || "")}</textarea>
+            </label>
+            <label>
+              Image Alt Text
+              <input name="teachersPage.items.${index}.alt" type="text" value="${escapeHtml(teacher.alt || "")}" data-teacher-field="alt" />
+            </label>
+          </div>
+          <article class="media-card" data-media-card>
+            <div class="media-preview">
+              <img src="${escapeHtml(image)}" alt="${escapeHtml(teacher.alt || teacher.name || "Teacher image")}" />
+            </div>
+            <div class="media-fields">
+              <label>
+                Teacher Image URL
+                <input name="teachersPage.items.${index}.image" type="url" value="${escapeHtml(image)}" data-media-url data-teacher-field="image" />
+              </label>
+              <label class="upload-field">
+                Upload Image
+                <input type="file" accept="image/*" data-media-upload data-target-path="teachersPage.items.${index}.image" />
+              </label>
+              <a href="${escapeHtml(image || "#")}" target="_blank" rel="noreferrer" data-media-link>Open media</a>
+            </div>
+          </article>
+        </article>
+      `;
+    })
+    .join("");
+};
+
 const getSectionContainer = (containers, attribute, name) =>
   [...containers].find((container) => container.dataset[attribute] === name);
 
@@ -283,6 +364,7 @@ const renderMediaFields = (content) => {
   const servicesPageWeddingContainer = getSectionContainer(mediaSections, "sectionMedia", "servicesPageWedding");
   const servicesPageCorporateContainer = getSectionContainer(mediaSections, "sectionMedia", "servicesPageCorporate");
   const servicesPageOtherContainer = getSectionContainer(mediaSections, "sectionMedia", "servicesPageOther");
+  const teachersPageHeroContainer = getSectionContainer(mediaSections, "sectionMedia", "teachersPageHero");
 
   const heroImages = (content.hero?.images?.length ? content.hero.images : [content.hero?.image, "", ""]).slice(0, 5);
   while (heroImages.length < 5) heroImages.push("");
@@ -359,6 +441,11 @@ const renderMediaFields = (content) => {
   if (servicesPageOtherContainer) {
     servicesPageOtherContainer.innerHTML = renderMediaGroup("Other Services Image", "Image shown with the other services section.", [
       mediaInput({ path: "servicesPage.otherImage", label: "Other Services Image", value: content.servicesPage?.otherImage })
+    ]);
+  }
+  if (teachersPageHeroContainer) {
+    teachersPageHeroContainer.innerHTML = renderMediaGroup("Hero Image", "Main image shown at the top of the Teachers page.", [
+      mediaInput({ path: "teachersPage.heroImage", label: "Teachers Page Hero Image", value: content.teachersPage?.heroImage })
     ]);
   }
 };
@@ -465,6 +552,7 @@ const fillForm = (content) => {
   renderCardFields(content);
   renderMediaFields(content);
   renderSubjectTemplates(content.contact?.subjects);
+  renderTeacherProfiles(content.teachersPage?.items);
 
   editorForm.querySelectorAll("[name]").forEach((field) => {
     const value = getPath(content, field.name);
@@ -511,6 +599,7 @@ const readForm = () => {
   }
 
   nextContent.contact.subjects = getSubjectTemplatesFromForm().filter((subject) => subject.label.trim() || subject.template.trim());
+  nextContent.teachersPage.items = getTeacherProfilesFromForm().filter((teacher) => teacher.name.trim() || teacher.bio.trim() || teacher.image.trim());
 
   return nextContent;
 };
@@ -573,12 +662,14 @@ const activatePage = (pageName) => {
     homepage: "Homepage",
     "about-page": "About Page",
     "services-page": "Services Page",
+    "teachers-page": "Teachers Page",
     "contact-page": "Contact Page"
   };
   const previewUrls = {
     homepage: "index.html",
     "about-page": "about.html",
     "services-page": "services.html",
+    "teachers-page": "teachers.html",
     "contact-page": "contact.html"
   };
   if (editorPageLabel) editorPageLabel.textContent = pageLabels[pageName] || "Homepage";
@@ -600,8 +691,10 @@ const loadContent = async () => {
 
   if (error && error.code !== "PGRST116") throw error;
 
-  currentContent = normalizeFooterContent(
-    normalizeServicesPageContent(data?.content ? deepMerge(defaultContentForAdmin, data.content) : structuredClone(defaultContentForAdmin))
+  currentContent = normalizeFacultyContent(
+    normalizeFooterContent(
+      normalizeServicesPageContent(data?.content ? deepMerge(defaultContentForAdmin, data.content) : structuredClone(defaultContentForAdmin))
+    )
   );
   fillForm(currentContent);
 };
@@ -708,7 +801,7 @@ const saveContent = async () => {
     return;
   }
 
-  currentContent = normalizeFooterContent(normalizeServicesPageContent(deepMerge(defaultContentForAdmin, data.content)));
+  currentContent = normalizeFacultyContent(normalizeFooterContent(normalizeServicesPageContent(deepMerge(defaultContentForAdmin, data.content))));
   fillForm(currentContent);
   setEditorMessage(`Saved and published at ${getStatusTime()}. Refresh the public site to see the latest content.`, "success");
   setSavingState(false);
@@ -854,6 +947,34 @@ subjectTemplatesContainer?.addEventListener("click", (event) => {
   subjects.splice(Number(deleteButton.dataset.deleteSubjectTemplate), 1);
   renderSubjectTemplates(subjects);
   setEditorMessage("Subject template removed. Save changes to publish this update.");
+});
+
+addTeacherProfileButton?.addEventListener("click", () => {
+  const teachers = getTeacherProfilesFromForm();
+  teachers.push({
+    name: `Teacher ${teachers.length + 1}`,
+    role: "Dance Teacher",
+    styles: "Social Dance",
+    bio: "Add a short teacher bio here.",
+    bookingUrl: currentContent.bookingUrl || defaultContentForAdmin.bookingUrl || "",
+    image: "",
+    alt: "Dance teacher"
+  });
+  renderTeacherProfiles(teachers);
+  teacherProfilesContainer?.querySelector(`[name="teachersPage.items.${teachers.length - 1}.name"]`)?.focus();
+  setEditorMessage("New teacher profile added. Save changes to publish it.");
+});
+
+teacherProfilesContainer?.addEventListener("click", (event) => {
+  const deleteButton = event.target.closest("[data-delete-teacher-profile]");
+  if (!deleteButton) return;
+
+  const teachers = getTeacherProfilesFromForm();
+  if (teachers.length <= 1) return;
+
+  teachers.splice(Number(deleteButton.dataset.deleteTeacherProfile), 1);
+  renderTeacherProfiles(teachers);
+  setEditorMessage("Teacher profile removed. Save changes to publish this update.");
 });
 
 editorForm.addEventListener("input", (event) => {
