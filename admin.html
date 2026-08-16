@@ -103,6 +103,7 @@
               <button type="button" data-page-tab="services-page">Services Page</button>
               <button type="button" data-page-tab="teachers-page">Teachers Page</button>
               <button type="button" data-page-tab="contact-page">Contact Page</button>
+              <button type="button" data-page-tab="faq-page">FAQ Page</button>
               <button type="button" data-page-tab="seo-settings">SEO Settings</button>
             </div>
 
@@ -153,6 +154,11 @@
               <button class="is-active" type="button" data-editor-tab="contact-page-copy">Copy</button>
               <button type="button" data-editor-tab="contact-page-form">Form & Email</button>
               <button type="button" data-editor-tab="contact-page-media">Media</button>
+            </div>
+
+            <div class="editor-tabs" role="tablist" aria-label="FAQ page sections" data-page-tabs="faq-page">
+              <button class="is-active" type="button" data-editor-tab="faq-page-copy">Copy</button>
+              <button type="button" data-editor-tab="faq-page-questions">Questions</button>
             </div>
 
             <div class="editor-tabs" role="tablist" aria-label="SEO settings" data-page-tabs="seo-settings">
@@ -465,6 +471,34 @@
             </section>
           </div>
 
+          <div class="editor-page" data-page-panel="faq-page">
+            <section class="editor-section is-active" data-editor-panel="faq-page-copy">
+              <h3>FAQ Page Copy</h3>
+              <p class="editor-help">Edit the FAQ page intro, search text, and the final call-to-action section.</p>
+              <div class="field-grid">
+                <label>Eyebrow <input name="faqPage.eyebrow" type="text" /></label>
+                <label>Search Placeholder <input name="faqPage.searchPlaceholder" type="text" /></label>
+                <label class="wide-field">Headline <textarea name="faqPage.title" rows="3"></textarea></label>
+                <label class="wide-field">Intro Copy <textarea name="faqPage.intro" rows="5"></textarea></label>
+                <label>Empty Search Message <input name="faqPage.emptyMessage" type="text" /></label>
+                <label>CTA Headline <input name="faqPage.ctaTitle" type="text" /></label>
+                <label>Contact Button Text <input name="faqPage.contactLabel" type="text" /></label>
+                <label>Contact Button Link <input name="faqPage.contactUrl" type="text" /></label>
+                <label>Booking Button Text <input name="faqPage.bookingLabel" type="text" /></label>
+                <label>Booking Button Link <input name="faqPage.bookingUrl" type="text" /></label>
+                <label class="wide-field">CTA Copy <textarea name="faqPage.ctaBody" rows="4"></textarea></label>
+              </div>
+            </section>
+
+            <section class="editor-section" data-editor-panel="faq-page-questions">
+              <h3>FAQ Questions</h3>
+              <p class="editor-help">Edit categories and questions as JSON. Each category needs a title and an items list with question and answer fields.</p>
+              <div class="json-grid single-json-grid">
+                <label>FAQ Categories <textarea name="faqPage.categories" data-json rows="24"></textarea></label>
+              </div>
+            </section>
+          </div>
+
           <div class="editor-page" data-page-panel="seo-settings">
             <section class="editor-section is-active" data-editor-panel="seo-settings-meta">
               <h3>SEO Settings</h3>
@@ -503,6 +537,12 @@
                   <label>SEO Title <input name="seo.pages.contact.title" type="text" /></label>
                   <label>Description <textarea name="seo.pages.contact.description" rows="4"></textarea></label>
                   <label>Social Image URL <input name="seo.pages.contact.image" type="text" /></label>
+                </article>
+                <article class="content-card">
+                  <h5>FAQ Page</h5>
+                  <label>SEO Title <input name="seo.pages.faq.title" type="text" /></label>
+                  <label>Description <textarea name="seo.pages.faq.description" rows="4"></textarea></label>
+                  <label>Social Image URL <input name="seo.pages.faq.image" type="text" /></label>
                 </article>
               </div>
             </section>

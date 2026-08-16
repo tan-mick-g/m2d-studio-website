@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Meet the Made To Dance Studio teachers and learn about their styles, roles, and class approach."
+      content="Find answers to common Made To Dance Studio questions about classes, booking, class packs, social dancing, studio policies, private classes, and events."
     />
-    <meta property="og:title" content="Teachers | Made To Dance Studio" />
-    <meta property="og:description" content="Meet the Made To Dance Studio teachers and learn about their styles, roles, and class approach." />
+    <meta property="og:title" content="FAQ | Made To Dance Studio" />
+    <meta property="og:description" content="Find answers to common Made To Dance Studio questions about classes, booking, class packs, social dancing, studio policies, private classes, and events." />
     <meta property="og:image" content="assets/m2d-icon.png" />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
-    <title>Teachers | Made To Dance Studio</title>
+    <title>FAQ | Made To Dance Studio</title>
     <link rel="icon" type="image/png" href="assets/m2d-icon.png" />
     <link rel="apple-touch-icon" href="assets/m2d-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -23,7 +23,7 @@
     />
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body class="content-loading teachers-page">
+  <body class="content-loading faq-page">
     <header class="site-header" data-header>
       <a class="brand" href="/" aria-label="Made To Dance home">
         <img src="assets/m2d-horizontal-cream.png" alt="Made To Dance Studio" />
@@ -63,27 +63,30 @@
     </nav>
 
     <main>
-      <section class="teachers-directory section-pad">
-        <div class="teachers-directory-heading">
-          <p class="eyebrow" data-text="teachersPage.eyebrow">Teachers</p>
-          <h2 data-text="teachersPage.sectionTitle">Our Teachers</h2>
-          <p data-text="teachersPage.sectionBody"></p>
+      <section class="faq-hero section-pad">
+        <p class="eyebrow" data-text="faqPage.eyebrow">FAQ</p>
+        <h1 data-text="faqPage.title">Frequently Asked Questions</h1>
+        <p data-text="faqPage.intro"></p>
+      </section>
+
+      <section class="faq-browser section-pad" aria-label="Frequently asked questions">
+        <div class="faq-tools">
+          <label class="faq-search">
+            <span>Search FAQ</span>
+            <input type="search" data-faq-search placeholder="Search questions, policies, classes, payments..." autocomplete="off" />
+          </label>
+          <div class="faq-category-pills" data-faq-categories aria-label="FAQ categories"></div>
         </div>
-        <div class="teacher-selector" data-teacher-selector>
-          <div class="teacher-avatar-scroll">
-            <div class="teacher-avatar-grid" data-teacher-avatars aria-label="Teacher selection"></div>
-          </div>
-          <p class="teacher-avatar-hint">Swipe to view teachers</p>
-          <div class="teacher-stage" data-teacher-feature>
-            <div class="teacher-feature-media" data-teacher-feature-image role="img"></div>
-            <article class="teacher-feature-copy">
-              <p data-teacher-role>Dance Teacher</p>
-              <h3 data-teacher-name>Teacher</h3>
-              <p class="teacher-styles" data-teacher-styles></p>
-              <p data-teacher-bio></p>
-              <a class="button navy-button" href="https://madetodance.rezerv.co/" data-teacher-booking>Book A Class</a>
-            </article>
-          </div>
+        <div class="faq-list" data-faq-list></div>
+        <p class="faq-empty" data-faq-empty hidden>No questions matched your search.</p>
+      </section>
+
+      <section class="about-cta faq-cta section-pad">
+        <h2 data-text="faqPage.ctaTitle">Still Have Questions?</h2>
+        <p data-text="faqPage.ctaBody"></p>
+        <div class="faq-cta-actions">
+          <a class="button navy-button" href="/contact" data-faq-contact data-text="faqPage.contactLabel">Contact Us</a>
+          <a class="button light-button" href="https://madetodance.rezerv.co/" data-faq-booking data-text="faqPage.bookingLabel">Book A Class</a>
         </div>
       </section>
     </main>

@@ -414,6 +414,10 @@
   gap: 16px;
 }
 
+.single-json-grid {
+  grid-template-columns: 1fr;
+}
+
 .media-grid,
 .link-grid {
   gap: 24px;
@@ -843,6 +847,10 @@ button:disabled {
   .content-card-grid,
   .subject-template-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .single-json-grid {
+    grid-template-columns: 1fr;
   }
 
   .teacher-profile-grid {

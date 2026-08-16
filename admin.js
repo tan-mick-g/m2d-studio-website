@@ -87,6 +87,11 @@ const normalizeFacultyContent = (content) => {
   return content;
 };
 
+const normalizeNavContent = (content) => {
+  if (content?.nav?.links?.faq === "/#contact") content.nav.links.faq = "/faq";
+  return content;
+};
+
 const isAnimatedImageMedia = (value = "") => /\.(gif|webp)(\?.*)?$/i.test(String(value));
 
 const normalizeTeachersContent = (content) => {
@@ -728,6 +733,7 @@ const activatePage = (pageName) => {
     "services-page": "Services Page",
     "teachers-page": "Teachers Page",
     "contact-page": "Contact Page",
+    "faq-page": "FAQ Page",
     "seo-settings": "SEO Settings"
   };
   const previewUrls = {
@@ -736,6 +742,7 @@ const activatePage = (pageName) => {
     "services-page": "services.html",
     "teachers-page": "teachers.html",
     "contact-page": "contact.html",
+    "faq-page": "faq.html",
     "seo-settings": "index.html"
   };
   if (editorPageLabel) editorPageLabel.textContent = pageLabels[pageName] || "Homepage";
@@ -757,10 +764,12 @@ const loadContent = async () => {
 
   if (error && error.code !== "PGRST116") throw error;
 
-  currentContent = normalizeTeachersContent(
-    normalizeFacultyContent(
-      normalizeFooterContent(
-        normalizeServicesPageContent(data?.content ? deepMerge(defaultContentForAdmin, data.content) : structuredClone(defaultContentForAdmin))
+  currentContent = normalizeNavContent(
+    normalizeTeachersContent(
+      normalizeFacultyContent(
+        normalizeFooterContent(
+          normalizeServicesPageContent(data?.content ? deepMerge(defaultContentForAdmin, data.content) : structuredClone(defaultContentForAdmin))
+        )
       )
     )
   );
@@ -869,7 +878,9 @@ const saveContent = async () => {
     return;
   }
 
-  currentContent = normalizeTeachersContent(normalizeFacultyContent(normalizeFooterContent(normalizeServicesPageContent(deepMerge(defaultContentForAdmin, data.content)))));
+  currentContent = normalizeNavContent(
+    normalizeTeachersContent(normalizeFacultyContent(normalizeFooterContent(normalizeServicesPageContent(deepMerge(defaultContentForAdmin, data.content)))))
+  );
   fillForm(currentContent);
   setEditorMessage(`Saved and published at ${getStatusTime()}. Refresh the public site to see the latest content.`, "success");
   setSavingState(false);

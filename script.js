@@ -61,6 +61,11 @@ const normalizeFacultyContent = (content) => {
   return content;
 };
 
+const normalizeNavContent = (content) => {
+  if (content?.nav?.links?.faq === "/#contact") content.nav.links.faq = "/faq";
+  return content;
+};
+
 const isAnimatedImageMedia = (value = "") => /\.(gif|webp)(\?.*)?$/i.test(String(value));
 
 const normalizeTeachersContent = (content) => {
@@ -101,6 +106,7 @@ const getCurrentSeoPageKey = () => {
   if (path.endsWith("/services") || path.endsWith("/services.html")) return "services";
   if (path.endsWith("/teachers") || path.endsWith("/teachers.html")) return "teachers";
   if (path.endsWith("/contact") || path.endsWith("/contact.html")) return "contact";
+  if (path.endsWith("/faq") || path.endsWith("/faq.html")) return "faq";
   return "home";
 };
 
@@ -193,6 +199,101 @@ const getContactSubjects = (contact = {}) =>
 const getSubjectTemplate = (contact = {}, label = "") => {
   const subject = getContactSubjects(contact).find((item) => item.label === label);
   return subject?.template || "";
+};
+
+const renderFaqAnswer = (answer = "") =>
+  String(answer)
+    .split(/\n{2,}/)
+    .map((block) => block.trim())
+    .filter(Boolean)
+    .map((block) => {
+      const lines = block.split("\n").map((line) => line.trim()).filter(Boolean);
+      if (lines.length > 1 && lines.every((line) => /^(\*|\d+\.)\s+/.test(line))) {
+        const tag = lines[0].startsWith("*") ? "ul" : "ol";
+        const items = lines.map((line) => line.replace(/^(\*|\d+\.)\s+/, ""));
+        return `<${tag}>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</${tag}>`;
+      }
+      return `<p>${escapeHtml(block).replaceAll("\n", "<br />")}</p>`;
+    })
+    .join("");
+
+const renderFaqPage = (faqPage = {}) => {
+  const list = document.querySelector("[data-faq-list]");
+  if (!list) return;
+
+  const categoryNav = document.querySelector("[data-faq-categories]");
+  const search = document.querySelector("[data-faq-search]");
+  const empty = document.querySelector("[data-faq-empty]");
+  const categories = Array.isArray(faqPage.categories) ? faqPage.categories : [];
+  let activeCategory = "all";
+
+  if (search && faqPage.searchPlaceholder) search.placeholder = faqPage.searchPlaceholder;
+  if (empty) empty.textContent = faqPage.emptyMessage || "No questions matched your search.";
+
+  const getVisibleCategories = () => {
+    const query = (search?.value || "").trim().toLowerCase();
+    return categories
+      .map((category, categoryIndex) => {
+        const items = (category.items || []).filter((item) => {
+          const matchesCategory = activeCategory === "all" || activeCategory === String(categoryIndex);
+          const haystack = `${category.title || ""} ${item.question || ""} ${item.answer || ""}`.toLowerCase();
+          return matchesCategory && (!query || haystack.includes(query));
+        });
+        return { ...category, categoryIndex, items };
+      })
+      .filter((category) => category.items.length);
+  };
+
+  const render = () => {
+    const visibleCategories = getVisibleCategories();
+    list.innerHTML = visibleCategories
+      .map(
+        (category) => `
+          <section class="faq-category">
+            <div class="faq-category-heading">
+              <p class="eyebrow">${escapeHtml(category.title || "FAQ")}</p>
+              <span>${category.items.length} ${category.items.length === 1 ? "answer" : "answers"}</span>
+            </div>
+            <div class="faq-accordion">
+              ${category.items
+                .map(
+                  (item, itemIndex) => `
+                    <details class="faq-item" ${category.categoryIndex === 0 && itemIndex === 0 && !search?.value ? "open" : ""}>
+                      <summary>
+                        <span>${escapeHtml(item.question || "")}</span>
+                        <span aria-hidden="true"></span>
+                      </summary>
+                      <div class="faq-answer">${renderFaqAnswer(item.answer || "")}</div>
+                    </details>
+                  `
+                )
+                .join("")}
+            </div>
+          </section>
+        `
+      )
+      .join("");
+    if (empty) empty.hidden = visibleCategories.length > 0;
+  };
+
+  if (categoryNav) {
+    categoryNav.innerHTML = [
+      `<button class="is-active" type="button" data-faq-filter="all">All</button>`,
+      ...categories.map((category, index) => `<button type="button" data-faq-filter="${index}">${escapeHtml(category.title || `Topic ${index + 1}`)}</button>`)
+    ].join("");
+    categoryNav.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-faq-filter]");
+      if (!button) return;
+      activeCategory = button.dataset.faqFilter || "all";
+      categoryNav.querySelectorAll("[data-faq-filter]").forEach((tab) => {
+        tab.classList.toggle("is-active", tab === button);
+      });
+      render();
+    });
+  }
+
+  search?.addEventListener("input", render);
+  render();
 };
 
 const applySubjectTemplate = (select, force = false) => {
@@ -493,7 +594,7 @@ const applyContent = (content) => {
   setHref("[data-nav-link='services']", normalizeNavLink(content.nav?.links?.services, "/services"));
   setHref("[data-nav-link='teachers']", normalizeNavLink(content.nav?.links?.teachers, "/teachers"));
   setHref("[data-nav-link='contact']", normalizeNavLink(content.nav?.links?.contact, "/contact"));
-  setHref("[data-nav-link='faq']", normalizeNavLink(content.nav?.links?.faq, "/#contact"));
+  setHref("[data-nav-link='faq']", normalizeNavLink(content.nav?.links?.faq, "/faq"));
   setHref("[data-nav-link='login']", content.nav?.links?.login || bookingUrl);
   setText("[data-booking]", content.nav?.cta || "Book Here");
 
@@ -560,6 +661,7 @@ const applyContent = (content) => {
   `);
 
   renderTeacherSelector(content.teachersPage, bookingUrl);
+  renderFaqPage(content.faqPage);
 
   setHref("[data-footer-booking]", resolveUrl(content.footer?.bookUrl, bookingUrl));
   setText("[data-footer-booking]", content.footer?.bookLabel || "Book Now");
@@ -571,6 +673,8 @@ const applyContent = (content) => {
   setHref("[data-terms]", content.footer?.termsUrl || "#");
   setHref("[data-about-page-cta]", resolveUrl(content.aboutPage?.ctaUrl, bookingUrl));
   setHref("[data-services-page-cta]", resolveUrl(content.servicesPage?.ctaUrl, bookingUrl));
+  setHref("[data-faq-contact]", resolveUrl(content.faqPage?.contactUrl, "/contact"));
+  setHref("[data-faq-booking]", resolveUrl(content.faqPage?.bookingUrl, bookingUrl));
   document.body.classList.remove("content-loading");
 };
 
@@ -590,7 +694,7 @@ const loadContent = async () => {
     return defaultContent;
   }
 
-  return normalizeTeachersContent(normalizeFacultyContent(normalizeFooterContent(normalizeServicesPageContent(deepMerge(defaultContent, data.content)))));
+  return normalizeNavContent(normalizeTeachersContent(normalizeFacultyContent(normalizeFooterContent(normalizeServicesPageContent(deepMerge(defaultContent, data.content))))));
 };
 
 menuToggle?.addEventListener("click", () => {
