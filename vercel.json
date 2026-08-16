@@ -1,26 +1,19 @@
 {
-  "cleanUrls": true,
-  "trailingSlash": false,
-  "rewrites": [
-    { "source": "/", "destination": "/api/page?path=/" },
-    { "source": "/about", "destination": "/api/page?path=/about" },
-    { "source": "/services", "destination": "/api/page?path=/services" },
-    { "source": "/teachers", "destination": "/api/page?path=/teachers" },
-    { "source": "/contact", "destination": "/api/page?path=/contact" },
-    { "source": "/faq", "destination": "/api/page?path=/faq" },
-    { "source": "/terms", "destination": "/api/page?path=/terms" },
-    { "source": "/waiver", "destination": "/api/page?path=/waiver" },
-    { "source": "/privacy", "destination": "/api/page?path=/privacy" }
-  ],
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        }
-      ]
+  "functions": {
+    "api/page.js": {
+      "includeFiles": ["*.html", "content.js"]
     }
+  },
+  "routes": [
+    { "src": "^/$", "dest": "/api/page?path=/" },
+    { "src": "^/about$", "dest": "/api/page?path=/about" },
+    { "src": "^/services$", "dest": "/api/page?path=/services" },
+    { "src": "^/teachers$", "dest": "/api/page?path=/teachers" },
+    { "src": "^/contact$", "dest": "/api/page?path=/contact" },
+    { "src": "^/faq$", "dest": "/api/page?path=/faq" },
+    { "src": "^/terms$", "dest": "/api/page?path=/terms" },
+    { "src": "^/waiver$", "dest": "/api/page?path=/waiver" },
+    { "src": "^/privacy$", "dest": "/api/page?path=/privacy" },
+    { "handle": "filesystem" }
   ]
 }
