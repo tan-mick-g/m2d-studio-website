@@ -501,6 +501,14 @@ const applyContent = (content) => {
     const value = getPath(content, element.dataset.text);
     if (value !== undefined) element.textContent = value;
   });
+  document.querySelectorAll("[data-visible]").forEach((element) => {
+    element.hidden = getPath(content, element.dataset.visible) === false;
+  });
+  document.querySelectorAll(".about-beliefs").forEach((section) => {
+    const visibleArticles = [...section.querySelectorAll("article")].filter((article) => !article.hidden);
+    section.hidden = visibleArticles.length === 0;
+    section.classList.toggle("is-single", visibleArticles.length === 1);
+  });
   setText('[data-text="footer.copyright"]', formatCopyright(content.footer?.copyright || defaultContent.footer?.copyright || ""));
 
   document.querySelectorAll("[data-image]").forEach((element) => {
@@ -643,7 +651,7 @@ document.addEventListener("mouseout", (event) => {
 
 const revealElements = () => {
   const elements = document.querySelectorAll(
-    ".section-pad, .package-band, .contact-section, .package-card, .class-pick, .teacher-preview-photo, .teacher-selector, .about-copy, .about-photo, .package-band-panel, .contact-copy, .contact-form, .site-footer, .page-hero-copy, .page-hero-image, .about-story-image, .about-story-copy, .about-beliefs article, .service-feature-copy, .service-feature-image"
+    ".section-pad, .package-band, .contact-section, .package-card, .class-pick, .teacher-selector, .about-copy, .about-photo, .package-band-panel, .contact-copy, .contact-form, .site-footer, .page-hero-copy, .page-hero-image, .about-story-image, .about-story-copy, .about-beliefs article, .service-feature-copy, .service-feature-image"
   );
   if (!("IntersectionObserver" in window)) {
     elements.forEach((element) => element.classList.add("is-visible"));

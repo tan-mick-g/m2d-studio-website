@@ -63,7 +63,7 @@
     </nav>
 
     <main>
-      <section class="page-hero about-page-hero">
+      <section class="page-hero about-page-hero" data-visible="aboutPage.heroVisible">
         <div class="page-hero-copy">
           <p class="eyebrow" data-text="aboutPage.eyebrow">About Made To Dance</p>
           <h1 data-text="aboutPage.title">Dance That Feels Like Coming Home</h1>
@@ -72,36 +72,38 @@
         <div class="image-fill page-hero-image" role="img" data-image="aboutPage.heroImage" data-aria="aboutPage.heroAlt"></div>
       </section>
 
-      <section class="about-story section-pad">
+      <section class="about-story section-pad" data-visible="aboutPage.storyVisible">
         <div class="image-fill about-story-image" role="img" data-image="aboutPage.storyImage" data-aria="aboutPage.storyAlt"></div>
         <div class="about-story-copy">
+          <p class="eyebrow" data-text="aboutPage.storyEyebrow">Story</p>
           <h2 data-text="aboutPage.storyTitle">Our Story</h2>
           <p data-text="aboutPage.storyBody"></p>
         </div>
       </section>
 
       <section class="about-beliefs section-pad">
-        <article>
-          <p class="eyebrow">Philosophy</p>
+        <article data-visible="aboutPage.missionVisible">
+          <p class="eyebrow" data-text="aboutPage.missionEyebrow">Philosophy</p>
           <h2 data-text="aboutPage.missionTitle">Our Philosophy</h2>
           <p data-text="aboutPage.missionBody"></p>
         </article>
-        <article>
-          <p class="eyebrow">Community</p>
+        <article data-visible="aboutPage.audienceVisible">
+          <p class="eyebrow" data-text="aboutPage.audienceEyebrow">Community</p>
           <h2 data-text="aboutPage.audienceTitle">Who It Is For</h2>
           <p data-text="aboutPage.audienceBody"></p>
         </article>
       </section>
 
-      <section class="about-location section-pad">
+      <section class="about-location section-pad" data-visible="aboutPage.locationVisible">
         <div>
-          <p class="eyebrow">Studio</p>
+          <p class="eyebrow" data-text="aboutPage.locationEyebrow">Studio</p>
           <h2 data-text="aboutPage.locationTitle">The Studio Feel</h2>
           <p data-text="aboutPage.locationBody"></p>
         </div>
       </section>
 
-      <section class="about-cta section-pad">
+      <section class="about-cta section-pad" data-visible="aboutPage.ctaVisible">
+        <p class="eyebrow" data-text="aboutPage.ctaEyebrow">Next Step</p>
         <h2 data-text="aboutPage.ctaTitle">Ready To Take The First Step?</h2>
         <p data-text="aboutPage.ctaBody"></p>
         <a class="button navy-button" href="https://madetodance.rezerv.co/" data-about-page-cta data-text="aboutPage.ctaLabel">Book A Class</a>

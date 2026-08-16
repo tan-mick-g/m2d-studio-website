@@ -664,6 +664,25 @@ input[type="checkbox"] {
   justify-self: start;
 }
 
+.checkbox-field {
+  display: flex;
+  align-items: center;
+  align-self: end;
+  gap: 10px;
+  min-height: 50px;
+  border: 1px solid rgba(15, 31, 47, 0.14);
+  border-radius: 8px;
+  padding: 12px 14px;
+  background: rgba(255, 253, 248, 0.72);
+}
+
+.checkbox-field input {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--navy);
+}
+
 button.button {
   appearance: none;
   border: 0;

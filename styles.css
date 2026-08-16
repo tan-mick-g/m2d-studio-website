@@ -563,12 +563,14 @@ h2 {
   aspect-ratio: 0.72;
   border: 3px solid var(--red);
   border-radius: 999px;
-  transition: transform 240ms var(--ease-out), box-shadow 240ms var(--ease-out);
+  box-shadow: 0 12px 30px rgba(21, 58, 99, 0.1);
+  transform: translateZ(0);
+  transition: transform 180ms var(--ease-out);
+  will-change: transform;
 }
 
 .teacher-preview-photo:hover {
   transform: translateY(-5px) rotate(0.8deg);
-  box-shadow: 0 16px 36px rgba(21, 58, 99, 0.14);
 }
 
 .faculty-copy {
@@ -948,6 +950,11 @@ h2 {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: clamp(24px, 4vw, 48px);
   background: var(--cream-soft);
+}
+
+.about-beliefs.is-single {
+  grid-template-columns: minmax(0, 760px);
+  justify-content: center;
 }
 
 .about-beliefs article {
@@ -1335,7 +1342,6 @@ h2 {
 .has-js .contact-section,
 .has-js .package-card,
 .has-js .class-pick,
-.has-js .teacher-preview-photo,
 .has-js .teacher-selector,
 .has-js .about-copy,
 .has-js .about-photo,
@@ -1362,7 +1368,6 @@ h2 {
 .has-js .contact-section.is-visible,
 .has-js .package-card.is-visible,
 .has-js .class-pick.is-visible,
-.has-js .teacher-preview-photo.is-visible,
 .has-js .teacher-selector.is-visible,
 .has-js .about-copy.is-visible,
 .has-js .about-photo.is-visible,
@@ -1381,8 +1386,7 @@ h2 {
   transform: translateY(0) scale(1);
 }
 
-.has-js .package-card.is-visible:hover,
-.has-js .teacher-preview-photo.is-visible:hover {
+.has-js .package-card.is-visible:hover {
   transform: translateY(-5px);
 }
 
@@ -1414,7 +1418,6 @@ h2 {
   .has-js .contact-section,
   .has-js .package-card,
   .has-js .class-pick,
-  .has-js .teacher-preview-photo,
   .has-js .teacher-selector,
   .has-js .about-copy,
   .has-js .about-photo,

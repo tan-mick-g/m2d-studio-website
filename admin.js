@@ -614,6 +614,8 @@ const fillForm = (content) => {
     const value = getPath(content, field.name);
     if (field.name === "schedule.widgetEmbed") {
       field.value = value || buildRezervEmbedCode(content.schedule);
+    } else if (field.type === "checkbox") {
+      field.checked = value !== false;
     } else if (field.matches("[data-json]")) {
       field.value = JSON.stringify(value || [], null, 2);
     } else {
@@ -639,7 +641,7 @@ const readForm = () => {
   fields
     .filter((field) => !field.matches("[data-json]"))
     .forEach((field) => {
-      setPath(nextContent, field.name, field.value);
+      setPath(nextContent, field.name, field.type === "checkbox" ? field.checked : field.value);
     });
 
   const embedField = editorForm.querySelector('[name="schedule.widgetEmbed"]');
