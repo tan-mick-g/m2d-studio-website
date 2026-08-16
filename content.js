@@ -47,6 +47,21 @@ window.MTD_DEFAULT_CONTENT = {
         title: "FAQ | Made To Dance Studio",
         description: "Find answers to common Made To Dance Studio questions about classes, booking, class packs, social dancing, studio policies, private classes, and events.",
         image: "assets/m2d-icon.png"
+      },
+      terms: {
+        title: "Terms and Conditions | Made To Dance Studio",
+        description: "Review the Made To Dance Studio terms covering bookings, class credits, cancellations, participation, studio rules, privacy, and contact information.",
+        image: "assets/m2d-icon.png"
+      },
+      waiver: {
+        title: "Waiver and Release | Made To Dance Studio",
+        description: "Read the Made To Dance waiver and release for classes, programs, workshops, Social Experiences, private lessons, events, and other activities.",
+        image: "assets/m2d-icon.png"
+      },
+      privacy: {
+        title: "Privacy Policy | Made To Dance Studio",
+        description: "Learn how Made To Dance Studio collects, uses, stores, and protects personal information from website forms, bookings, inquiries, and studio services.",
+        image: "assets/m2d-icon.png"
       }
     }
   },
@@ -499,7 +514,8 @@ window.MTD_DEFAULT_CONTENT = {
     address: "2/F East Wing, Estancia Mall\nCapitol Commons, Meralco Ave.,\nPasig City, 1605\nMetro Manila",
     instagramUrl: "#",
     facebookUrl: "#",
-    termsUrl: "#",
+    termsUrl: "/terms",
+    privacyUrl: "/privacy",
     copyright: "Copyright 2026 Made To Dance.\nAll Rights Reserved"
   }
 };

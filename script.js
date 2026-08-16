@@ -50,6 +50,14 @@ const normalizeFooterContent = (content) => {
   if (content?.footer?.logoUrl === "assets/made-to-dance-logo.png") {
     content.footer.logoUrl = defaultContent.footer?.logoUrl || "assets/m2d-icon-cream.png";
   }
+  if (content?.footer) {
+    if (!content.footer.termsUrl || content.footer.termsUrl === "#") {
+      content.footer.termsUrl = defaultContent.footer?.termsUrl || "/terms";
+    }
+    if (!content.footer.privacyUrl || content.footer.privacyUrl === "#") {
+      content.footer.privacyUrl = defaultContent.footer?.privacyUrl || "/privacy";
+    }
+  }
   return content;
 };
 
@@ -107,6 +115,9 @@ const getCurrentSeoPageKey = () => {
   if (path.endsWith("/teachers") || path.endsWith("/teachers.html")) return "teachers";
   if (path.endsWith("/contact") || path.endsWith("/contact.html")) return "contact";
   if (path.endsWith("/faq") || path.endsWith("/faq.html")) return "faq";
+  if (path.endsWith("/terms") || path.endsWith("/terms.html")) return "terms";
+  if (path.endsWith("/waiver") || path.endsWith("/waiver.html")) return "waiver";
+  if (path.endsWith("/privacy") || path.endsWith("/privacy.html")) return "privacy";
   return "home";
 };
 
@@ -671,6 +682,7 @@ const applyContent = (content) => {
   setHref("[data-social='instagram']", content.footer?.instagramUrl || "#");
   setHref("[data-social='facebook']", content.footer?.facebookUrl || "#");
   setHref("[data-terms]", content.footer?.termsUrl || "#");
+  setHref("[data-privacy]", content.footer?.privacyUrl || "/privacy");
   setHref("[data-about-page-cta]", resolveUrl(content.aboutPage?.ctaUrl, bookingUrl));
   setHref("[data-services-page-cta]", resolveUrl(content.servicesPage?.ctaUrl, bookingUrl));
   setHref("[data-faq-contact]", resolveUrl(content.faqPage?.contactUrl, "/contact"));
