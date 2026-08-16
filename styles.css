@@ -931,7 +931,7 @@ h2 {
 }
 
 .footer-mark {
-  width: clamp(210px, 22vw, 310px);
+  width: clamp(320px, 32vw, 480px);
 }
 
 .footer-mark img {
@@ -1226,7 +1226,7 @@ h2 {
   }
 
   .footer-mark {
-    width: 220px;
+    width: min(320px, 78vw);
   }
 
   .footer-mark img {
