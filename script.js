@@ -324,9 +324,9 @@ const renderTeacherSelector = (teachersPage = {}, bookingUrl = "") => {
     .map((teacher, index) => {
       const image = teacher.image || defaultContent.teachersPage?.items?.[index]?.image || "";
       return `
-        <button class="teacher-avatar" type="button" data-teacher-avatar="${index}" aria-pressed="${index === 0 ? "true" : "false"}">
+        <button class="teacher-avatar" type="button" data-teacher-avatar="${index}" aria-label="Select ${escapeHtml(teacher.name || `Teacher ${index + 1}`)}" aria-pressed="${index === 0 ? "true" : "false"}">
           <span class="teacher-avatar-image image-fill ${image ? "has-image" : ""}" style="${image ? `background-image:url('${escapeHtml(image)}')` : ""}" aria-hidden="true"></span>
-          <span>${escapeHtml(teacher.name || `Teacher ${index + 1}`)}</span>
+          <span class="teacher-avatar-label">${escapeHtml(teacher.name || `Teacher ${index + 1}`)}</span>
         </button>
       `;
     })

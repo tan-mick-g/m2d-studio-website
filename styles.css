@@ -1084,36 +1084,41 @@ h2 {
 
 .teacher-selector {
   display: grid;
-  grid-template-columns: minmax(180px, 0.42fr) minmax(0, 1fr);
-  gap: clamp(28px, 5vw, 72px);
-  align-items: center;
+  gap: clamp(28px, 4vw, 52px);
 }
 
 .teacher-avatar-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(12px, 1.5vw, 18px);
+  display: flex;
+  gap: clamp(10px, 1.4vw, 18px);
+  justify-content: center;
+  overflow-x: auto;
+  padding: 6px 4px 18px;
+  scroll-snap-type: x proximity;
 }
 
 .teacher-avatar {
   display: grid;
-  gap: 8px;
+  flex: 0 0 auto;
+  gap: 7px;
+  width: clamp(64px, 7vw, 94px);
   border: 0;
   padding: 0;
   color: var(--navy);
   background: transparent;
   font: inherit;
-  font-size: 0.74rem;
+  font-size: clamp(0.62rem, 0.68vw, 0.72rem);
   font-weight: 900;
   text-align: center;
   text-transform: uppercase;
   cursor: pointer;
+  scroll-snap-align: center;
 }
 
 .teacher-avatar-image {
+  width: clamp(64px, 7vw, 94px);
   aspect-ratio: 1;
   border: 3px solid rgba(237, 31, 47, 0.45);
-  border-radius: 28px;
+  border-radius: 50%;
   background-color: var(--white);
   box-shadow: 0 12px 28px rgba(21, 58, 99, 0.08);
   transition: transform 220ms var(--ease-out), border-color 220ms ease, box-shadow 220ms var(--ease-out);
@@ -1131,27 +1136,36 @@ h2 {
   color: var(--red);
 }
 
-.teacher-feature {
-  display: grid;
-  grid-template-columns: minmax(280px, 0.95fr) minmax(300px, 1.05fr);
+.teacher-avatar-label {
   overflow: hidden;
-  min-height: clamp(560px, 48vw, 720px);
-  border: 3px solid var(--red);
-  border-radius: 72px;
-  background: var(--white);
-  box-shadow: 0 26px 70px rgba(21, 58, 99, 0.12);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.teacher-stage {
+  display: grid;
+  grid-template-columns: minmax(360px, 1.1fr) minmax(320px, 0.9fr);
+  gap: clamp(28px, 5vw, 72px);
+  align-items: center;
 }
 
 .teacher-feature-image {
-  min-height: 100%;
-  border-right: 3px solid var(--red);
+  min-height: clamp(640px, 62vw, 920px);
+  border: 3px solid var(--red);
+  border-radius: 120px 120px 36px 36px;
+  background-position: center top;
+  box-shadow: 0 26px 70px rgba(21, 58, 99, 0.12);
 }
 
 .teacher-feature-copy {
   display: grid;
   gap: 18px;
-  align-content: center;
+  align-content: start;
+  border: 3px solid var(--red);
+  border-radius: 46px;
   padding: clamp(30px, 5vw, 58px);
+  background: var(--white);
+  box-shadow: 0 18px 46px rgba(21, 58, 99, 0.08);
 }
 
 .teacher-feature-copy h3 {
@@ -1453,15 +1467,12 @@ h2 {
     gap: clamp(30px, 4vw, 52px);
   }
 
-  .teacher-selector,
-  .teacher-feature {
+  .teacher-stage {
     grid-template-columns: 1fr;
   }
 
   .teacher-feature-image {
-    min-height: 460px;
-    border-right: 0;
-    border-bottom: 3px solid var(--red);
+    min-height: clamp(560px, 78vw, 760px);
   }
 }
 
@@ -1594,16 +1605,13 @@ h2 {
     min-height: 0;
   }
 
-  .teacher-avatar-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .teacher-feature {
-    border-radius: 38px;
-  }
-
   .teacher-feature-image {
-    min-height: 360px;
+    min-height: 520px;
+    border-radius: 72px 72px 28px 28px;
+  }
+
+  .teacher-feature-copy {
+    border-radius: 32px;
   }
 
   .contact-form {
