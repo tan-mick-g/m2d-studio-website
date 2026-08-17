@@ -1,7 +1,7 @@
 {
   "functions": {
     "api/page.js": {
-      "includeFiles": ["*.html", "content.js"]
+      "includeFiles": "*.{html,js}"
     }
   },
   "routes": [
