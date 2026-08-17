@@ -1493,19 +1493,32 @@ h2 {
 .teacher-selector {
   display: grid;
   gap: clamp(28px, 4vw, 52px);
+  min-width: 0;
+  max-width: 100%;
 }
 
 .teacher-avatar-scroll {
   position: relative;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .teacher-avatar-grid {
   display: flex;
   gap: clamp(10px, 1.4vw, 18px);
   justify-content: center;
+  max-width: 100%;
   overflow-x: auto;
   padding: 6px 4px 18px;
   scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: none;
+  touch-action: pan-x;
+}
+
+.teacher-avatar-grid::-webkit-scrollbar {
+  display: none;
 }
 
 .teacher-avatar-hint {
@@ -1635,6 +1648,7 @@ h2 {
   font-size: clamp(3rem, 6vw, 6.2rem);
   line-height: 0.95;
   text-transform: uppercase;
+  overflow-wrap: anywhere;
 }
 
 .teacher-feature-copy p {
@@ -1975,6 +1989,46 @@ h2 {
     inset-block-start: 90px;
   }
 
+  .teacher-avatar-scroll {
+    margin-inline: calc(clamp(22px, 4.4vw, 58px) * -1);
+  }
+
+  .teacher-avatar-grid {
+    justify-content: flex-start;
+    padding-inline: clamp(22px, 4.4vw, 58px);
+  }
+
+  .teacher-avatar-scroll::before,
+  .teacher-avatar-scroll::after {
+    content: "";
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    bottom: 18px;
+    width: 42px;
+    pointer-events: none;
+  }
+
+  .teacher-avatar-scroll::before {
+    left: 0;
+    background: linear-gradient(90deg, var(--cream-soft), rgba(254, 255, 233, 0));
+  }
+
+  .teacher-avatar-scroll::after {
+    right: 0;
+    background: linear-gradient(270deg, var(--cream-soft), rgba(254, 255, 233, 0));
+  }
+
+  .teacher-avatar-hint {
+    display: block;
+  }
+
+  .teachers-directory-heading,
+  .teacher-stage {
+    justify-self: center;
+    width: min(100%, calc(100vw - (2 * clamp(22px, 4.4vw, 58px))));
+  }
+
   .page-hero,
   .service-feature,
   .service-feature-reverse {
@@ -2037,6 +2091,49 @@ h2 {
     max-width: none;
     padding: clamp(26px, 3.5vw, 46px);
     padding-right: clamp(18px, 3vw, 34px);
+  }
+}
+
+@media (max-width: 1120px) {
+  .teacher-stage {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    max-width: 100%;
+    min-height: auto;
+    border-radius: 48px;
+    padding: clamp(20px, 3.8vw, 34px);
+    background: var(--teacher-panel, var(--teal));
+  }
+
+  .teacher-feature-copy {
+    grid-column: 1;
+    grid-row: 1;
+    width: 100%;
+    max-width: none;
+    padding: clamp(24px, 4vw, 42px) clamp(20px, 4vw, 36px) 8px;
+  }
+
+  .teacher-feature-copy h3 {
+    font-size: clamp(3rem, 10vw, 5.4rem);
+  }
+
+  .teacher-feature-copy [data-teacher-bio] {
+    max-width: 100%;
+    font-size: clamp(1rem, 2.8vw, 1.14rem);
+  }
+
+  .teacher-feature-media {
+    grid-column: 1;
+    grid-row: 2;
+    justify-self: center;
+    width: min(88%, 520px);
+    min-height: clamp(360px, 58vw, 540px);
+    margin: 0;
+  }
+
+  .teacher-feature-media img,
+  .teacher-feature-media video {
+    height: clamp(360px, 58vw, 540px);
   }
 }
 
@@ -2298,39 +2395,28 @@ h2 {
   }
 
   .teacher-avatar-grid {
-    justify-content: flex-start;
-    margin-inline: -22px;
     padding-inline: 22px;
   }
 
   .teacher-avatar-scroll::before,
   .teacher-avatar-scroll::after {
-    content: "";
-    position: absolute;
-    z-index: 2;
-    top: 0;
-    bottom: 18px;
     width: 36px;
-    pointer-events: none;
   }
 
   .teacher-avatar-scroll::before {
-    left: -22px;
+    left: 0;
     background: linear-gradient(90deg, var(--cream-soft), rgba(254, 255, 233, 0));
   }
 
   .teacher-avatar-scroll::after {
-    right: -22px;
+    right: 0;
     background: linear-gradient(270deg, var(--cream-soft), rgba(254, 255, 233, 0));
-  }
-
-  .teacher-avatar-hint {
-    display: block;
   }
 
   .teacher-stage {
     grid-template-columns: 1fr;
     gap: 8px;
+    width: calc(100vw - 44px);
     min-height: auto;
     border-width: 2px;
     border-radius: 34px;
@@ -2342,11 +2428,12 @@ h2 {
     grid-column: 1;
     grid-row: 1;
     max-width: none;
+    overflow: hidden;
     padding: 22px 18px 10px;
   }
 
   .teacher-feature-copy h3 {
-    font-size: clamp(2.75rem, 15vw, 4.7rem);
+    font-size: clamp(2.45rem, 12vw, 3.65rem);
   }
 
   .teacher-feature-copy [data-teacher-bio] {
