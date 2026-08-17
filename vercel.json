@@ -14,6 +14,7 @@
     { "src": "^/terms$", "dest": "/api/page?path=/terms" },
     { "src": "^/waiver$", "dest": "/api/page?path=/waiver" },
     { "src": "^/privacy$", "dest": "/api/page?path=/privacy" },
+    { "src": "^/admin$", "dest": "/admin.html" },
     { "handle": "filesystem" }
   ]
 }
