@@ -1732,12 +1732,6 @@ h2 {
   text-decoration: none;
 }
 
-.footer-socials div a:last-child {
-  border-radius: 50%;
-  font-family: Arial, sans-serif;
-  font-weight: 900;
-}
-
 .has-js .section-pad,
 .has-js .package-band,
 .has-js .contact-section,
