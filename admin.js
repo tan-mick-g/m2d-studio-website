@@ -27,6 +27,7 @@ const subjectTemplatesContainer = document.querySelector("[data-subject-template
 const addSubjectTemplateButton = document.querySelector("[data-add-subject-template]");
 const teacherProfilesContainer = document.querySelector("[data-teacher-profiles]");
 const addTeacherProfileButton = document.querySelector("[data-add-teacher-profile]");
+const optimizeExistingMediaButton = document.querySelector("[data-optimize-existing-media]");
 
 let supabaseClient;
 let currentContent = defaultContentForAdmin;
@@ -93,6 +94,97 @@ const normalizeNavContent = (content) => {
 };
 
 const isAnimatedImageMedia = (value = "") => /\.(gif|webp)(\?.*)?$/i.test(String(value));
+const isOptimizableImageFile = (file) =>
+  ["image/jpeg", "image/png"].includes(file?.type) && !/\.gif$/i.test(file.name || "");
+const isSupabaseSiteMediaUrl = (value = "") =>
+  typeof value === "string" &&
+  value.includes(`${adminConfig.url}/storage/v1/object/public/site-media/`) &&
+  /\.(jpe?g|png)(\?.*)?$/i.test(value);
+
+const getUploadImageSettings = (targetPath = "") => {
+  if (/footer\.logoUrl/i.test(targetPath)) return null;
+  if (/seo\.defaultImage/i.test(targetPath)) return { maxWidth: 1200, maxHeight: 630, quality: 0.88, type: "image/jpeg" };
+  if (/hero\.(images|image)/i.test(targetPath)) return { maxWidth: 1920, maxHeight: 1080, quality: 0.86, type: "image/webp" };
+  if (/profileImage/i.test(targetPath)) return { maxWidth: 720, maxHeight: 720, quality: 0.86, type: "image/webp" };
+  if (/bodyStillImage|bodyImage/i.test(targetPath)) return { maxWidth: 1500, maxHeight: 1800, quality: 0.88, type: "image/webp" };
+  if (/classes\.items/i.test(targetPath)) return { maxWidth: 1000, maxHeight: 1000, quality: 0.86, type: "image/webp" };
+  if (/contact\.image|packagesBand\.image/i.test(targetPath)) return { maxWidth: 1800, maxHeight: 1200, quality: 0.86, type: "image/webp" };
+  return { maxWidth: 1400, maxHeight: 1100, quality: 0.86, type: "image/webp" };
+};
+
+const getOptimizedExtension = (mimeType = "", fallback = "jpg") => {
+  if (mimeType === "image/webp") return "webp";
+  if (mimeType === "image/png") return "png";
+  if (mimeType === "image/jpeg") return "jpg";
+  return fallback;
+};
+
+const formatFileSize = (bytes = 0) => {
+  if (bytes >= 1024 * 1024) return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+  if (bytes >= 1024) return `${Math.round(bytes / 1024)} KB`;
+  return `${bytes} B`;
+};
+
+const canvasToBlob = (canvas, type, quality) =>
+  new Promise((resolve, reject) => {
+    canvas.toBlob(
+      (blob) => {
+        if (blob) resolve(blob);
+        else reject(new Error("Could not optimize image. Please try a different file."));
+      },
+      type,
+      quality
+    );
+  });
+
+const optimizeImageFile = async (file, targetPath) => {
+  const settings = getUploadImageSettings(targetPath);
+  if (!settings || !isOptimizableImageFile(file)) {
+    return { file, optimized: false, originalSize: file.size, finalSize: file.size };
+  }
+
+  try {
+    const bitmap = await createImageBitmap(file);
+    const scale = Math.min(1, settings.maxWidth / bitmap.width, settings.maxHeight / bitmap.height);
+    const width = Math.max(1, Math.round(bitmap.width * scale));
+    const height = Math.max(1, Math.round(bitmap.height * scale));
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const context = canvas.getContext("2d", { alpha: settings.type !== "image/jpeg" });
+
+    if (settings.type === "image/jpeg") {
+      context.fillStyle = "#feffe9";
+      context.fillRect(0, 0, width, height);
+    }
+    context.drawImage(bitmap, 0, 0, width, height);
+    bitmap.close?.();
+
+    const blob = await canvasToBlob(canvas, settings.type, settings.quality);
+    if (blob.size >= file.size && scale === 1) {
+      return { file, optimized: false, originalSize: file.size, finalSize: file.size };
+    }
+
+    const extension = getOptimizedExtension(settings.type);
+    const baseName = file.name.replace(/\.[^/.]+$/, "") || "image";
+    const optimizedFile = new File([blob], `${baseName}.${extension}`, {
+      type: settings.type,
+      lastModified: Date.now()
+    });
+
+    return {
+      file: optimizedFile,
+      optimized: true,
+      originalSize: file.size,
+      finalSize: optimizedFile.size,
+      width,
+      height
+    };
+  } catch (error) {
+    console.warn("Image optimization skipped:", error);
+    return { file, optimized: false, originalSize: file.size, finalSize: file.size };
+  }
+};
 
 const normalizeTeachersContent = (content) => {
   if (!Array.isArray(content?.teachersPage?.items)) return content;
@@ -554,8 +646,11 @@ const updateMediaPreview = (input) => {
 
 const uploadMediaFile = async (file, targetPath) => {
   const bucketName = "site-media";
-  const extension = file.name.split(".").pop() || "media";
-  const safeName = file.name
+  const optimizedResult = await optimizeImageFile(file, targetPath);
+  const uploadFile = optimizedResult.file;
+  const originalExtension = file.name.split(".").pop() || "media";
+  const extension = getOptimizedExtension(uploadFile.type, originalExtension);
+  const safeName = uploadFile.name
     .replace(/\.[^/.]+$/, "")
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
@@ -563,8 +658,9 @@ const uploadMediaFile = async (file, targetPath) => {
     .slice(0, 48);
   const storagePath = `homepage/${targetPath.replaceAll(".", "-")}-${Date.now()}-${safeName}.${extension}`;
 
-  const { error } = await supabaseClient.storage.from(bucketName).upload(storagePath, file, {
+  const { error } = await supabaseClient.storage.from(bucketName).upload(storagePath, uploadFile, {
     cacheControl: "31536000",
+    contentType: uploadFile.type || file.type,
     upsert: true
   });
 
@@ -576,7 +672,127 @@ const uploadMediaFile = async (file, targetPath) => {
   }
 
   const { data } = supabaseClient.storage.from(bucketName).getPublicUrl(storagePath);
-  return data.publicUrl;
+  return {
+    publicUrl: data.publicUrl,
+    ...optimizedResult
+  };
+};
+
+const collectOptimizableMediaPaths = (value, path = "", results = []) => {
+  if (typeof value === "string") {
+    if (isSupabaseSiteMediaUrl(value) && getUploadImageSettings(path)) {
+      results.push({ path, url: value });
+    }
+    return results;
+  }
+
+  if (!value || typeof value !== "object") return results;
+
+  Object.entries(value).forEach(([key, childValue]) => {
+    const childPath = path ? `${path}.${key}` : key;
+    collectOptimizableMediaPaths(childValue, childPath, results);
+  });
+
+  return results;
+};
+
+const fetchUrlAsFile = async (url, fallbackName) => {
+  const response = await fetch(url, { cache: "no-store" });
+  if (!response.ok) throw new Error(`Could not download ${fallbackName || url}.`);
+  const blob = await response.blob();
+  const extension = blob.type === "image/png" ? "png" : "jpg";
+  return new File([blob], `${fallbackName || "image"}.${extension}`, {
+    type: blob.type || "image/jpeg",
+    lastModified: Date.now()
+  });
+};
+
+const saveOptimizedContent = async (nextContent) => {
+  const { data, error } = await supabaseClient
+    .from("site_content")
+    .upsert(
+      {
+        id: adminConfig.contentId || "homepage",
+        content: nextContent,
+        is_published: true
+      },
+      { onConflict: "id" }
+    )
+    .select("content")
+    .single();
+
+  if (error) throw error;
+  currentContent = normalizeNavContent(
+    normalizeTeachersContent(normalizeFacultyContent(normalizeFooterContent(normalizeServicesPageContent(deepMerge(defaultContentForAdmin, data.content)))))
+  );
+  fillForm(currentContent);
+};
+
+const optimizeExistingMedia = async () => {
+  if (!supabaseClient || isSavingContent) return;
+
+  let nextContent;
+  try {
+    nextContent = readForm();
+  } catch (error) {
+    setEditorMessage(error.message, "error");
+    return;
+  }
+
+  const seenUrls = new Map();
+  const mediaItems = collectOptimizableMediaPaths(nextContent).filter((item) => {
+    const key = `${item.path}:${item.url}`;
+    if (seenUrls.has(key)) return false;
+    seenUrls.set(key, true);
+    return true;
+  });
+
+  if (!mediaItems.length) {
+    setEditorMessage("No existing Supabase JPG or PNG uploads need optimization.", "success");
+    return;
+  }
+
+  isSavingContent = true;
+  setSavingState(true);
+  if (optimizeExistingMediaButton) optimizeExistingMediaButton.disabled = true;
+
+  let optimizedCount = 0;
+  let skippedCount = 0;
+  let originalBytes = 0;
+  let finalBytes = 0;
+
+  try {
+    for (const [index, item] of mediaItems.entries()) {
+      const fileName = item.url.split("/").pop()?.split("?")[0] || `image-${index + 1}`;
+      setEditorMessage(`Optimizing existing image ${index + 1} of ${mediaItems.length}: ${fileName}`);
+      const file = await fetchUrlAsFile(item.url, fileName.replace(/\.[^/.]+$/, ""));
+      const uploadResult = await uploadMediaFile(file, item.path);
+      if (uploadResult.optimized) {
+        setPath(nextContent, item.path, uploadResult.publicUrl);
+        originalBytes += uploadResult.originalSize;
+        finalBytes += uploadResult.finalSize;
+        optimizedCount += 1;
+      } else {
+        skippedCount += 1;
+      }
+    }
+
+    if (optimizedCount > 0) {
+      await saveOptimizedContent(nextContent);
+      setEditorMessage(
+        `Optimized ${optimizedCount} existing image${optimizedCount === 1 ? "" : "s"} from ${formatFileSize(originalBytes)} to ${formatFileSize(finalBytes)} and published the new URLs.${skippedCount ? ` Skipped ${skippedCount} already-small image${skippedCount === 1 ? "" : "s"}.` : ""}`,
+        "success"
+      );
+    } else {
+      setEditorMessage("Existing uploads were already small enough, so no URLs were changed.", "success");
+    }
+  } catch (error) {
+    setEditorMessage(`Optimization failed: ${getAdminErrorMessage(error)}`, "error");
+  } finally {
+    isSavingContent = false;
+    setSavingState(false);
+    if (optimizeExistingMediaButton) optimizeExistingMediaButton.disabled = false;
+  }
 };
 
 const buildRezervEmbedCode = (schedule = {}) => {
@@ -1058,6 +1274,8 @@ teacherProfilesContainer?.addEventListener("click", (event) => {
   setEditorMessage("Teacher profile removed. Save changes to publish this update.");
 });
 
+optimizeExistingMediaButton?.addEventListener("click", optimizeExistingMedia);
+
 editorForm.addEventListener("input", (event) => {
   const input = event.target.closest("[data-media-url]");
   if (!input) return;
@@ -1096,8 +1314,10 @@ editorForm.addEventListener("change", async (event) => {
 
   try {
     upload.disabled = true;
-    setEditorMessage(`Uploading ${upload.files[0].name}...`);
-    const publicUrl = await uploadMediaFile(upload.files[0], upload.dataset.targetPath);
+    const selectedFile = upload.files[0];
+    setEditorMessage(`Optimizing and uploading ${selectedFile.name}...`);
+    const uploadResult = await uploadMediaFile(selectedFile, upload.dataset.targetPath);
+    const publicUrl = uploadResult.publicUrl;
     targetInput.value = publicUrl;
     if (targetInput.name === "hero.images.0") {
       const fallbackInput = editorForm.querySelector('[name="hero.image"][data-media-url]');
@@ -1105,7 +1325,10 @@ editorForm.addEventListener("change", async (event) => {
     }
     syncJsonTextareaFromPath(targetInput.name, targetInput.value);
     updateMediaPreview(targetInput);
-    setEditorMessage("Upload complete. Save changes to publish this media update.", "success");
+    const optimizationNote = uploadResult.optimized
+      ? ` Optimized from ${formatFileSize(uploadResult.originalSize)} to ${formatFileSize(uploadResult.finalSize)}.`
+      : "";
+    setEditorMessage(`Upload complete.${optimizationNote} Save changes to publish this media update.`, "success");
   } catch (error) {
     setEditorMessage(getAdminErrorMessage(error), "error");
   } finally {

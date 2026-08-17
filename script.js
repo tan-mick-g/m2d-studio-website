@@ -5,6 +5,8 @@ const mobileNav = document.querySelector("[data-mobile-nav]");
 let heroCarouselTimer;
 let heroCarouselResetTimer;
 let teacherGifObserver;
+let lazyBackgroundObserver;
+const preloadedImages = new Set();
 
 document.documentElement.classList.add("has-js");
 
@@ -136,6 +138,17 @@ const setMetaContent = (attribute, name, value) => {
   ensureMeta(attribute, name).setAttribute("content", value);
 };
 
+const preloadImage = (url = "", fetchPriority = "auto") => {
+  if (!url || preloadedImages.has(url)) return;
+  preloadedImages.add(url);
+  const link = document.createElement("link");
+  link.rel = "preload";
+  link.as = "image";
+  link.href = url;
+  if (fetchPriority !== "auto") link.fetchPriority = fetchPriority;
+  document.head.appendChild(link);
+};
+
 const setCanonical = () => {
   const href = window.location.href.split("#")[0].split("?")[0];
   let link = document.head.querySelector('link[rel="canonical"]');
@@ -175,16 +188,66 @@ const normalizePhoneHref = (value = "") => {
   return phone ? `tel:${phone}` : "#";
 };
 
+const loadLazyBackground = (element) => {
+  const url = element?.dataset.lazyBg;
+  if (!element || !url) return;
+  element.style.backgroundImage = `url("${url}")`;
+  element.classList.add("has-image");
+  delete element.dataset.lazyBg;
+  lazyBackgroundObserver?.unobserve(element);
+};
+
+const queueLazyBackground = (element) => {
+  if (!element?.dataset.lazyBg) return;
+  if (!("IntersectionObserver" in window)) {
+    loadLazyBackground(element);
+    return;
+  }
+
+  if (!lazyBackgroundObserver) {
+    lazyBackgroundObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) loadLazyBackground(entry.target);
+        });
+      },
+      { rootMargin: "650px 0px", threshold: 0.01 }
+    );
+  }
+  lazyBackgroundObserver.observe(element);
+};
+
+const setImageElement = (element, value, { eager = false } = {}) => {
+  if (!element) return;
+  lazyBackgroundObserver?.unobserve(element);
+  element.style.removeProperty("background-image");
+  delete element.dataset.lazyBg;
+
+  if (!value) {
+    element.classList.remove("has-image");
+    return;
+  }
+
+  element.classList.add("has-image");
+  if (eager) {
+    element.style.backgroundImage = `url("${value}")`;
+    return;
+  }
+  element.dataset.lazyBg = value;
+  queueLazyBackground(element);
+};
+
 const setImage = (selector, value) => {
   document.querySelectorAll(selector).forEach((element) => {
-    if (value) {
-      element.style.backgroundImage = `url("${value}")`;
-      element.classList.add("has-image");
-    } else {
-      element.style.removeProperty("background-image");
-      element.classList.remove("has-image");
-    }
+    setImageElement(element, value, { eager: Boolean(element.closest(".hero, .page-hero")) });
   });
+};
+
+const backgroundAttributes = (url = "", { eager = false } = {}) => {
+  if (!url) return "";
+  return eager
+    ? `style="background-image:url('${escapeHtml(url)}')"`
+    : `data-lazy-bg="${escapeHtml(url)}"`;
 };
 
 const formatCopyright = (value = "") =>
@@ -385,15 +448,17 @@ const applyHeroMedia = (content) => {
 
   if (!heroFilm || !heroTrack) return;
   heroFilm.hidden = false;
+  preloadImage(images[0], "high");
   heroTrack.style.transform = "translateX(0)";
   heroTrack.classList.remove("is-resetting");
   heroTrack.innerHTML = [...images, images[0]]
     .map(
-      (image) => `
-        <div class="image-fill hero-image has-image" style="background-image:url('${escapeHtml(image)}')"></div>
+      (image, slideIndex) => `
+        <div class="image-fill hero-image has-image" data-hero-slide="${slideIndex}" ${backgroundAttributes(image, { eager: slideIndex === 0 })}></div>
       `
     )
     .join("");
+  heroTrack.querySelectorAll("[data-lazy-bg]").forEach(queueLazyBackground);
 
   if (images.length <= 1) return;
 
@@ -401,6 +466,7 @@ const applyHeroMedia = (content) => {
   heroCarouselTimer = window.setInterval(() => {
     heroTrack.classList.remove("is-resetting");
     index += 1;
+    loadLazyBackground(heroTrack.querySelector(`[data-hero-slide="${index}"]`));
     heroTrack.style.transform = `translateX(-${index * 100}%)`;
 
     if (index === images.length) {
@@ -574,7 +640,7 @@ const renderTeacherSelector = (teachersPage = {}, bookingUrl = "") => {
       const avatarImage = teacher.profileImage || teacher.image || teacher.bodyImage || defaultTeacher.profileImage || defaultTeacher.image || "";
       return `
         <button class="teacher-avatar" type="button" data-teacher-avatar="${index}" aria-label="Select ${escapeHtml(teacher.name || `Teacher ${index + 1}`)}" aria-pressed="${index === 0 ? "true" : "false"}">
-          <span class="teacher-avatar-image image-fill ${avatarImage ? "has-image" : ""}" style="${avatarImage ? `background-image:url('${escapeHtml(avatarImage)}')` : ""}" aria-hidden="true"></span>
+          <span class="teacher-avatar-image image-fill ${avatarImage ? "has-image" : ""}" ${backgroundAttributes(avatarImage)} aria-hidden="true"></span>
           <span class="teacher-avatar-label">${escapeHtml(teacher.name || `Teacher ${index + 1}`)}</span>
         </button>
       `;
@@ -639,7 +705,7 @@ const applyContent = (content) => {
     const image = getItemImage(content, "classes", index, item);
     return `
     <article class="class-pick">
-      <div class="class-image image-fill ${image ? "has-image" : ""}" style="${image ? `background-image:url('${escapeHtml(image)}')` : ""}" role="img" aria-label="${escapeHtml(item.alt || item.title)}"></div>
+      <div class="class-image image-fill ${image ? "has-image" : ""}" ${backgroundAttributes(image)} role="img" aria-label="${escapeHtml(item.alt || item.title)}"></div>
       <a class="button navy-button" href="${escapeHtml(resolveUrl(item.ctaUrl, "#schedule"))}">${escapeHtml(item.title)}</a>
     </article>
   `;
@@ -655,7 +721,7 @@ const applyContent = (content) => {
     const defaultTeacher = defaultContent.teachersPage?.items?.[index] || {};
     const image = teacher.profileImage || teacher.image || teacher.bodyImage || defaultTeacher.profileImage || defaultTeacher.image || "";
     return `
-      <div class="teacher-preview-photo image-fill ${image ? "has-image" : ""}" style="${image ? `background-image:url('${escapeHtml(image)}')` : ""}" role="img" aria-label="${escapeHtml(teacher.name || "Dance teacher")}"></div>
+      <div class="teacher-preview-photo image-fill ${image ? "has-image" : ""}" ${backgroundAttributes(image)} role="img" aria-label="${escapeHtml(teacher.name || "Dance teacher")}"></div>
     `;
   });
   setHref("[data-faculty-cta]", "/teachers");
@@ -688,6 +754,7 @@ const applyContent = (content) => {
   setHref("[data-services-page-cta]", resolveUrl(content.servicesPage?.ctaUrl, bookingUrl));
   setHref("[data-faq-contact]", resolveUrl(content.faqPage?.contactUrl, "/contact"));
   setHref("[data-faq-booking]", resolveUrl(content.faqPage?.bookingUrl, bookingUrl));
+  document.querySelectorAll("[data-lazy-bg]").forEach(queueLazyBackground);
   document.body.classList.remove("content-loading");
 };
 
