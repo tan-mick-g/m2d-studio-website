@@ -681,6 +681,7 @@ const applyContent = (content) => {
   if (footerLogo && content.footer?.logoUrl) footerLogo.setAttribute("src", content.footer.logoUrl);
   setHref("[data-social='instagram']", content.footer?.instagramUrl || "#");
   setHref("[data-social='facebook']", content.footer?.facebookUrl || "#");
+  setHref("[data-social='tiktok']", content.footer?.tiktokUrl || "#");
   setHref("[data-terms]", content.footer?.termsUrl || "#");
   setHref("[data-privacy]", content.footer?.privacyUrl || "/privacy");
   setHref("[data-about-page-cta]", resolveUrl(content.aboutPage?.ctaUrl, bookingUrl));

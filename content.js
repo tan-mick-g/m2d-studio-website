@@ -514,6 +514,7 @@ window.MTD_DEFAULT_CONTENT = {
     address: "2/F East Wing, Estancia Mall\nCapitol Commons, Meralco Ave.,\nPasig City, 1605\nMetro Manila",
     instagramUrl: "#",
     facebookUrl: "#",
+    tiktokUrl: "#",
     termsUrl: "/terms",
     privacyUrl: "/privacy",
     copyright: "Copyright 2026 Made To Dance.\nAll Rights Reserved"
