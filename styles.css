@@ -96,6 +96,7 @@ textarea {
   display: flex;
   align-items: center;
   gap: clamp(18px, 2.7vw, 40px);
+  justify-content: space-between;
   flex: 1;
   color: rgba(255, 253, 232, 0.86);
   font-size: 0.92rem;
@@ -2002,6 +2003,7 @@ h2 {
 
   .desktop-nav {
     gap: clamp(10px, 1.05vw, 18px);
+    justify-content: flex-start;
     font-size: clamp(0.72rem, 0.78vw, 0.84rem);
   }
 
