@@ -603,6 +603,7 @@ const applySelectedTeacher = (teacher, index, teachersPage = {}, bookingUrl = ""
     imageElement.classList.toggle("is-video", false);
     imageElement.classList.toggle("is-cutout", shouldSwapBodyShot);
     imageElement.setAttribute("aria-label", teacher.name || "Dance teacher");
+    if (imageElement.tagName === "A") imageElement.href = bookingHref;
     delete imageElement.dataset.animatedSrc;
     delete imageElement.dataset.pausedSrc;
     delete imageElement.dataset.animatedType;
@@ -703,10 +704,11 @@ const applyContent = (content) => {
 
   renderCards("[data-class-cards]", content.classes?.items, (item, index) => {
     const image = getItemImage(content, "classes", index, item);
+    const classUrl = resolveUrl(item.ctaUrl, "#schedule");
     return `
     <article class="class-pick">
-      <div class="class-image image-fill ${image ? "has-image" : ""}" ${backgroundAttributes(image)} role="img" aria-label="${escapeHtml(item.alt || item.title)}"></div>
-      <a class="button navy-button" href="${escapeHtml(resolveUrl(item.ctaUrl, "#schedule"))}">${escapeHtml(item.title)}</a>
+      <a class="class-image class-image-link image-fill ${image ? "has-image" : ""}" href="${escapeHtml(classUrl)}" ${backgroundAttributes(image)} aria-label="${escapeHtml(item.alt || `View ${item.title}`)}"></a>
+      <a class="button navy-button" href="${escapeHtml(classUrl)}">${escapeHtml(item.title)}</a>
     </article>
   `;
   });
@@ -721,7 +723,7 @@ const applyContent = (content) => {
     const defaultTeacher = defaultContent.teachersPage?.items?.[index] || {};
     const image = teacher.profileImage || teacher.image || teacher.bodyImage || defaultTeacher.profileImage || defaultTeacher.image || "";
     return `
-      <div class="teacher-preview-photo image-fill ${image ? "has-image" : ""}" ${backgroundAttributes(image)} role="img" aria-label="${escapeHtml(teacher.name || "Dance teacher")}"></div>
+      <a class="teacher-preview-photo image-fill ${image ? "has-image" : ""}" href="/teachers" ${backgroundAttributes(image)} aria-label="${escapeHtml(`Meet ${teacher.name || "this teacher"}`)}"></a>
     `;
   });
   setHref("[data-faculty-cta]", "/teachers");
