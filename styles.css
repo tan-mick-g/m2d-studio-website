@@ -99,7 +99,7 @@ textarea {
   justify-content: space-between;
   flex: 1;
   color: rgba(255, 253, 232, 0.86);
-  font-size: 0.92rem;
+  font-size: clamp(1rem, 0.95vw, 1.08rem);
   font-weight: 800;
   text-transform: uppercase;
 }
