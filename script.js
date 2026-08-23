@@ -701,12 +701,12 @@ const applyContent = (content) => {
   setHref("[data-nav-link='home']", normalizeNavLink(content.nav?.links?.home, "/"));
   setHref("[data-nav-link='about']", normalizeNavLink(content.nav?.links?.about, "/about"));
   setHref("[data-nav-link='classes']", normalizeNavLink(content.nav?.links?.classes, "/#classes"));
+  setHref("[data-nav-link='packages']", normalizeNavLink(content.nav?.links?.packages, "/#packages"));
   setHref("[data-nav-link='schedule']", normalizeNavLink(content.nav?.links?.schedule, "/#schedule"));
-  setHref("[data-nav-link='services']", normalizeNavLink(content.nav?.links?.services, "/services"));
   setHref("[data-nav-link='teachers']", normalizeNavLink(content.nav?.links?.teachers, "/teachers"));
+  setHref("[data-nav-link='services']", normalizeNavLink(content.nav?.links?.services, "/services"));
   setHref("[data-nav-link='contact']", normalizeNavLink(content.nav?.links?.contact, "/contact"));
   setHref("[data-nav-link='faq']", normalizeNavLink(content.nav?.links?.faq, "/faq"));
-  setHref("[data-nav-link='login']", content.nav?.links?.login || bookingUrl);
   setText("[data-booking]", content.nav?.cta || "Buy Package");
 
   document.querySelectorAll("[data-text]").forEach((element) => {

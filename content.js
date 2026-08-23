@@ -6,12 +6,12 @@ window.MTD_DEFAULT_CONTENT = {
       home: "/",
       about: "/about",
       classes: "/#classes",
+      packages: "/#packages",
       schedule: "/#schedule",
-      services: "/services",
       teachers: "/teachers",
+      services: "/services",
       contact: "/contact",
-      faq: "/faq",
-      login: "https://madetodance.rezerv.co/"
+      faq: "/faq"
     }
   },
   seo: {
