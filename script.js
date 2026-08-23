@@ -78,6 +78,31 @@ const normalizeNavContent = (content) => {
 
 const isAnimatedImageMedia = (value = "") => /\.(gif|webp)(\?.*)?$/i.test(String(value));
 
+const slugify = (value = "") =>
+  String(value)
+    .trim()
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+const getTeacherSlug = (teacher, index) => slugify(teacher?.name) || `teacher-${index + 1}`;
+
+const getRequestedTeacherIndex = (teachers = []) => {
+  const requestedTeacher = new URLSearchParams(window.location.search).get("teacher");
+  if (!requestedTeacher) return 0;
+
+  const normalizedRequest = slugify(requestedTeacher);
+  const numericRequest = Number(requestedTeacher);
+  const matchedIndex = teachers.findIndex((teacher, index) => {
+    if (Number.isInteger(numericRequest) && numericRequest === index + 1) return true;
+    return getTeacherSlug(teacher, index) === normalizedRequest;
+  });
+
+  return matchedIndex >= 0 ? matchedIndex : 0;
+};
+
 const normalizeTeachersContent = (content) => {
   if (!Array.isArray(content?.teachersPage?.items)) return content;
   content.teachersPage.items = content.teachersPage.items.map((teacher) => ({
@@ -635,12 +660,14 @@ const renderTeacherSelector = (teachersPage = {}, bookingUrl = "") => {
   const teachers = Array.isArray(teachersPage.items) ? teachersPage.items : [];
   if (!avatars || !teachers.length) return;
 
+  const initialIndex = getRequestedTeacherIndex(teachers);
+
   avatars.innerHTML = teachers
     .map((teacher, index) => {
       const defaultTeacher = defaultContent.teachersPage?.items?.[index] || {};
       const avatarImage = teacher.profileImage || teacher.image || teacher.bodyImage || defaultTeacher.profileImage || defaultTeacher.image || "";
       return `
-        <button class="teacher-avatar" type="button" data-teacher-avatar="${index}" aria-label="Select ${escapeHtml(teacher.name || `Teacher ${index + 1}`)}" aria-pressed="${index === 0 ? "true" : "false"}">
+        <button class="teacher-avatar" type="button" data-teacher-avatar="${index}" aria-label="Select ${escapeHtml(teacher.name || `Teacher ${index + 1}`)}" aria-pressed="${index === initialIndex ? "true" : "false"}">
           <span class="teacher-avatar-image image-fill ${avatarImage ? "has-image" : ""}" ${backgroundAttributes(avatarImage)} aria-hidden="true"></span>
           <span class="teacher-avatar-label">${escapeHtml(teacher.name || `Teacher ${index + 1}`)}</span>
         </button>
@@ -650,12 +677,18 @@ const renderTeacherSelector = (teachersPage = {}, bookingUrl = "") => {
 
   avatars.querySelectorAll("[data-teacher-avatar]").forEach((button) => {
     button.addEventListener("click", () => {
-      applySelectedTeacher(teachers[Number(button.dataset.teacherAvatar)], Number(button.dataset.teacherAvatar), teachersPage, bookingUrl);
+      const teacherIndex = Number(button.dataset.teacherAvatar);
+      applySelectedTeacher(teachers[teacherIndex], teacherIndex, teachersPage, bookingUrl);
       button.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      const teacherSlug = getTeacherSlug(teachers[teacherIndex], teacherIndex);
+      const nextUrl = new URL(window.location.href);
+      nextUrl.searchParams.set("teacher", teacherSlug);
+      window.history.replaceState({}, "", nextUrl);
     });
   });
 
-  applySelectedTeacher(teachers[0], 0, teachersPage, bookingUrl);
+  applySelectedTeacher(teachers[initialIndex], initialIndex, teachersPage, bookingUrl);
+  avatars.querySelector(`[data-teacher-avatar="${initialIndex}"]`)?.scrollIntoView({ inline: "center", block: "nearest" });
 };
 
 const applyContent = (content) => {
@@ -722,8 +755,9 @@ const applyContent = (content) => {
   renderCards("[data-teachers-preview-grid]", content.teachersPage?.items, (teacher, index) => {
     const defaultTeacher = defaultContent.teachersPage?.items?.[index] || {};
     const image = teacher.profileImage || teacher.image || teacher.bodyImage || defaultTeacher.profileImage || defaultTeacher.image || "";
+    const teacherUrl = `/teachers?teacher=${encodeURIComponent(getTeacherSlug(teacher, index))}`;
     return `
-      <a class="teacher-preview-photo image-fill ${image ? "has-image" : ""}" href="/teachers" ${backgroundAttributes(image)} aria-label="${escapeHtml(`Meet ${teacher.name || "this teacher"}`)}"></a>
+      <a class="teacher-preview-photo image-fill ${image ? "has-image" : ""}" href="${escapeHtml(teacherUrl)}" ${backgroundAttributes(image)} aria-label="${escapeHtml(`Meet ${teacher.name || "this teacher"}`)}"></a>
     `;
   });
   setHref("[data-faculty-cta]", "/teachers");
