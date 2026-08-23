@@ -118,7 +118,7 @@ textarea {
   display: flex;
   align-items: center;
   gap: 24px;
-  margin-left: auto;
+  flex: 0 0 auto;
   color: var(--cream);
   font-size: 0.92rem;
   font-weight: 800;
