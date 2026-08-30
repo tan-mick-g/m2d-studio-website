@@ -707,6 +707,7 @@ const applyContent = (content) => {
   setHref("[data-nav-link='services']", normalizeNavLink(content.nav?.links?.services, "/services"));
   setHref("[data-nav-link='contact']", normalizeNavLink(content.nav?.links?.contact, "/contact"));
   setHref("[data-nav-link='faq']", normalizeNavLink(content.nav?.links?.faq, "/faq"));
+  setHref("[data-account-link]", content.nav?.links?.account || "https://madetodance.rezerv.co/account/bookings?tab=0");
   setText("[data-booking]", content.nav?.cta || "Buy Package");
 
   document.querySelectorAll("[data-text]").forEach((element) => {

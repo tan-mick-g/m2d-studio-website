@@ -110,14 +110,15 @@ textarea {
 
 .desktop-nav a,
 .login-link,
-.nav-cta {
+.nav-cta,
+.account-link {
   white-space: nowrap;
 }
 
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 14px;
   flex: 0 0 auto;
   color: var(--cream);
   font-size: 0.92rem;
@@ -152,6 +153,51 @@ textarea {
 .light-button {
   color: var(--navy);
   background: var(--cream);
+}
+
+.account-link {
+  position: relative;
+  display: inline-flex;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(255, 253, 232, 0.84);
+  border-radius: 999px;
+  color: var(--cream);
+  background: rgba(255, 253, 232, 0.08);
+  transition: transform 180ms var(--ease-out), box-shadow 180ms var(--ease-out), background-color 180ms ease;
+}
+
+.account-link span,
+.account-link::after {
+  display: block;
+  border: 2px solid currentColor;
+  content: "";
+}
+
+.account-link span {
+  width: 11px;
+  height: 11px;
+  margin-top: -10px;
+  border-radius: 999px;
+}
+
+.account-link::after {
+  position: absolute;
+  bottom: 11px;
+  width: 21px;
+  height: 10px;
+  border-bottom: 0;
+  border-radius: 999px 999px 0 0;
+}
+
+.account-link:hover,
+.account-link:focus-visible {
+  transform: translateY(-3px);
+  background: rgba(255, 253, 232, 0.14);
+  box-shadow: 0 12px 28px rgba(21, 58, 99, 0.16);
 }
 
 .navy-button {
@@ -2012,6 +2058,22 @@ h2 {
     font-size: clamp(0.72rem, 0.78vw, 0.84rem);
   }
 
+  .account-link {
+    width: 42px;
+    height: 42px;
+  }
+
+  .account-link span {
+    width: 10px;
+    height: 10px;
+  }
+
+  .account-link::after {
+    bottom: 10px;
+    width: 19px;
+    height: 9px;
+  }
+
   .nav-cta {
     min-height: 42px;
     padding: 10px clamp(18px, 1.55vw, 26px);
@@ -2047,6 +2109,11 @@ h2 {
     min-height: 40px;
     padding-inline: clamp(14px, 1.25vw, 18px);
   }
+
+  .account-link {
+    width: 40px;
+    height: 40px;
+  }
 }
 
 @media (min-width: 1281px) and (max-width: 1340px) {
@@ -2081,9 +2148,15 @@ h2 {
     display: none;
   }
 
+  .site-header > .account-link {
+    width: 46px;
+    height: 46px;
+    margin-left: auto;
+  }
+
   .menu-toggle {
     display: block;
-    margin-left: auto;
+    margin-left: 0;
   }
 
   .site-header {

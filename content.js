@@ -11,7 +11,8 @@ window.MTD_DEFAULT_CONTENT = {
       teachers: "/teachers",
       services: "/services",
       contact: "/contact",
-      faq: "/faq"
+      faq: "/faq",
+      account: "https://madetodance.rezerv.co/account/bookings?tab=0"
     }
   },
   seo: {
