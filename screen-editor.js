@@ -9,6 +9,7 @@ window.MTD_SCREEN_EDITOR = ({ upload }) => {
   let uploading = false;
   let dragId = null;
   let previewSettings = null;
+  const expanded = new Set();
   const id = () => window.crypto?.randomUUID?.() || `slide-${Date.now()}-${Math.random().toString(36).slice(2)}`;
   const escape = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
   const notify = (text, error = false) => { message.textContent = text; message.classList.toggle("is-error", error); };
@@ -28,22 +29,23 @@ window.MTD_SCREEN_EDITOR = ({ upload }) => {
       ? `<video src="${escape(url)}" muted playsinline preload="metadata" aria-label="${escape(item.name)}"></video>`
       : `<img src="${escape(url)}" alt="${escape(item.name)}" loading="lazy" />`;
   };
+  const itemSummary = (item) => `${item.type === "video" ? "Video · plays to end" : `Image · ${item.duration || settings.duration}s`} · ${item.fit === "cover" ? "Fill" : "Fit"}${item.landscapeSrc ? " · Landscape version" : ""}`;
   const render = () => {
     list.innerHTML = settings.items.length ? settings.items.map((item, index) => `
       <article class="screen-item${item.enabled ? "" : " is-disabled"}" data-screen-id="${escape(item.id)}">
         <div class="screen-item-top">
           <button type="button" class="screen-drag" draggable="true" data-screen-drag aria-label="Drag slide ${index + 1} to reorder" title="Drag to reorder">⠿</button>
           <span class="screen-slide-number">${String(index + 1).padStart(2, "0")}</span>
+          <div class="screen-thumbnail">${thumbnail(item)}</div>
+          <div class="screen-item-overview"><strong data-screen-title title="${escape(item.name)}">${escape(item.name)}</strong><span data-screen-item-summary>${escape(itemSummary(item))}</span></div>
           <label class="screen-enabled"><input type="checkbox" data-field="enabled"${item.enabled ? " checked" : ""} /> Enabled</label>
           <div class="screen-item-actions">
             <button type="button" class="text-button" data-screen-action="up" aria-label="Move slide ${index + 1} up"${index === 0 ? " disabled" : ""}>↑</button>
             <button type="button" class="text-button" data-screen-action="down" aria-label="Move slide ${index + 1} down"${index === settings.items.length - 1 ? " disabled" : ""}>↓</button>
-            <button type="button" class="text-button" data-screen-action="duplicate">Duplicate</button>
-            <button type="button" class="text-button" data-screen-action="remove">Remove</button>
+            <button type="button" class="text-button screen-edit-toggle" data-screen-action="edit" aria-expanded="${expanded.has(item.id)}" aria-controls="screen-fields-${escape(item.id)}">${expanded.has(item.id) ? "Done" : "Edit"}</button>
           </div>
         </div>
-        <div class="screen-item-body">
-          <div class="screen-thumbnail">${thumbnail(item)}</div>
+        <div class="screen-item-body" id="screen-fields-${escape(item.id)}"${expanded.has(item.id) ? "" : " hidden"}>
           <div class="screen-item-fields">
             <div class="field-grid">
               <label>Slide Name<input data-field="name" value="${escape(item.name)}" placeholder="e.g. Class rates" /></label>
@@ -66,6 +68,10 @@ window.MTD_SCREEN_EDITOR = ({ upload }) => {
               <label class="upload-field">Upload Landscape Version<input type="file" accept="${item.type}/*" data-screen-file="landscapeSrc" /></label>
               <p class="editor-help">Used when the screen is wider than it is tall. Match the main media type. Text inside images scales with the image; it cannot rearrange.</p>
             </details>
+            <div class="screen-secondary-actions">
+              <button type="button" class="text-button" data-screen-action="duplicate">Duplicate slide</button>
+              <button type="button" class="text-button" data-screen-action="remove">Remove slide</button>
+            </div>
           </div>
         </div>
       </article>`).join("") : '<div class="screen-empty"><span class="screen-empty-icon" aria-hidden="true">▤</span><h4>Your screen starts here</h4><p>Upload rate cards, studio photos, or videos.<br />They will play in the order you choose.</p></div>';
@@ -92,12 +98,19 @@ window.MTD_SCREEN_EDITOR = ({ upload }) => {
     if (setting) {
       settings[setting] = setting === "muted" ? event.target.value === "true" : event.target.value;
       updateSummary();
+      list.querySelectorAll("[data-screen-id]").forEach((row) => {
+        const item = settings.items.find((entry) => entry.id === row.dataset.screenId);
+        row.querySelector("[data-screen-item-summary]").textContent = itemSummary(item);
+      });
     }
     if (!field) return;
     const row = event.target.closest("[data-screen-id]");
     const item = settings.items.find((entry) => entry.id === row.dataset.screenId);
     item[field] = event.target.type === "checkbox" ? event.target.checked : event.target.value;
     row.classList.toggle("is-disabled", !item.enabled);
+    row.querySelector("[data-screen-title]").textContent = item.name;
+    row.querySelector("[data-screen-title]").title = item.name;
+    row.querySelector("[data-screen-item-summary]").textContent = itemSummary(item);
     updateSummary();
   });
   root.addEventListener("change", (event) => {
@@ -138,19 +151,36 @@ window.MTD_SCREEN_EDITOR = ({ upload }) => {
       root.querySelectorAll("[data-screen-orientation]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.screenOrientation === orientation)));
     }
     if (uploading) return;
-    if (event.target.closest("[data-screen-add]")) { settings.items.push(createItem()); render(); draftNotice(); }
+    if (event.target.closest("[data-screen-add]")) {
+      const item = createItem(); settings.items.push(item); expanded.add(item.id); render(); draftNotice();
+      list.lastElementChild.querySelector('[data-field="name"]').focus();
+    }
     const button = event.target.closest("[data-screen-action]");
     if (!button) return;
     const row = button.closest("[data-screen-id]");
     const index = settings.items.findIndex((item) => item.id === row.dataset.screenId);
     const action = button.dataset.screenAction;
-    if (action === "remove") settings.items.splice(index, 1);
+    if (action === "edit") {
+      const open = !expanded.has(row.dataset.screenId);
+      if (open) expanded.add(row.dataset.screenId); else expanded.delete(row.dataset.screenId);
+      row.querySelector(".screen-item-body").hidden = !open;
+      button.setAttribute("aria-expanded", String(open));
+      button.textContent = open ? "Done" : "Edit";
+      return;
+    }
+    if (action === "remove") { expanded.delete(row.dataset.screenId); settings.items.splice(index, 1); }
     if (action === "duplicate") settings.items.splice(index + 1, 0, { ...settings.items[index], id: id(), name: `${settings.items[index].name} (copy)` });
     if (action === "up" || action === "down") {
       const target = index + (action === "up" ? -1 : 1);
       if (target >= 0 && target < settings.items.length) [settings.items[index], settings.items[target]] = [settings.items[target], settings.items[index]];
     }
+    const movedId = row.dataset.screenId;
     render(); draftNotice();
+    if (action === "up" || action === "down") {
+      const movedRow = [...list.children].find((element) => element.dataset.screenId === movedId);
+      const moveButton = movedRow.querySelector(`[data-screen-action="${action}"]`);
+      (moveButton.disabled ? movedRow.querySelector('[data-screen-action="edit"]') : moveButton).focus({ preventScroll: true });
+    }
   });
   list.addEventListener("dragstart", (event) => {
     if (uploading || !event.target.matches("[data-screen-drag]")) { event.preventDefault(); return; }
