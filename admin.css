@@ -933,3 +933,58 @@ button:disabled {
     width: 100%;
   }
 }
+
+/* Studio Screen playlist editor */
+.screen-section-heading, .screen-actions, .screen-item-top, .screen-item-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.screen-section-heading { justify-content: space-between; }
+.screen-section-heading h3 { margin: 0; }
+.screen-controls { border: 0; min-width: 0; padding: 0; margin: 0; }
+.screen-controls:disabled { opacity: .6; }
+.screen-actions { margin: 18px 0 24px; }
+.screen-upload-button { position: relative; overflow: hidden; cursor: pointer; }
+.screen-upload-button input { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
+.screen-upload-button:focus-within { outline: 3px solid #2098c2; outline-offset: 3px; }
+.screen-playlist { display: grid; gap: 18px; }
+.screen-item { border: 1px solid rgba(20,49,85,.2); border-radius: 16px; background: #fff; overflow: hidden; }
+.screen-item.is-disabled { background: #f0f1ef; }
+.screen-item.is-disabled .screen-thumbnail { opacity: .45; }
+.screen-item-top { padding: 12px 18px; border-bottom: 1px solid rgba(20,49,85,.12); background: #f5f5ee; }
+.screen-item-top .screen-enabled { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.screen-enabled input { width: 18px; height: 18px; accent-color: #143155; }
+.screen-slide-number { font-size: 12px; letter-spacing: .12em; font-weight: 800; }
+.screen-drag { border: 0; background: transparent; color: #143155; font-size: 25px; cursor: grab; padding: 0 8px; }
+.screen-item-actions { margin-left: auto; gap: 18px; }
+.screen-item-actions button { font-size: 13px; }
+.screen-item-actions button:disabled { opacity: .25; cursor: default; }
+.screen-item-body { display: grid; grid-template-columns: 150px minmax(0,1fr); gap: 22px; padding: 20px; }
+.screen-thumbnail { aspect-ratio: 9 / 16; background: #143155; border-radius: 8px; overflow: hidden; display: grid; place-items: center; align-self: start; }
+.screen-thumbnail img, .screen-thumbnail video { width: 100%; height: 100%; object-fit: contain; min-height: 0; }
+.screen-thumbnail-empty { color: #feffe9; font-size: 13px; }
+.screen-item-fields { display: grid; gap: 14px; min-width: 0; }
+.screen-item-fields .field-grid { margin: 0; }
+.screen-item-options { border-top: 1px solid #e3e5e4; padding-top: 12px; }
+.screen-item-options summary { cursor: pointer; font-weight: 700; font-size: 13px; color: #143155; }
+.screen-item-options[open] { display: grid; gap: 14px; }
+.screen-item-options[open] > * { margin-bottom: 14px; }
+.screen-empty { text-align: center; padding: 54px 24px; border: 1px dashed #bac4c9; border-radius: 16px; background: #f6f7f2; color: #53606c; }
+.screen-empty h4 { color: #143155; margin: 12px 0; font-size: 23px; }
+.screen-empty-icon { font-size: 38px; color: #a78747; }
+.screen-preview-wrap { position: relative; margin: 24px auto; width: min(100%, 340px); aspect-ratio: 9 / 16; background: #143155; border: 0; outline: 8px solid #102235; border-radius: 12px; overflow: hidden; box-shadow: 0 16px 40px #14315526; display: grid; place-items: center; }
+.screen-preview-wrap[data-orientation="landscape"] { width: 100%; max-width: 900px; aspect-ratio: 16 / 9; }
+.screen-preview-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.screen-preview-wrap > p { color: #feffe9; text-align: center; padding: 24px; }
+[data-screen-orientation][aria-pressed="true"] { background: #143155; color: #feffe9; }
+[data-screen-message].is-error { color: #b42318; }
+@media (max-width: 700px) {
+  .screen-item-body { grid-template-columns: 1fr; padding: 16px; }
+  .screen-thumbnail { width: 100%; aspect-ratio: 16 / 9; max-height: 200px; }
+  .screen-item-actions { width: 100%; justify-content: flex-end; }
+}
+
+[data-page-panel="studio-screen"] select { width: 100%; min-width: 0; border: 1px solid rgba(15,31,47,.18); border-radius: 8px; padding: 13px 14px; color: var(--ink); background: #fffdf8; font: inherit; font-weight: 500; }
+[data-page-panel="studio-screen"] input[type="color"] { height: 48px; padding: 5px; }
+
+/* Keep long playlist forms clear of the large website-editor sticky header. */
+.editor-form.is-screen-editor .editor-sticky { position: static; }
+.page-tabs { overflow-x: auto; scrollbar-width: thin; }
+.page-tabs button { flex-shrink: 0; }

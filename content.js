@@ -1,4 +1,5 @@
 window.MTD_DEFAULT_CONTENT = {
+  studioScreen: { muted: true, duration: 10, transition: "fade", background: "#143155", items: [] },
   bookingUrl: "https://madetodance.rezerv.co/",
   nav: {
     cta: "Buy Package",

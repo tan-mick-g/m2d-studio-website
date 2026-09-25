@@ -1,0 +1,17 @@
+:root { color-scheme: dark; background: #143155; font-family: Arial, sans-serif; }
+* { box-sizing: border-box; }
+html, body, #screen { width: 100%; height: 100%; margin: 0; overflow: hidden; }
+body { cursor: none; }
+#screen { position: relative; isolation: isolate; background: #143155; }
+.screen-fallback { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4vmin; padding: 10vmin; color: #feffe9; text-align: center; }
+.screen-fallback img { width: min(75vw, 850px); max-height: 45vh; object-fit: contain; }
+.screen-fallback p { font-size: clamp(16px, 3vmin, 42px); letter-spacing: .04em; line-height: 1.5; }
+.screen-slide { position: absolute; inset: 0; overflow: hidden; opacity: 0; transition: opacity 450ms ease; }
+.screen-slide.is-visible { opacity: 1; }
+.screen-slide.is-cut { transition: none; }
+.screen-media, .screen-backdrop { position: absolute; width: 100%; height: 100%; inset: 0; }
+.screen-media { object-fit: contain; }
+.screen-backdrop { object-fit: cover; filter: blur(35px) brightness(.45); transform: scale(1.12); }
+@media (prefers-reduced-motion: reduce) { .screen-slide { transition: none; } }
+
+.screen-fallback[hidden] { display: none; }

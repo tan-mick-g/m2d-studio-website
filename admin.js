@@ -102,6 +102,7 @@ const isSupabaseSiteMediaUrl = (value = "") =>
   /\.(jpe?g|png)(\?.*)?$/i.test(value);
 
 const getUploadImageSettings = (targetPath = "") => {
+  if (/^studioScreen\./i.test(targetPath)) return null; // Preserve rate artwork and portrait resolution.
   if (/footer\.logoUrl/i.test(targetPath)) return null;
   if (/seo\.defaultImage/i.test(targetPath)) return { maxWidth: 1200, maxHeight: 630, quality: 0.88, type: "image/jpeg" };
   if (/hero\.(images|image)/i.test(targetPath)) return { maxWidth: 1920, maxHeight: 1080, quality: 0.86, type: "image/webp" };
@@ -829,6 +830,7 @@ const parseRezervEmbedCode = (embedCode = "") => {
 };
 
 const fillForm = (content) => {
+  studioScreenEditor.fill(content.studioScreen);
   renderCardFields(content);
   renderMediaFields(content);
   renderSubjectTemplates(content.contact?.subjects);
@@ -886,10 +888,12 @@ const readForm = () => {
     (teacher) => teacher.name.trim() || teacher.bio.trim() || teacher.profileImage.trim() || teacher.bodyStillImage.trim() || teacher.bodyImage.trim()
   );
 
+  nextContent.studioScreen = studioScreenEditor.read();
   return nextContent;
 };
 
 const showEditor = (show) => {
+  if (!show) studioScreenEditor.stop();
   loginForm.hidden = show;
   passwordForm.hidden = true;
   accountForm.hidden = true;
@@ -917,6 +921,7 @@ const showLogin = () => {
 };
 
 const activateEditorTab = (tabName) => {
+  if (tabName !== "screen-preview") studioScreenEditor.stop();
   const activePage = [...pagePanels].find((panel) => panel.classList.contains("is-active"));
   const tabScope = activePage || editorForm;
   const activeTabGroup = [...pageTabGroups].find((group) => group.classList.contains("is-active"));
@@ -931,6 +936,8 @@ const activateEditorTab = (tabName) => {
 };
 
 const activatePage = (pageName) => {
+  editorForm.classList.toggle("is-screen-editor", pageName === "studio-screen");
+  if (pageName !== "studio-screen") studioScreenEditor.stop();
   pageTabs.forEach((tab) => {
     tab.classList.toggle("is-active", tab.dataset.pageTab === pageName);
   });
@@ -950,6 +957,7 @@ const activatePage = (pageName) => {
     "teachers-page": "Teachers Page",
     "contact-page": "Contact Page",
     "faq-page": "FAQ Page",
+    "studio-screen": "Studio Screen",
     "seo-settings": "SEO Settings"
   };
   const previewUrls = {
@@ -959,6 +967,7 @@ const activatePage = (pageName) => {
     "teachers-page": "teachers.html",
     "contact-page": "contact.html",
     "faq-page": "faq.html",
+    "studio-screen": "/screen",
     "seo-settings": "index.html"
   };
   if (editorPageLabel) editorPageLabel.textContent = pageLabels[pageName] || "Homepage";
@@ -1047,6 +1056,7 @@ const boot = async () => {
 
 const saveContent = async () => {
   if (isSavingContent) return;
+  if (studioScreenEditor.isUploading()) { setEditorMessage("Wait for the Studio Screen uploads to finish before saving.", "error"); return; }
   isSavingContent = true;
   setEditorMessage(`Saving started at ${getStatusTime()}...`);
   setSavingState(true);
@@ -1343,4 +1353,5 @@ editorForm.addEventListener("input", (event) => {
   syncJsonTextareaFromPath(input.name, input.value);
 });
 
+const studioScreenEditor = window.MTD_SCREEN_EDITOR({ upload: uploadMediaFile });
 boot();

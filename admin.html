@@ -104,6 +104,7 @@
               <button type="button" data-page-tab="teachers-page">Teachers Page</button>
               <button type="button" data-page-tab="contact-page">Contact Page</button>
               <button type="button" data-page-tab="faq-page">FAQ Page</button>
+              <button type="button" data-page-tab="studio-screen">Studio Screen</button>
               <button type="button" data-page-tab="seo-settings">SEO Settings</button>
             </div>
 
@@ -159,6 +160,12 @@
             <div class="editor-tabs" role="tablist" aria-label="FAQ page sections" data-page-tabs="faq-page">
               <button class="is-active" type="button" data-editor-tab="faq-page-copy">Copy</button>
               <button type="button" data-editor-tab="faq-page-questions">Questions</button>
+            </div>
+
+            <div class="editor-tabs" role="tablist" aria-label="Studio Screen sections" data-page-tabs="studio-screen">
+              <button class="is-active" type="button" data-editor-tab="screen-playlist">Playlist</button>
+              <button type="button" data-editor-tab="screen-settings">Display Settings</button>
+              <button type="button" data-editor-tab="screen-preview">Preview</button>
             </div>
 
             <div class="editor-tabs" role="tablist" aria-label="SEO settings" data-page-tabs="seo-settings">
@@ -557,6 +564,49 @@
             </section>
           </div>
 
+          <div class="editor-page" data-page-panel="studio-screen">
+            <section class="editor-section is-active" data-editor-panel="screen-playlist">
+              <div class="screen-section-heading">
+                <div><p class="eyebrow">Made for your studio TV</p><h3>Studio Screen</h3></div>
+                <a class="button button-outline" href="/screen" target="_blank" rel="noopener">Open Live Screen ↗</a>
+              </div>
+              <p class="editor-help">Mix rate images, photos, posters, and videos in a continuous loop. Drag the move handle or use the arrow buttons to arrange your slides. This page is not linked in the website navigation.</p>
+              <fieldset class="screen-controls" data-screen-controls>
+                <div class="screen-actions">
+                  <label class="button button-gold screen-upload-button">Upload Images / Videos<input type="file" accept="image/*,video/*" multiple data-screen-bulk /></label>
+                  <button type="button" class="button button-outline" data-screen-add>Add from URL</button>
+                  <span class="editor-help" data-screen-summary></span>
+                </div>
+                <div class="screen-playlist" data-screen-list></div>
+              </fieldset>
+              <p class="admin-message" role="status" aria-live="polite" data-screen-message></p>
+            </section>
+            <section class="editor-section" data-editor-panel="screen-settings">
+              <h3>Display Settings</h3>
+              <p class="editor-help">These defaults apply to the whole playlist. Each image can have its own duration.</p>
+              <div class="field-grid">
+                <label>Video Sound<select data-screen-setting="muted"><option value="true">Muted (default)</option><option value="false">Sound on</option></select></label>
+                <label>Default Image Duration (seconds)<input data-screen-setting="duration" type="number" min="3" max="300" value="10" /></label>
+                <label>Transition<select data-screen-setting="transition"><option value="fade">Soft fade</option><option value="cut">Instant cut</option></select></label>
+                <label>Background Color<input data-screen-setting="background" type="color" value="#143155" /></label>
+              </div>
+              <p class="editor-help">Videos play to the end. Sound also depends on the TV volume and AbleSign’s browser permissions; playback falls back to muted if sound is blocked. Use direct video files, such as MP4, rather than YouTube or social-media page links.</p>
+              <div class="admin-tool-panel"><div><h4>Ready for AbleSign</h4><p class="editor-help">Add your website’s /screen address as a Website in AbleSign. Allow enough display time for the playlist. The screen checks for published changes every minute and applies them between slides. Website playback requires an internet connection.</p></div></div>
+            </section>
+            <section class="editor-section" data-editor-panel="screen-preview">
+              <h3>Preview Your Playlist</h3>
+              <p class="editor-help">Preview includes unsaved changes. Use Save Changes when you are ready to publish. The live screen stays on its published playlist until then.</p>
+              <div class="screen-actions">
+                <button type="button" class="button button-outline" data-screen-orientation="portrait" aria-pressed="true">Portrait</button>
+                <button type="button" class="button button-outline" data-screen-orientation="landscape" aria-pressed="false">Landscape</button>
+                <button type="button" class="button button-gold" data-screen-preview>Play / Restart Preview</button>
+                <button type="button" class="button button-outline" data-screen-stop>Stop Preview</button>
+              </div>
+              <p class="admin-message" role="status" data-screen-preview-message></p>
+              <div class="screen-preview-wrap" data-screen-preview-wrap data-orientation="portrait"><p class="editor-help" data-screen-preview-placeholder>Press Play to preview your current playlist.</p></div>
+            </section>
+          </div>
+
           <div class="editor-toolbar floating-save-bar">
             <p class="admin-message" role="status" aria-live="polite" data-editor-message></p>
             <div class="floating-save-actions">
@@ -571,6 +621,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="content.js"></script>
     <script src="supabase-config.js"></script>
+    <script src="screen-core.js"></script>
+    <script src="screen-editor.js"></script>
     <script src="admin.js"></script>
   </body>
 </html>
