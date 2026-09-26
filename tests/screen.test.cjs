@@ -6,10 +6,11 @@ const path = require('node:path');
 const read = name => fs.readFileSync(path.join(__dirname, '..', name), 'utf8');
 
 // A deterministic media clock lets us exercise TV failures and long refresh cycles.
-function environment({ preview = true, stored = null, mutedRejection = false } = {}) {
+function environment({ preview = true, stored = null, storedAppearance = null, mutedRejection = false } = {}) {
   let now = 0, timerId = 0;
   const timers = new Map(), events = new Map(), storage = new Map();
   if (stored) storage.set('mtd-studio-screen-position', stored);
+  if (storedAppearance) storage.set('mtd-studio-screen-appearance', JSON.stringify(storedAppearance));
   const schedule = (fn, ms, interval = 0) => { const id = ++timerId; timers.set(id, { fn, at: now + ms, interval }); return id; };
   const tick = ms => {
     const until = now + ms;
@@ -41,6 +42,8 @@ function environment({ preview = true, stored = null, mutedRejection = false } =
   }
   const stage = new Element('main'), fallback = new Element('div');
   stage.append(fallback);
+  const logo = new Element('img'), copy = new Element('p');
+  logo.hidden = true; copy.hidden = true; fallback.append(logo); fallback.append(copy);
   const parent = { postMessage() {} };
   const ctx = {
     URL, URLSearchParams, AbortController, console: { warn() {} },
@@ -189,4 +192,87 @@ test('reloading resumes at the remembered next slide; preview does not change it
   const preview = environment({ stored: 'b' });
   preview.update({ items: [image('a'), image('b')] }); preview.current().emit('load');
   assert.equal(preview.storage.get('mtd-studio-screen-position'), 'b');
+});
+
+
+test('position insertion shifts intervening slides in both directions', () => {
+  const { ctx } = environment();
+  const items = Array.from({ length: 14 }, (_, index) => index + 1);
+  ctx.MTD_SCREEN.moveItem(items, 0, 11);
+  assert.deepEqual(items, [2,3,4,5,6,7,8,9,10,11,12,1,13,14]);
+  ctx.MTD_SCREEN.moveItem(items, 11, 0);
+  assert.deepEqual(items, Array.from({ length: 14 }, (_, index) => index + 1));
+  ctx.MTD_SCREEN.moveItem(items, 0, 99);
+  assert.equal(items[0], 1);
+});
+
+test('custom loading appearance and image background apply to fallback and media', () => {
+  const env = environment();
+  env.update({ backgroundImage: '/wall.png', loadingImage: '/welcome.png', loadingText: 'Welcome dancers', loadingTextColor: '#123456', loadingLayout: 'full', items: [] });
+  assert.equal(env.fallback.querySelector('p').textContent, 'Welcome dancers');
+  assert.match(env.fallback.querySelector('img').src, /welcome.png$/);
+  assert.equal(env.fallback.style.color, '#123456');
+  assert.match(env.fallback.className, /is-full/);
+  assert.match(env.stage.style.backgroundImage, /wall.png/);
+  env.update({ backgroundImage: '/wall.png', loadingText: '', loadingImage: '', items: [image('a')] });
+  assert.equal(env.fallback.querySelector('p').hidden, true);
+  assert.equal(env.fallback.querySelector('img').hidden, true);
+  assert.match(env.layers()[0].style.backgroundImage, /wall.png/);
+});
+
+test('cached published artwork appears before the startup network request resolves', () => {
+  const env = environment({ preview: false, storedAppearance: { loadingText: 'Saved welcome', loadingImage: '/saved.png', backgroundImage: '/wall.png' } });
+  assert.equal(env.fallback.querySelector('p').textContent, 'Saved welcome');
+  assert.match(env.fallback.querySelector('img').src, /saved.png$/);
+  assert.match(env.stage.style.backgroundImage, /wall.png/);
+  const firstVisit = environment({ preview: false });
+  assert.equal(firstVisit.fallback.querySelector('p').hidden, true);
+});
+
+test('loading screen defaults on, interludes default off, and disabling preserves artwork', () => {
+  const env = environment();
+  assert.equal(env.ctx.MTD_SCREEN.normalize().loadingEnabled, true);
+  assert.equal(env.ctx.MTD_SCREEN.normalize().loadingBetween, false);
+  env.update({ loadingEnabled: false, loadingBetween: true, loadingText: 'Keep this design', items: [] });
+  assert.equal(env.fallback.hidden, true);
+  assert.equal(env.fallback.querySelector('p').textContent, 'Keep this design');
+  env.update({ loadingEnabled: true, loadingText: 'Keep this design', items: [] });
+  assert.equal(env.fallback.hidden, false);
+  const cached = environment({ preview: false, storedAppearance: { loadingEnabled: false, loadingText: 'Hidden on startup' } });
+  assert.equal(cached.fallback.hidden, true);
+});
+
+test('interlude shows between images for the configured time, including loop wrap', () => {
+  const env = environment();
+  env.update({ loadingBetween: true, loadingDuration: 2, items: [image('a'), image('b')] });
+  env.current().emit('load'); env.tick(3000);
+  assert.equal(env.layers().length, 0);
+  assert.equal(env.fallback.hidden, false);
+  env.tick(1999); assert.equal(env.layers().length, 0);
+  env.tick(1); assert.match(env.current().src, /b.png$/);
+  env.current().emit('load'); env.tick(3000);
+  assert.equal(env.fallback.hidden, false);
+  env.resize(1920, 1080); assert.equal(env.layers().length, 0);
+  env.tick(1750); assert.match(env.current().src, /a.png$/);
+});
+
+test('video end inserts interlude but disabled loading skips it', async () => {
+  for (const enabled of [true, false]) {
+    const env = environment();
+    env.update({ loadingEnabled: enabled, loadingBetween: true, items: [image('v', { type: 'video' }), image('b')] });
+    await flush();
+    env.current().emit('ended');
+    if (enabled) {
+      assert.equal(env.layers().length, 0); assert.equal(env.fallback.hidden, false);
+      env.tick(3000);
+    }
+    assert.match(env.current().src, /b.png$/);
+  }
+});
+
+test('broken media does not insert an extra interlude', () => {
+  const env = environment();
+  env.update({ loadingBetween: true, items: [image('broken'), image('good')] });
+  env.current().emit('error'); env.tick(100);
+  assert.match(env.current().src, /good.png$/);
 });

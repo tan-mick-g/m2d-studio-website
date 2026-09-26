@@ -19,6 +19,14 @@
       duration: clamp(value.duration, 3, 300, 10),
       transition: value.transition === "cut" ? "cut" : "fade",
       background: /^#[\da-f]{6}$/i.test(value.background || "") ? value.background : defaults.background,
+      backgroundImage: mediaUrl(value.backgroundImage),
+      loadingImage: mediaUrl(value.loadingImage === undefined ? "/assets/m2d-horizontal-cream.png" : value.loadingImage),
+      loadingText: String(value.loadingText === undefined ? "Made to move. Made to connect." : value.loadingText),
+      loadingTextColor: /^#[\da-f]{6}$/i.test(value.loadingTextColor || "") ? value.loadingTextColor : "#feffe9",
+      loadingEnabled: value.loadingEnabled !== false,
+      loadingBetween: value.loadingBetween === true,
+      loadingDuration: clamp(value.loadingDuration, 1, 60, 3),
+      loadingLayout: value.loadingLayout === "full" ? "full" : "logo",
       items: (Array.isArray(value.items) ? value.items : []).filter(Boolean).map((item, index) => ({
         id: String(item.id || `slide-${index}`),
         name: String(item.name || "Untitled slide"),
@@ -35,5 +43,9 @@
     };
   };
   const source = (item, landscape) => landscape && item.landscapeSrc ? item.landscapeSrc : item.src;
-  window.MTD_SCREEN = { defaults, normalize, source, mediaUrl };
+  const moveItem = (items, from, to) => {
+    if (!Number.isInteger(from) || !Number.isInteger(to) || from < 0 || from >= items.length || to < 0 || to >= items.length) return;
+    items.splice(to, 0, items.splice(from, 1)[0]);
+  };
+  window.MTD_SCREEN = { defaults, normalize, source, mediaUrl, moveItem };
 })();

@@ -70,8 +70,8 @@ This is a static site. Import the GitHub repository into Vercel and deploy with:
 In **Admin → Studio Screen**:
 
 1. Upload images/videos or add direct media URLs. Rate cards are uploaded images.
-2. Drag the move handle, or use the up/down buttons, to order slides. Duplicate a rate card to repeat it later in the loop; disable slides to keep them out of playback.
-3. Choose **Fit** to preserve the whole image/video or **Fill** to crop. Optional landscape media replaces the main file on wider screens. Fit images can use a blurred background; videos use the display background color.
+2. Drag the move handle, use the up/down buttons, or enter a position number and press Enter to order slides. Moving a slide inserts it into that slot and shifts the intervening slides. Duplicate a rate card to repeat it later in the loop; disable slides to keep them out of playback.
+3. Choose **Fit** to preserve the whole image/video or **Fill** to crop. Optional landscape media replaces the main file on wider screens. Fit images can use a blurred background; videos use the display background image or color.
 4. Adjust timing, transitions, background color, and video sound in **Display Settings**. Videos play to completion; sound is muted by default.
 5. Use **Preview** for unsaved portrait/landscape playback, then **Save Changes** to publish with the existing website content. Switching away from Preview stops preview playback.
 
@@ -96,3 +96,7 @@ node --test tests/screen.test.cjs
 ```
 
 The tests cover load timing, broken/stalled media, muted autoplay fallback, orientation variants, preview message isolation, published updates at slide boundaries, and reload resume behavior. They do not write to Supabase.
+
+Studio Screen display settings also include an uploaded background image and an editable loading/empty screen (image, layout, message, and text color). The background image covers the screen behind fitted media; a slide’s blurred background overrides it. Use **Preview Loading Screen** to check its design without changing the playlist. Repeat visits use the last published appearance from browser storage while current settings load; first visits show an empty background until settings arrive. Clearing the image or message hides it.
+
+**Show Loading Screen** hides or enables the saved loading design (on by default). **Show between each image / video** inserts that design after each completed item, including at the end of a loop (off by default). Its duration defaults to 3 seconds, adjustable from 1–60 seconds; it remains visible if the next media needs longer to load. Turning off the loading screen also suppresses between-media playback without erasing either preference or artwork.

@@ -12,7 +12,11 @@ window.MTD_SCREEN_EDITOR = ({ upload }) => {
   const expanded = new Set();
   const id = () => window.crypto?.randomUUID?.() || `slide-${Date.now()}-${Math.random().toString(36).slice(2)}`;
   const escape = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
-  const notify = (text, error = false) => { message.textContent = text; message.classList.toggle("is-error", error); };
+  const notify = (text, error = false) => {
+    [message, root.querySelector("[data-screen-appearance-message]")].forEach((element) => {
+      if (element) { element.textContent = text; element.classList.toggle("is-error", error); }
+    });
+  };
   const draftNotice = () => notify("Playlist updated. Preview it, then Save Changes to publish.");
   const createItem = (extra = {}) => ({ id: id(), name: "New slide", type: "image", src: "", landscapeSrc: "", enabled: true, duration: "", fit: "contain", background: "brand", x: 50, y: 50, ...extra });
   const option = (value, label, current) => `<option value="${value}"${value === current ? " selected" : ""}>${label}</option>`;
@@ -35,7 +39,7 @@ window.MTD_SCREEN_EDITOR = ({ upload }) => {
       <article class="screen-item${item.enabled ? "" : " is-disabled"}" data-screen-id="${escape(item.id)}">
         <div class="screen-item-top">
           <button type="button" class="screen-drag" draggable="true" data-screen-drag aria-label="Drag slide ${index + 1} to reorder" title="Drag to reorder">⠿</button>
-          <span class="screen-slide-number">${String(index + 1).padStart(2, "0")}</span>
+          <input class="screen-slide-number" type="number" inputmode="numeric" min="1" max="${settings.items.length}" value="${index + 1}" data-screen-position aria-label="Position of ${escape(item.name)}" title="Enter a position and press Enter" />
           <div class="screen-thumbnail">${thumbnail(item)}</div>
           <div class="screen-item-overview"><strong data-screen-title title="${escape(item.name)}">${escape(item.name)}</strong><span data-screen-item-summary>${escape(itemSummary(item))}</span></div>
           <label class="screen-enabled"><input type="checkbox" data-field="enabled"${item.enabled ? " checked" : ""} /> Enabled</label>
@@ -59,7 +63,7 @@ window.MTD_SCREEN_EDITOR = ({ upload }) => {
             </div>
             <details class="screen-item-options"><summary>Background, crop & landscape version</summary>
               <div class="field-grid">
-                <label>Unused Space<select data-field="background">${option("brand", "Display background color", item.background)}${item.type === "image" ? option("blur", "Blurred copy of image", item.background) : ""}</select></label>
+                <label>Unused Space<select data-field="background">${option("brand", "Display background image / color", item.background)}${item.type === "image" ? option("blur", "Blurred copy of image", item.background) : ""}</select></label>
                 <p class="editor-help">Fit keeps all text and movement visible. Fill crops around the position below.</p>
                 <label>Crop Position — Left to Right (%)<input data-field="x" type="number" min="0" max="100" value="${escape(item.x)}" /></label>
                 <label>Crop Position — Top to Bottom (%)<input data-field="y" type="number" min="0" max="100" value="${escape(item.y)}" /></label>
@@ -77,26 +81,48 @@ window.MTD_SCREEN_EDITOR = ({ upload }) => {
       </article>`).join("") : '<div class="screen-empty"><span class="screen-empty-icon" aria-hidden="true">▤</span><h4>Your screen starts here</h4><p>Upload rate cards, studio photos, or videos.<br />They will play in the order you choose.</p></div>';
     updateSummary();
   };
+  const syncLoadingControls = () => {
+    root.querySelector('[data-screen-setting="loadingBetween"]').disabled = !settings.loadingEnabled;
+    root.querySelector('[data-screen-setting="loadingDuration"]').disabled = !settings.loadingEnabled || !settings.loadingBetween;
+  };
+  const syncArtwork = () => {
+    root.querySelectorAll("[data-screen-art-preview]").forEach((image) => {
+      const url = core.mediaUrl(settings[image.dataset.screenArtPreview]);
+      image.hidden = !url;
+      if (url) image.src = url; else image.removeAttribute("src");
+    });
+  };
   const read = () => {
     if (uploading) throw new Error("Wait for Studio Screen uploads to finish.");
+    for (const key of ["backgroundImage", "loadingImage"]) {
+      if (settings[key] && !core.mediaUrl(settings[key])) throw new Error(`Studio Screen: ${key === "backgroundImage" ? "background" : "loading"} image needs a valid URL.`);
+    }
     for (const [index, item] of settings.items.entries()) {
       if (item.enabled && !core.mediaUrl(item.src)) throw new Error(`Studio Screen slide ${index + 1} needs a valid media URL, or disable it for now.`);
       if (item.landscapeSrc && !core.mediaUrl(item.landscapeSrc)) throw new Error(`Studio Screen slide ${index + 1} has an invalid landscape URL.`);
       if (item.duration !== "" && (Number(item.duration) < 3 || Number(item.duration) > 300)) throw new Error(`Studio Screen slide ${index + 1}: use an image duration from 3 to 300 seconds.`);
     }
+    if (!Number.isFinite(Number(settings.loadingDuration)) || Number(settings.loadingDuration) < 1 || Number(settings.loadingDuration) > 60) throw new Error("Use a loading-screen duration from 1 to 60 seconds.");
     if (Number(settings.duration) < 3 || Number(settings.duration) > 300) throw new Error("Studio Screen: use a default image duration from 3 to 300 seconds.");
     return core.normalize(settings);
   };
   const fill = (value) => {
     settings = core.normalize(value);
-    root.querySelectorAll("[data-screen-setting]").forEach((input) => { input.value = String(settings[input.dataset.screenSetting]); });
+    syncArtwork();
+    root.querySelectorAll("[data-screen-setting]").forEach((input) => {
+      if (input.type === "checkbox") input.checked = settings[input.dataset.screenSetting];
+      else input.value = String(settings[input.dataset.screenSetting]);
+    });
+    syncLoadingControls();
     render();
   };
   root.addEventListener("input", (event) => {
     const field = event.target.dataset.field;
     const setting = event.target.dataset.screenSetting;
     if (setting) {
-      settings[setting] = setting === "muted" ? event.target.value === "true" : event.target.value;
+      settings[setting] = event.target.type === "checkbox" ? event.target.checked : setting === "muted" ? event.target.value === "true" : event.target.value;
+      syncLoadingControls();
+      syncArtwork();
       updateSummary();
       list.querySelectorAll("[data-screen-id]").forEach((row) => {
         const item = settings.items.find((entry) => entry.id === row.dataset.screenId);
@@ -125,9 +151,10 @@ window.MTD_SCREEN_EDITOR = ({ upload }) => {
     previewWrap.querySelector("iframe")?.remove();
     previewWrap.querySelector("[data-screen-preview-placeholder]").hidden = false;
   };
-  const playPreview = () => {
+  const playPreview = (loadingOnly = false) => {
     const status = root.querySelector("[data-screen-preview-message]");
     try { previewSettings = read(); status.textContent = ""; } catch (error) { status.textContent = error.message; return; }
+    if (loadingOnly) previewSettings.items = [];
     stop();
     const frame = document.createElement("iframe");
     frame.title = "Studio Screen draft preview";
@@ -144,7 +171,15 @@ window.MTD_SCREEN_EDITOR = ({ upload }) => {
   });
   root.addEventListener("click", (event) => {
     if (event.target.closest("[data-screen-preview]")) playPreview();
+    if (event.target.closest("[data-screen-loading-preview]")) playPreview(true);
     if (event.target.closest("[data-screen-stop]")) stop();
+    const clearArtwork = event.target.closest("[data-screen-art-clear]");
+    if (clearArtwork && !uploading) {
+      const key = clearArtwork.dataset.screenArtClear;
+      settings[key] = "";
+      root.querySelector(`[data-screen-setting="${key}"]`).value = "";
+      syncArtwork(); draftNotice();
+    }
     const orientation = event.target.closest("[data-screen-orientation]")?.dataset.screenOrientation;
     if (orientation) {
       previewWrap.dataset.orientation = orientation;
@@ -181,6 +216,49 @@ window.MTD_SCREEN_EDITOR = ({ upload }) => {
       const moveButton = movedRow.querySelector(`[data-screen-action="${action}"]`);
       (moveButton.disabled ? movedRow.querySelector('[data-screen-action="edit"]') : moveButton).focus({ preventScroll: true });
     }
+  });
+  const moveToPosition = (input) => {
+    if (uploading) return;
+    const row = input.closest("[data-screen-id]");
+    const from = settings.items.findIndex((item) => item.id === row.dataset.screenId);
+    const requested = Number(input.value);
+    if (!input.value || !Number.isInteger(requested) || requested < 1 || requested > settings.items.length) {
+      input.value = from + 1;
+      notify(`Enter a position from 1 to ${settings.items.length}.`, true);
+      return;
+    }
+    if (from === requested - 1) return;
+    core.moveItem(settings.items, from, requested - 1);
+    const movedId = row.dataset.screenId;
+    render(); draftNotice();
+    const movedRow = [...list.children].find((element) => element.dataset.screenId === movedId);
+    movedRow.querySelector("[data-screen-position]").focus({ preventScroll: true });
+    movedRow.scrollIntoView({ block: "nearest" });
+  };
+  list.addEventListener("change", (event) => {
+    if (event.target.matches("[data-screen-position]")) moveToPosition(event.target);
+  });
+  list.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" && event.target.matches("[data-screen-position]")) {
+      event.preventDefault(); moveToPosition(event.target);
+    }
+  });
+  root.addEventListener("change", async (event) => {
+    const input = event.target;
+    const key = input.dataset.screenArtUpload;
+    if (!key || !input.files.length || uploading) return;
+    const appearanceControls = root.querySelector("[data-screen-appearance-controls]");
+    uploading = true; controls.disabled = true; appearanceControls.disabled = true;
+    try {
+      const file = input.files[0];
+      if (!file.type.startsWith("image/")) throw new Error("Choose an image file.");
+      notify(`Uploading ${file.name}…`);
+      const result = await upload(file, `studioScreen.${key}`);
+      settings[key] = result.publicUrl;
+      root.querySelector(`[data-screen-setting="${key}"]`).value = result.publicUrl;
+      syncArtwork(); notify("Image uploaded. Preview, then Save Changes to publish.");
+    } catch (error) { notify(error.message, true); }
+    finally { uploading = false; controls.disabled = false; appearanceControls.disabled = false; input.value = ""; }
   });
   list.addEventListener("dragstart", (event) => {
     if (uploading || !event.target.matches("[data-screen-drag]")) { event.preventDefault(); return; }

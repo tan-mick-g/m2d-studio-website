@@ -570,7 +570,7 @@
                 <div><p class="eyebrow">Made for your studio TV</p><h3>Studio Screen</h3></div>
                 <a class="button button-outline" href="/screen" target="_blank" rel="noopener">Open Live Screen ↗</a>
               </div>
-              <p class="editor-help">Mix rate images, photos, posters, and videos in a continuous loop. Drag the move handle or use the arrow buttons to arrange your slides. This page is not linked in the website navigation.</p>
+              <p class="editor-help">Mix rate images, photos, posters, and videos in a continuous loop. Drag the move handle, use the arrows, or enter a position number and press Enter to move a slide. This page is not linked in the website navigation.</p>
               <fieldset class="screen-controls" data-screen-controls>
                 <div class="screen-actions">
                   <label class="button button-gold screen-upload-button">Upload Images / Videos<input type="file" accept="image/*,video/*" multiple data-screen-bulk /></label>
@@ -591,6 +591,30 @@
                 <label>Background Color<input data-screen-setting="background" type="color" value="#143155" /></label>
               </div>
               <p class="editor-help">Videos play to the end. Sound also depends on the TV volume and AbleSign’s browser permissions; playback falls back to muted if sound is blocked. Use direct video files, such as MP4, rather than YouTube or social-media page links.</p>
+              <fieldset class="screen-controls screen-appearance" data-screen-appearance-controls>
+                <h4>Screen Background</h4>
+                <p class="editor-help">Your background image fills the screen behind fitted media and the loading screen. The color above remains the fallback. A slide’s blurred-image setting takes precedence.</p>
+                <label>Background Image URL<input type="url" data-screen-setting="backgroundImage" placeholder="Optional image URL" /></label>
+                <label class="upload-field">Upload Background Image<input type="file" accept="image/*" data-screen-art-upload="backgroundImage" /></label>
+                <img class="screen-art-preview" data-screen-art-preview="backgroundImage" alt="Screen background preview" hidden />
+                <button type="button" class="text-button" data-screen-art-clear="backgroundImage">Remove background image</button>
+                <h4>Loading & Empty Screen</h4>
+                <label class="screen-toggle"><input type="checkbox" data-screen-setting="loadingEnabled" /> Show Loading Screen</label>
+                <label class="screen-toggle"><input type="checkbox" data-screen-setting="loadingBetween" /> Show between each image / video</label>
+                <label>Between-Media Duration (seconds)<input type="number" min="1" max="60" data-screen-setting="loadingDuration" /></label>
+                <p class="editor-help">Turning off Show Loading Screen hides its image and message but keeps your design saved. Only the background remains while loading. Between-media playback also requires Show Loading Screen; its timer starts after an image finishes or a video ends. The screen stays visible if the next item needs extra time to load.</p>
+                <p class="editor-help">Shown while the first media loads, when the playlist is empty, or when all media fails. The TV remembers the last published design for its next startup.</p>
+                <label>Loading Image URL<input type="url" data-screen-setting="loadingImage" placeholder="Leave empty for no image" /></label>
+                <label class="upload-field">Upload Loading Image<input type="file" accept="image/*" data-screen-art-upload="loadingImage" /></label>
+                <img class="screen-art-preview" data-screen-art-preview="loadingImage" alt="Loading image preview" hidden />
+                <button type="button" class="text-button" data-screen-art-clear="loadingImage">Remove loading image</button>
+                <div class="field-grid">
+                  <label>Loading Image Layout<select data-screen-setting="loadingLayout"><option value="logo">Centered logo / image</option><option value="full">Full-screen artwork (fit entire image)</option></select></label>
+                  <label>Loading Text Color<input type="color" data-screen-setting="loadingTextColor" /></label>
+                </div>
+                <label>Loading Message<textarea rows="2" data-screen-setting="loadingText" placeholder="Leave empty for no message"></textarea></label>
+                <p class="admin-message" role="status" data-screen-appearance-message></p>
+              </fieldset>
               <div class="admin-tool-panel"><div><h4>Ready for AbleSign</h4><p class="editor-help">Add your website’s /screen address as a Website in AbleSign. Allow enough display time for the playlist. The screen checks for published changes every minute and applies them between slides. Website playback requires an internet connection.</p></div></div>
             </section>
             <section class="editor-section" data-editor-panel="screen-preview">
@@ -600,6 +624,7 @@
                 <button type="button" class="button button-outline" data-screen-orientation="portrait" aria-pressed="true">Portrait</button>
                 <button type="button" class="button button-outline" data-screen-orientation="landscape" aria-pressed="false">Landscape</button>
                 <button type="button" class="button button-gold" data-screen-preview>Play / Restart Preview</button>
+                <button type="button" class="button button-outline" data-screen-loading-preview>Preview Loading Screen</button>
                 <button type="button" class="button button-outline" data-screen-stop>Stop Preview</button>
               </div>
               <p class="admin-message" role="status" data-screen-preview-message></p>

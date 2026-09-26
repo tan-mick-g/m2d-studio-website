@@ -4,6 +4,7 @@
   const fallback = document.getElementById("fallback");
   const preview = new URLSearchParams(location.search).has("preview") && window.parent !== window;
   const storageKey = "mtd-studio-screen-position";
+  const appearanceKey = "mtd-studio-screen-appearance";
   let settings = core.normalize();
   let pending = null;
   let signature = "";
@@ -16,6 +17,7 @@
   let failures = new Map();
   let preloaded = null;
   let running = false;
+  let interlude = false;
   const playlist = () => settings.items.filter((item) => item.enabled && item.src);
   const source = (item) => core.source(item, innerWidth > innerHeight);
   const clearTimers = () => { clearTimeout(slideTimer); clearInterval(watchTimer); };
@@ -31,17 +33,49 @@
     generation++;
     dispose(loading); loading = null;
     dispose(active); active = null;
-    fallback.hidden = false;
+    fallback.hidden = !settings.loadingEnabled;
+    interlude = false;
     running = false;
     slideTimer = setTimeout(() => { failures.clear(); advance(); }, 60000);
   };
+  const setBackground = (element) => {
+    element.style.backgroundColor = settings.background;
+    element.style.backgroundImage = settings.backgroundImage ? `url(${JSON.stringify(settings.backgroundImage)})` : "none";
+  };
+  const appearance = () => {
+    setBackground(stage);
+    const logo = fallback.querySelector("img");
+    const text = fallback.querySelector("p");
+    if (logo) {
+      logo.hidden = !settings.loadingImage;
+      if (settings.loadingImage) logo.src = settings.loadingImage;
+      else logo.removeAttribute("src");
+      logo.onerror = () => { logo.hidden = true; };
+    }
+    if (text) { text.textContent = settings.loadingText; text.hidden = !settings.loadingText; }
+    fallback.className = `screen-fallback${settings.loadingLayout === "full" ? " is-full" : ""}`;
+    fallback.style.color = settings.loadingTextColor;
+    if (!active) fallback.hidden = !settings.loadingEnabled;
+    if (!preview) {
+      const { background, backgroundImage, loadingImage, loadingText, loadingTextColor, loadingLayout, loadingEnabled } = settings;
+      try { localStorage.setItem(appearanceKey, JSON.stringify({ background, backgroundImage, loadingImage, loadingText, loadingTextColor, loadingLayout, loadingEnabled })); } catch { /* Optional startup cache. */ }
+    }
+  };
+  // On repeat TV loads, show the last published artwork immediately. On a first
+  // visit, keep the shell empty until settings arrive instead of flashing old copy.
+  if (!preview) {
+    try {
+      const cached = localStorage.getItem(appearanceKey);
+      if (cached) { settings = core.normalize(JSON.parse(cached)); appearance(); }
+    } catch { /* Fetch current settings below if the cache is unavailable. */ }
+  }
   const applyPending = () => {
     if (!pending) return;
     const previousId = playlist()[index]?.id;
     settings = pending; pending = null;
     index = playlist().findIndex((item) => item.id === previousId);
     failures.clear();
-    stage.style.backgroundColor = settings.background;
+    appearance();
   };
   const rememberNext = (items) => {
     if (preview || !items.length) return;
@@ -59,7 +93,7 @@
     const layer = document.createElement("div");
     loading = layer;
     layer.className = `screen-slide${settings.transition === "cut" ? " is-cut" : ""}`;
-    layer.style.backgroundColor = settings.background;
+    setBackground(layer);
     const url = source(item);
     const failureKey = `${item.id}:${url}`;
     const media = document.createElement(item.type === "video" ? "video" : "img");
@@ -99,7 +133,7 @@
       setTimeout(() => dispose(previous), 500);
       rememberNext(items);
       preloadNext(items);
-      if (item.type === "image") slideTimer = setTimeout(advance, (item.duration || settings.duration) * 1000);
+      if (item.type === "image") slideTimer = setTimeout(finishSlide, (item.duration || settings.duration) * 1000);
     };
     media.addEventListener("error", fail, { once: true });
     slideTimer = setTimeout(fail, 20000);
@@ -110,7 +144,7 @@
       media.setAttribute("playsinline", "");
       media.preload = "auto";
       media.addEventListener("playing", reveal);
-      media.addEventListener("ended", () => { if (token === generation) advance(); }, { once: true });
+      media.addEventListener("ended", () => { if (token === generation) finishSlide(); }, { once: true });
       let lastTime = -1;
       let lastProgress = Date.now();
       watchTimer = setInterval(() => {
@@ -136,7 +170,19 @@
       media.src = url;
     }
   };
+  function finishSlide() {
+    clearTimers();
+    applyPending();
+    if (!settings.loadingEnabled || !settings.loadingBetween || !playlist().length) { advance(); return; }
+    generation++;
+    dispose(loading); loading = null;
+    dispose(active); active = null;
+    fallback.hidden = false;
+    interlude = true;
+    slideTimer = setTimeout(advance, settings.loadingDuration * 1000);
+  }
   function advance() {
+    interlude = false;
     clearTimers();
     applyPending();
     const items = playlist();
@@ -207,7 +253,7 @@
       if (next === landscape) return;
       landscape = next;
       failures.clear();
-      if (running) { index--; advance(); }
+      if (running && !interlude) { index--; advance(); }
     }, 250);
   });
 })();

@@ -953,7 +953,7 @@ button:disabled {
 .screen-item-top { display: flex; flex-wrap: nowrap; gap: 10px; padding: 10px 12px; background: #f5f5ee; }
 .screen-item-top .screen-enabled { display: flex; align-items: center; gap: 8px; font-size: 13px; }
 .screen-enabled input { width: 18px; height: 18px; accent-color: #143155; }
-.screen-slide-number { font-size: 12px; letter-spacing: .12em; font-weight: 800; }
+.screen-slide-number { width: 54px; flex-shrink: 0; padding: 8px 4px; font-size: 13px; text-align: center; font-weight: 800; }
 .screen-drag { border: 0; background: transparent; color: #143155; font-size: 25px; cursor: grab; padding: 0 8px; }
 .screen-item-actions { flex-wrap: nowrap; margin-left: auto; gap: 4px; flex-shrink: 0; }
 .screen-item-actions button { font-size: 13px; min-width: 40px; min-height: 40px; padding: 8px; border-radius: 6px; }
@@ -985,7 +985,7 @@ button:disabled {
 [data-screen-orientation][aria-pressed="true"] { background: #143155; color: #feffe9; }
 [data-screen-message].is-error { color: #b42318; }
 @media (max-width: 700px) {
-  .screen-item-top { display: grid; grid-template-columns: 28px 24px 44px minmax(0, 1fr); gap: 6px; padding: 8px; }
+  .screen-item-top { display: grid; grid-template-columns: 28px 48px 44px minmax(0, 1fr); gap: 6px; padding: 8px; }
   .screen-thumbnail { width: 44px; height: 44px; }
   .screen-item-top .screen-enabled { grid-column: 1 / 4; grid-row: 2; justify-self: start; }
   .screen-item-actions { grid-column: 4; grid-row: 2; justify-self: end; }
@@ -1002,3 +1002,12 @@ button:disabled {
 .editor-form.is-screen-editor .editor-sticky { position: static; }
 .page-tabs { overflow-x: auto; scrollbar-width: thin; }
 .page-tabs button { flex-shrink: 0; }
+
+.screen-appearance { display: grid; gap: 14px; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--line); }
+.screen-appearance h4 { margin: 8px 0 0; }
+.screen-art-preview { width: 160px; height: 100px; object-fit: contain; background: #143155; border-radius: 8px; }
+.screen-appearance .text-button { justify-self: start; }
+@media (max-width: 700px) { .screen-slide-number { width: 48px; } }
+
+.screen-appearance .screen-toggle { display: flex; align-items: center; gap: 10px; }
+.screen-toggle input { width: 18px; height: 18px; accent-color: #143155; }
