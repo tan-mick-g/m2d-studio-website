@@ -571,7 +571,7 @@
                 <div><p class="eyebrow">Made for your studio TV</p><h3>Studio Screen</h3></div>
                 <a class="button button-outline" href="/screen" target="_blank" rel="noopener">Open Live Screen ↗</a>
               </div>
-              <p class="editor-help">Mix rate images, photos, posters, and videos in a continuous loop. Drag the move handle, use the arrows, or enter a position number and press Enter to move a slide. This page is not linked in the website navigation.</p>
+              <p class="editor-help">Mix photos, posters, and videos in a continuous loop. Drag the move handle, use the arrows, or enter a position number and press Enter to move a slide. This page is not linked in the website navigation.</p>
               <fieldset class="screen-controls" data-screen-controls>
                 <div class="screen-actions">
                   <label class="button button-gold screen-upload-button">Upload Images / Videos<input type="file" accept="image/*,video/*" multiple data-screen-bulk /></label>
@@ -622,6 +622,18 @@
               <h3>Screen Navigation</h3>
               <label>Return to Playlist After Inactivity (seconds)<input type="number" min="15" max="600" data-screen-setting="browseTimeout" /></label>
               <p class="editor-help">Applies while browsing videos, packages, schedules, or classes. A selected video plays to the end before returning. Back to Playlist returns immediately.</p>
+              <p class="editor-help">Packages, Schedule, and Classes are managed here independently of the looping playlist.</p>
+              <fieldset class="screen-controls screen-appearance" data-navigation-controls>
+                <h4>Packages / Rate Cards</h4>
+                <label class="upload-field">Upload Rate Cards<input type="file" accept="image/*" multiple data-nav-upload="packages" /></label>
+                <button type="button" class="text-button" data-nav-add="packages">Add rate card from URL</button>
+                <div data-nav-list="packages"></div>
+                <h4>Schedule</h4>
+                <label class="upload-field">Upload Schedule Images<input type="file" accept="image/*" multiple data-nav-upload="schedule" /></label>
+                <button type="button" class="text-button" data-nav-add="schedule">Add schedule from URL</button>
+                <div data-nav-list="schedule"></div>
+                <p class="admin-message" role="status" data-nav-message></p>
+              </fieldset>
               <fieldset class="screen-controls screen-appearance" data-screen-classes-controls>
                 <h4>Classes Button</h4>
                 <label>Classes Content<select data-screen-setting="classesMode"><option value="webpage">Webpage URL</option><option value="image">Image</option></select></label>
@@ -641,8 +653,7 @@
               <h4>Video Display Names</h4>
               <p class="editor-help">These titles appear in the Videos gallery. Internal slide names stay unchanged. Blank titles appear as Video 1, Video 2, and so on.</p>
               <div class="screen-video-names" data-screen-video-names></div>
-              <h4>Packages & Schedule Images</h4>
-              <p class="editor-help">Upload images in Playlist, open Edit, then set Image Category to Package / rate card or Schedule. Enabled images appear in the matching gallery and open at full size without cropping. Disabled slides are hidden from all galleries.</p>
+
             </section>
             <section class="editor-section" data-editor-panel="screen-preview">
               <h3>Preview Your Playlist</h3>
@@ -674,6 +685,7 @@
     <script src="content.js"></script>
     <script src="supabase-config.js"></script>
     <script src="screen-core.js"></script>
+    <script src="/screen-thumbnails.js"></script>
     <script src="screen-editor.js"></script>
     <script src="admin.js"></script>
   </body>

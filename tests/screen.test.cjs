@@ -331,10 +331,10 @@ test('published updates remain pending while browsing even from an empty playlis
 
 test('navigation metadata is normalized and inactivity timeout is bounded', () => {
   const env = environment();
-  const result = env.ctx.MTD_SCREEN.normalize({ browseTimeout: 9999, items: [image('a', { displayName: 'First dance', category: 'packages' }), image('b', { category: 'invalid' })] });
+  const result = env.ctx.MTD_SCREEN.normalize({ browseTimeout: 9999, items: [image('a', { type: 'video', displayName: 'First dance', category: 'general' }), image('b', { category: 'invalid' })] });
   assert.equal(result.browseTimeout, 600);
   assert.equal(result.items[0].displayName, 'First dance');
-  assert.equal(result.items[0].category, 'packages');
+  assert.equal(result.items[0].category, 'general');
   assert.equal(result.items[1].category, 'general');
 });
 
@@ -403,4 +403,34 @@ test('rotation remains usable with blocked storage and ignores invalid saved val
   env.ctx.MTD_SCREEN_ROTATION.rotate();
   assert.equal(env.ctx.MTD_SCREEN_ROTATION.angle(), 90);
   assert.equal(rotationEnvironment({ saved: '45' }).ctx.MTD_SCREEN_ROTATION.angle(), 0);
+});
+
+test('legacy rate cards and schedules move out of the playlist without losing images', () => {
+  const env = environment();
+  const result = env.ctx.MTD_SCREEN.normalize({ items: [
+    image('photo'), image('rate', { category: 'packages', landscapeSrc: 'https://studio.test/wide.png', enabled: false }),
+    image('schedule', { category: 'schedule' })
+  ] });
+  assert.equal(result.items.length, 1);
+  assert.equal(result.items[0].id, 'photo');
+  assert.equal(result.navigationImages.packages[0].id, 'rate');
+  assert.equal(result.navigationImages.packages[0].enabled, false);
+  assert.equal(result.navigationImages.packages[0].landscapeSrc, 'https://studio.test/wide.png');
+  assert.equal(result.navigationImages.schedule[0].id, 'schedule');
+  assert.equal(JSON.stringify(env.ctx.MTD_SCREEN.normalize(result)), JSON.stringify(result));
+  env.update(result);
+  assert.match(env.current().src, /photo.png$/);
+  env.current().emit('load');
+  env.tick(3000);
+  assert.match(env.current().src, /photo.png$/);
+});
+
+test('explicit empty navigation lists do not resurrect removed legacy cards', () => {
+  const env = environment();
+  const result = env.ctx.MTD_SCREEN.normalize({
+    navigationImages: { packages: [], schedule: [] },
+    items: [image('rate', { category: 'packages' })]
+  });
+  assert.equal(result.items.length, 0);
+  assert.equal(result.navigationImages.packages.length, 0);
 });

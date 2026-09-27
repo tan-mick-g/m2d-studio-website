@@ -13,7 +13,7 @@ window.MTD_SCREEN_EDITOR = ({ upload }) => {
   const id = () => window.crypto?.randomUUID?.() || `slide-${Date.now()}-${Math.random().toString(36).slice(2)}`;
   const escape = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
   const notify = (text, error = false) => {
-    [message, root.querySelector("[data-screen-appearance-message]"), root.querySelector("[data-screen-classes-message]")].forEach((element) => {
+    [message, root.querySelector("[data-screen-appearance-message]"), root.querySelector("[data-screen-classes-message]"), root.querySelector("[data-nav-message]")].forEach((element) => {
       if (element) { element.textContent = text; element.classList.toggle("is-error", error); }
     });
   };
@@ -30,11 +30,17 @@ window.MTD_SCREEN_EDITOR = ({ upload }) => {
     const url = core.mediaUrl(item.src);
     if (!url) return '<span class="screen-thumbnail-empty">Add media</span>';
     return item.type === "video"
-      ? `<video src="${escape(url)}" muted playsinline preload="metadata" aria-label="${escape(item.name)}"></video>`
+      ? `<span class="video-thumbnail" data-video-thumbnail data-video-url="${escape(url)}" aria-label="${escape(item.name)}"></span>`
       : `<img src="${escape(url)}" alt="${escape(item.name)}" loading="lazy" />`;
   };
   const itemSummary = (item) => `${item.type === "video" ? "Video · plays to end" : `Image · ${item.duration || settings.duration}s`} · ${item.fit === "cover" ? "Fill" : "Fit"}${item.landscapeSrc ? " · Landscape version" : ""}`;
+  const mountThumbnails = () => {
+    list.querySelectorAll("[data-video-url]").forEach(host => {
+      window.MTD_SCREEN_THUMBNAILS.mount(host, host.dataset.videoUrl);
+    });
+  };
   const render = () => {
+    window.MTD_SCREEN_THUMBNAILS.clear(list);
     list.innerHTML = settings.items.length ? settings.items.map((item, index) => `
       <article class="screen-item${item.enabled ? "" : " is-disabled"}" data-screen-id="${escape(item.id)}">
         <div class="screen-item-top">
@@ -55,7 +61,6 @@ window.MTD_SCREEN_EDITOR = ({ upload }) => {
               <label>Slide Name<input data-field="name" value="${escape(item.name)}" placeholder="e.g. Class rates" /></label>
               <label>Media Type<select data-field="type">${option("image", "Image / rate card", item.type)}${option("video", "Video", item.type)}</select></label>
             </div>
-            ${item.type === "image" ? `<label>Image Category<select data-field="category">${option("general", "General image", item.category)}${option("packages", "Package / rate card", item.category)}${option("schedule", "Schedule", item.category)}</select></label>` : ""}
             <label>Media URL<input data-field="src" type="url" value="${escape(item.src)}" placeholder="https://… (direct image or video file)" /></label>
             <label class="upload-field">Replace ${item.type === "video" ? "Video" : "Image"}<input type="file" accept="${item.type}/*" data-screen-file="src" /></label>
             <div class="field-grid">
@@ -79,10 +84,75 @@ window.MTD_SCREEN_EDITOR = ({ upload }) => {
             </div>
           </div>
         </div>
-      </article>`).join("") : '<div class="screen-empty"><span class="screen-empty-icon" aria-hidden="true">▤</span><h4>Your screen starts here</h4><p>Upload rate cards, studio photos, or videos.<br />They will play in the order you choose.</p></div>';
+      </article>`).join("") : '<div class="screen-empty"><span class="screen-empty-icon" aria-hidden="true">▤</span><h4>Your screen starts here</h4><p>Upload studio photos or videos.<br />They will play in the order you choose.</p></div>';
+    mountThumbnails();
     root.querySelector("[data-screen-video-names]").innerHTML = settings.items.filter(item => item.type === "video").map((item, index) => `<label>${escape(item.name)}${item.enabled ? "" : " (disabled)"}<input data-video-name="${escape(item.id)}" value="${escape(item.displayName)}" placeholder="Video ${index + 1}" /></label>`).join("") || '<p class="editor-help">Upload videos in Playlist to name them here.</p>';
     updateSummary();
   };
+  const renderNavigation = () => {
+    root.querySelectorAll("[data-nav-list]").forEach(list => {
+      const category = list.dataset.navList;
+      list.innerHTML = settings.navigationImages[category].map(item => `
+        <div class="screen-navigation-image" data-nav-category="${category}" data-nav-id="${escape(item.id)}">
+          <img class="screen-art-preview" src="${escape(core.mediaUrl(item.src))}" alt="${escape(item.name)}" ${item.src ? "" : "hidden"} />
+          <label>Image Title<input data-nav-field="name" value="${escape(item.name)}" /></label>
+          <label>Image URL<input type="url" data-nav-field="src" value="${escape(item.src)}" /></label>
+          <label class="upload-field">Replace Image<input type="file" accept="image/*" data-nav-upload="${category}" data-nav-replace="${escape(item.id)}" /></label>
+          <label>Optional Landscape Image URL<input type="url" data-nav-field="landscapeSrc" value="${escape(item.landscapeSrc)}" /></label>
+          <label class="screen-toggle"><input type="checkbox" data-nav-field="enabled" ${item.enabled ? "checked" : ""} /> Show in navigation</label>
+          <button type="button" class="text-button" data-nav-remove>Remove image</button>
+        </div>`).join("") || '<p class="editor-help">No images added yet. These images will only appear in navigation.</p>';
+    });
+  };
+  root.addEventListener("input", event => {
+    const field = event.target.dataset.navField;
+    if (!field) return;
+    const row = event.target.closest("[data-nav-id]");
+    const item = settings.navigationImages[row.dataset.navCategory].find(item => item.id === row.dataset.navId);
+    item[field] = field === "enabled" ? event.target.checked : event.target.value;
+    if (field === "src") { const image = row.querySelector("img"); image.hidden = !core.mediaUrl(item.src); image.src = core.mediaUrl(item.src); }
+  });
+  root.addEventListener("click", event => {
+    const add = event.target.closest("[data-nav-add]");
+    const remove = event.target.closest("[data-nav-remove]");
+    if (uploading || (!add && !remove)) return;
+    if (add) {
+      const category = add.dataset.navAdd;
+      settings.navigationImages[category].push({ id: id(), name: category === "packages" ? "Rate card" : "Schedule", src: "", landscapeSrc: "", enabled: true, type: "image" });
+    } else {
+      const row = remove.closest("[data-nav-id]");
+      settings.navigationImages[row.dataset.navCategory] = settings.navigationImages[row.dataset.navCategory].filter(item => item.id !== row.dataset.navId);
+    }
+    renderNavigation();
+    notify("Navigation updated. Save Changes to publish.");
+  });
+  root.addEventListener("change", async event => {
+    const input = event.target;
+    const category = input.dataset.navUpload;
+    if (!category || !input.files.length || uploading) return;
+    uploading = true;
+    const fieldsets = [...root.querySelectorAll("fieldset")];
+    fieldsets.forEach(fieldset => { fieldset.disabled = true; });
+    let completed = 0;
+    try {
+      for (const file of input.files) {
+        if (!file.type.startsWith("image/")) throw new Error("Choose image files for navigation.");
+        notify(`Uploading ${file.name}…`);
+        const result = await upload(file, `studioScreen.navigationImages.${category}`);
+        const existing = settings.navigationImages[category].find(item => item.id === input.dataset.navReplace);
+        if (existing) existing.src = result.publicUrl;
+        else settings.navigationImages[category].push({ id: id(), name: file.name.replace(/\.[^.]+$/, ""), src: result.publicUrl, landscapeSrc: "", enabled: true, type: "image" });
+        completed++;
+      }
+      notify(`${completed} navigation image(s) uploaded. Save Changes to publish.`);
+    } catch (error) { notify(`${completed} uploaded. ${error.message}`, true); }
+    finally {
+      uploading = false;
+      fieldsets.forEach(fieldset => { fieldset.disabled = false; });
+      input.value = "";
+      renderNavigation();
+    }
+  });
   const syncLoadingControls = () => {
     root.querySelectorAll("[data-screen-classes-mode]").forEach(section => {
       section.hidden = section.dataset.screenClassesMode !== settings.classesMode;
@@ -103,6 +173,12 @@ window.MTD_SCREEN_EDITOR = ({ upload }) => {
     for (const key of ["backgroundImage", "loadingImage", "classesImage", "classesUrl"]) {
       if (settings[key] && !core.mediaUrl(settings[key])) throw new Error(`Studio Screen: ${({ backgroundImage: "background image", loadingImage: "loading image", classesImage: "classes image", classesUrl: "classes webpage" })[key]} needs a valid URL.`);
     }
+    for (const category of ["packages", "schedule"]) {
+      for (const item of settings.navigationImages[category]) {
+        if (item.enabled && !core.mediaUrl(item.src)) throw new Error(`Navigation: add an image URL for ${item.name}, or disable it.`);
+        if (item.landscapeSrc && !core.mediaUrl(item.landscapeSrc)) throw new Error(`Navigation: invalid landscape image URL for ${item.name}.`);
+      }
+    }
     for (const [index, item] of settings.items.entries()) {
       if (item.enabled && !core.mediaUrl(item.src)) throw new Error(`Studio Screen slide ${index + 1} needs a valid media URL, or disable it for now.`);
       if (item.landscapeSrc && !core.mediaUrl(item.landscapeSrc)) throw new Error(`Studio Screen slide ${index + 1} has an invalid landscape URL.`);
@@ -114,6 +190,7 @@ window.MTD_SCREEN_EDITOR = ({ upload }) => {
   };
   const fill = (value) => {
     settings = core.normalize(value);
+    renderNavigation();
     syncArtwork();
     root.querySelectorAll("[data-screen-setting]").forEach((input) => {
       if (input.type === "checkbox") input.checked = settings[input.dataset.screenSetting];
@@ -155,7 +232,14 @@ window.MTD_SCREEN_EDITOR = ({ upload }) => {
       const row = event.target.closest("[data-screen-id]");
       const item = settings.items.find((entry) => entry.id === row.dataset.screenId);
       if (event.target.dataset.field === "type") { item.background = "brand"; render(); }
-      else row.querySelector(".screen-thumbnail").innerHTML = thumbnail(item);
+      else {
+        item.src = event.target.value;
+        const host = row.querySelector(".screen-thumbnail");
+        window.MTD_SCREEN_THUMBNAILS.clear(host);
+        host.innerHTML = thumbnail(item);
+        const video = host.querySelector("[data-video-url]");
+        if (video) window.MTD_SCREEN_THUMBNAILS.mount(video, video.dataset.videoUrl);
+      }
     }
   });
   const stop = () => {

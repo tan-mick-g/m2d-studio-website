@@ -27,6 +27,7 @@ window.MTD_SCREEN_CONTROLS = ({ suspend, play, resume }) => {
   let settings, section, timer, interacting = false;
   const source = item => window.MTD_SCREEN.source(item, window.MTD_SCREEN_ROTATION.landscape());
   const clearMedia = element => {
+    window.MTD_SCREEN_THUMBNAILS.clear(element);
     element.querySelectorAll("video").forEach(video => { video.removeAttribute("src"); video.load(); });
     element.querySelectorAll("iframe").forEach(frame => { frame.src = "about:blank"; });
     element.replaceChildren();
@@ -75,7 +76,7 @@ window.MTD_SCREEN_CONTROLS = ({ suspend, play, resume }) => {
       resetTimer();
       return;
     }
-    const items = settings.items.filter(item => item.enabled && item.src && (section === "videos" ? item.type === "video" : item.type === "image" && item.category === section));
+    const items = (section === "videos" ? settings.items.filter(item => item.type === "video") : settings.navigationImages[section] || []).filter(item => item.enabled && item.src);
     if (!items.length) {
       const empty = document.createElement("p");
       empty.textContent = "Nothing has been added here yet.";
@@ -85,10 +86,11 @@ window.MTD_SCREEN_CONTROLS = ({ suspend, play, resume }) => {
       const title = section === "videos" ? item.displayName.trim() || `Video ${index + 1}` : item.name;
       const button = document.createElement("button");
       button.type = "button"; button.className = "screen-gallery-card";
-      const thumbnail = document.createElement(item.type === "video" ? "video" : "img");
-      if (item.type === "video") { thumbnail.muted = true; thumbnail.playsInline = true; thumbnail.preload = "metadata"; }
+      const thumbnail = document.createElement(item.type === "video" ? "span" : "img");
+      if (item.type === "video") { thumbnail.className = "video-thumbnail"; thumbnail.setAttribute("aria-hidden", "true"); window.MTD_SCREEN_THUMBNAILS.mount(thumbnail, source(item)); }
       else { thumbnail.alt = ""; thumbnail.loading = "lazy"; }
-      thumbnail.src = source(item); thumbnail.dataset.itemId = item.id;
+      if (item.type === "image") thumbnail.src = source(item);
+      thumbnail.dataset.itemId = item.id;
       const label = document.createElement("span"); label.textContent = title;
       button.append(thumbnail, label);
       button.addEventListener("click", () => {
@@ -137,11 +139,13 @@ window.MTD_SCREEN_CONTROLS = ({ suspend, play, resume }) => {
   window.addEventListener("keydown", event => { if (event.key === "Escape" && interacting) resume(); });
   const refreshSources = () => {
     const image = detail.querySelector("img");
-    const item = settings?.items.find(item => item.id === image?.dataset.itemId);
+    const candidates = settings ? [...settings.items, ...settings.navigationImages.packages, ...settings.navigationImages.schedule] : [];
+    const item = candidates.find(item => item.id === image?.dataset.itemId);
     if (image && item) image.src = source(item);
     gallery.querySelectorAll("[data-item-id]").forEach(media => {
-      const entry = settings?.items.find(item => item.id === media.dataset.itemId);
-      if (entry) media.src = source(entry);
+      const entry = candidates.find(item => item.id === media.dataset.itemId);
+      if (entry?.type === "video") window.MTD_SCREEN_THUMBNAILS.mount(media, source(entry));
+      else if (entry) media.src = source(entry);
     });
   };
   window.addEventListener("resize", refreshSources);

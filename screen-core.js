@@ -14,7 +14,19 @@
   };
   const normalize = (value = {}) => {
     value = value && typeof value === "object" ? value : {};
+    const originalItems = (Array.isArray(value.items) ? value.items : []).filter(Boolean);
+    const navigationImages = category => {
+      const saved = value.navigationImages?.[category];
+      const images = Array.isArray(saved) ? saved : originalItems.filter(item => item.type !== "video" && item.category === category);
+      return images.filter(Boolean).map((item, index) => ({
+        id: String(item.id || `nav-${category}-${index}`),
+        name: String(item.name || (category === "packages" ? "Rate card" : "Schedule")),
+        src: mediaUrl(item.src), landscapeSrc: mediaUrl(item.landscapeSrc),
+        enabled: item.enabled !== false, type: "image"
+      }));
+    };
     return {
+      navigationImages: { packages: navigationImages("packages"), schedule: navigationImages("schedule") },
       muted: value.muted !== false,
       classesMode: value.classesMode === "image" ? "image" : "webpage",
       classesUrl: mediaUrl(value.classesUrl),
@@ -31,7 +43,7 @@
       loadingBetween: value.loadingBetween === true,
       loadingDuration: clamp(value.loadingDuration, 1, 60, 3),
       loadingLayout: value.loadingLayout === "full" ? "full" : "logo",
-      items: (Array.isArray(value.items) ? value.items : []).filter(Boolean).map((item, index) => ({
+      items: originalItems.filter(item => item.type === "video" || !["packages", "schedule"].includes(item.category)).map((item, index) => ({
         id: String(item.id || `slide-${index}`),
         name: String(item.name || "Untitled slide"),
         displayName: String(item.displayName || ""),
