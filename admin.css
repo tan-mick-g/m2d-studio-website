@@ -1011,3 +1011,5 @@ button:disabled {
 
 .screen-appearance .screen-toggle { display: flex; align-items: center; gap: 10px; }
 .screen-toggle input { width: 18px; height: 18px; accent-color: #143155; }
+
+.screen-video-names { display: grid; gap: 16px; margin: 16px 0 28px; }

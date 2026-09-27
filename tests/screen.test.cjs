@@ -59,6 +59,8 @@ function environment({ preview = true, stored = null, storedAppearance = null, m
     addEventListener: (name, fn) => events.set(name, fn),
     MTD_SUPABASE: { url: 'https://data.test', anonKey: 'test' }
   };
+  let navigation;
+  ctx.MTD_SCREEN_CONTROLS = callbacks => { navigation = callbacks; return { close() {} }; };
   ctx.window = ctx;
   ctx.parent = preview ? parent : ctx;
   let published = {};
@@ -67,7 +69,7 @@ function environment({ preview = true, stored = null, storedAppearance = null, m
   vm.runInContext(read('screen-core.js'), ctx);
   vm.runInContext(read('screen.js'), ctx);
   return {
-    ctx, stage, fallback, tick, storage,
+    ctx, stage, fallback, tick, storage, navigation,
     update: (settings, overrides = {}) => events.get('message')?.({ origin: ctx.location.origin, source: parent, data: { type: 'mtd-screen-preview', settings }, ...overrides }),
     publish: settings => { published = settings; events.get('online')?.(); },
     resize: (width, height) => { ctx.innerWidth = width; ctx.innerHeight = height; events.get('resize')(); tick(250); },
@@ -275,4 +277,130 @@ test('broken media does not insert an extra interlude', () => {
   env.update({ loadingBetween: true, items: [image('broken'), image('good')] });
   env.current().emit('error'); env.tick(100);
   assert.match(env.current().src, /good.png$/);
+});
+
+test('browsing pauses timers and rotation; returning advances once', () => {
+  const env = environment();
+  env.update({ items: [image('a'), image('b')] });
+  env.current().emit('load');
+  env.navigation.suspend();
+  env.tick(30000);
+  env.resize(1920, 1080);
+  assert.match(env.current().src, /a.png$/);
+  env.navigation.resume();
+  assert.match(env.current().src, /b.png$/);
+});
+
+test('a selected video plays once and resumes the interrupted playlist position', () => {
+  const env = environment();
+  const video = image('clip', { type: 'video' });
+  env.update({ items: [image('a'), image('b'), video], loadingBetween: true });
+  env.current().emit('load');
+  env.navigation.suspend();
+  env.navigation.play(video);
+  assert.match(env.current().src, /clip.png$/);
+  env.current().emit('ended');
+  assert.match(env.current().src, /b.png$/);
+});
+
+test('failed selected video returns to playlist, and stale completion cannot skip slides', () => {
+  const env = environment();
+  env.update({ items: [image('a'), image('b')] });
+  env.current().emit('load');
+  env.navigation.suspend();
+  env.navigation.play(image('broken', { type: 'video' }));
+  const oldVideo = env.current();
+  oldVideo.emit('error');
+  env.tick(100);
+  assert.match(env.current().src, /b.png$/);
+  oldVideo.emit('ended');
+  assert.match(env.current().src, /b.png$/);
+});
+
+test('published updates remain pending while browsing even from an empty playlist', async () => {
+  const env = environment({ preview: false });
+  await flush();
+  env.navigation.suspend();
+  env.publish({ items: [image('new')] });
+  await flush();
+  env.tick(10000);
+  assert.equal(env.layers().length, 0);
+  env.navigation.resume();
+  assert.match(env.current().src, /new.png$/);
+});
+
+test('navigation metadata is normalized and inactivity timeout is bounded', () => {
+  const env = environment();
+  const result = env.ctx.MTD_SCREEN.normalize({ browseTimeout: 9999, items: [image('a', { displayName: 'First dance', category: 'packages' }), image('b', { category: 'invalid' })] });
+  assert.equal(result.browseTimeout, 600);
+  assert.equal(result.items[0].displayName, 'First dance');
+  assert.equal(result.items[0].category, 'packages');
+  assert.equal(result.items[1].category, 'general');
+});
+
+test('Back to Playlist pauses the selected video immediately while the next image loads', () => {
+  const env = environment();
+  env.update({ items: [image('a'), image('b')] });
+  env.current().emit('load');
+  env.navigation.suspend();
+  env.navigation.play(image('selected', { type: 'video' }));
+  const video = env.current();
+  env.navigation.resume();
+  assert.equal(video.paused, true);
+  assert.match(env.current().src, /b.png$/);
+});
+
+function rotationEnvironment({ saved = '0', preview = false, blocked = false } = {}) {
+  const properties = {}, classes = new Set(), listeners = new Map();
+  const storage = new Map([['mtd-studio-screen-rotation', saved]]);
+  const viewport = { style: { setProperty: (key, value) => { properties[key] = value; } }, classList: { toggle: (name, enabled) => enabled ? classes.add(name) : classes.delete(name) } };
+  const ctx = {
+    URLSearchParams, Event, innerWidth: 1920, innerHeight: 1080,
+    location: { search: preview ? '?preview=1' : '' },
+    document: { getElementById: () => viewport },
+    localStorage: {
+      getItem(key) { if (blocked) throw new Error('Unavailable'); return storage.get(key); },
+      setItem(key, value) { if (blocked) throw new Error('Unavailable'); storage.set(key, value); }
+    },
+    addEventListener: (name, fn) => listeners.set(name, fn),
+    dispatchEvent: event => listeners.get(event.type)?.()
+  };
+  ctx.window = ctx; ctx.parent = preview ? {} : ctx;
+  vm.createContext(ctx);
+  vm.runInContext(read('screen-rotation.js'), ctx);
+  return { ctx, viewport, properties, classes, storage, resize: () => listeners.get('resize')() };
+}
+
+test('rotation cycles all four directions, swaps dimensions, and remembers the device setting', () => {
+  const env = rotationEnvironment();
+  const rotation = env.ctx.MTD_SCREEN_ROTATION;
+  for (const degrees of [90, 180, 270, 0]) {
+    rotation.rotate();
+    assert.equal(rotation.angle(), degrees);
+    assert.equal(env.viewport.style.width, degrees % 180 ? '1080px' : '1920px');
+    assert.equal(env.viewport.style.height, degrees % 180 ? '1920px' : '1080px');
+    assert.equal(rotation.landscape(), degrees % 180 === 0);
+    assert.equal(env.storage.get('mtd-studio-screen-rotation'), String(degrees));
+  }
+  assert.equal(rotationEnvironment({ saved: '270' }).ctx.MTD_SCREEN_ROTATION.angle(), 270);
+});
+
+test('rotation resizes correctly and preview does not change the saved orientation', () => {
+  const env = rotationEnvironment({ saved: '90', preview: true });
+  assert.equal(env.ctx.MTD_SCREEN_ROTATION.angle(), 0);
+  env.ctx.MTD_SCREEN_ROTATION.rotate();
+  assert.equal(env.storage.get('mtd-studio-screen-rotation'), '90');
+  env.ctx.MTD_SCREEN_ROTATION.rotate();
+  assert.equal(env.storage.get('mtd-studio-screen-rotation'), '90');
+  env.ctx.innerWidth = 390; env.ctx.innerHeight = 844; env.resize();
+  assert.equal(env.viewport.style.width, '390px');
+  assert.ok(env.classes.has('is-narrow'));
+  assert.equal(env.properties['--screen-height'], '844px');
+});
+
+test('rotation remains usable with blocked storage and ignores invalid saved values', () => {
+  const env = rotationEnvironment({ blocked: true });
+  env.ctx.MTD_SCREEN_ROTATION.rotate();
+  assert.equal(env.ctx.MTD_SCREEN_ROTATION.angle(), 90);
+  assert.equal(rotationEnvironment({ saved: '45' }).ctx.MTD_SCREEN_ROTATION.angle(), 0);
 });

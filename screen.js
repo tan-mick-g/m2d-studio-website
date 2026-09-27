@@ -18,8 +18,11 @@
   let preloaded = null;
   let running = false;
   let interlude = false;
+  let interacting = false;
+  let selected = null;
   const playlist = () => settings.items.filter((item) => item.enabled && item.src);
-  const source = (item) => core.source(item, innerWidth > innerHeight);
+  const isLandscape = () => window.MTD_SCREEN_ROTATION?.landscape() ?? (innerWidth > innerHeight);
+  const source = (item) => core.source(item, isLandscape());
   const clearTimers = () => { clearTimeout(slideTimer); clearInterval(watchTimer); };
   const dispose = (node) => {
     if (!node) return;
@@ -86,7 +89,7 @@
     const next = items[(index + 1) % items.length];
     if (next?.type === "image") { preloaded = new Image(); preloaded.src = source(next); }
   };
-  const show = (item, items) => {
+  const show = (item, items, manual = false) => {
     clearTimers();
     const token = ++generation;
     dispose(loading);
@@ -119,7 +122,7 @@
       if (loading === layer) loading = null;
       if (active === layer) active = null;
       dispose(layer);
-      slideTimer = setTimeout(advance, 100);
+      slideTimer = setTimeout(manual ? resume : advance, 100);
     };
     const reveal = () => {
       if (token !== generation || revealed) return;
@@ -131,8 +134,7 @@
       fallback.hidden = true;
       requestAnimationFrame(() => { if (token === generation) layer.classList.add("is-visible"); });
       setTimeout(() => dispose(previous), 500);
-      rememberNext(items);
-      preloadNext(items);
+      if (!manual) { rememberNext(items); preloadNext(items); }
       if (item.type === "image") slideTimer = setTimeout(finishSlide, (item.duration || settings.duration) * 1000);
     };
     media.addEventListener("error", fail, { once: true });
@@ -144,7 +146,7 @@
       media.setAttribute("playsinline", "");
       media.preload = "auto";
       media.addEventListener("playing", reveal);
-      media.addEventListener("ended", () => { if (token === generation) finishSlide(); }, { once: true });
+      media.addEventListener("ended", () => { if (token === generation) { if (manual) resume(); else finishSlide(); } }, { once: true });
       let lastTime = -1;
       let lastProgress = Date.now();
       watchTimer = setInterval(() => {
@@ -170,6 +172,27 @@
       media.src = url;
     }
   };
+  function suspend() {
+    clearTimers();
+    generation++;
+    dispose(loading); loading = null;
+    active?.querySelector("video")?.pause();
+    interacting = true;
+    selected = null;
+    return settings;
+  }
+  function resume() {
+    active?.querySelector("video")?.pause();
+    interacting = false;
+    selected = null;
+    navigation?.close();
+    advance();
+  }
+  const navigation = window.MTD_SCREEN_CONTROLS?.({
+    suspend,
+    resume,
+    play(item) { selected = item; show(item, playlist(), true); }
+  });
   function finishSlide() {
     clearTimers();
     applyPending();
@@ -201,6 +224,8 @@
     if (nextSignature === signature && !restart) return;
     signature = nextSignature;
     pending = normalized;
+    if (interacting && !restart) return;
+    if (restart) { interacting = false; selected = null; navigation?.close(); }
     if (!running || restart) {
       applyPending();
       index = -1;
@@ -244,16 +269,19 @@
     setInterval(refresh, 60000);
     window.addEventListener("online", refresh);
   }
-  let landscape = innerWidth > innerHeight;
+  let landscape = isLandscape();
   let resizeTimer;
-  window.addEventListener("resize", () => {
+  const resize = () => {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => {
-      const next = innerWidth > innerHeight;
+      const next = isLandscape();
       if (next === landscape) return;
       landscape = next;
       failures.clear();
+      if (interacting) { if (selected) show(selected, playlist(), true); return; }
       if (running && !interlude) { index--; advance(); }
     }, 250);
-  });
+  };
+  window.addEventListener("resize", resize);
+  window.addEventListener("screenrotation", resize);
 })();

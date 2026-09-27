@@ -10,14 +10,18 @@
     <link rel="stylesheet" href="/screen.css" />
   </head>
   <body>
+    <div id="screen-viewport">
     <main id="screen" aria-label="Studio media playlist">
       <div class="screen-fallback" id="fallback">
         <img alt="Studio loading screen" hidden />
         <p hidden></p>
       </div>
     </main>
+    </div>
     <script src="/supabase-config.js"></script>
     <script src="/screen-core.js"></script>
+    <script src="/screen-rotation.js"></script>
+    <script src="/screen-controls.js"></script>
     <script src="/screen.js"></script>
   </body>
 </html>

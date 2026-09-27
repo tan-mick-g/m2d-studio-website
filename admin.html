@@ -165,6 +165,7 @@
             <div class="editor-tabs" role="tablist" aria-label="Studio Screen sections" data-page-tabs="studio-screen">
               <button class="is-active" type="button" data-editor-tab="screen-playlist">Playlist</button>
               <button type="button" data-editor-tab="screen-settings">Display Settings</button>
+              <button type="button" data-editor-tab="screen-navigation">Navigation</button>
               <button type="button" data-editor-tab="screen-preview">Preview</button>
             </div>
 
@@ -616,6 +617,32 @@
                 <p class="admin-message" role="status" data-screen-appearance-message></p>
               </fieldset>
               <div class="admin-tool-panel"><div><h4>Ready for AbleSign</h4><p class="editor-help">Add your website’s /screen address as a Website in AbleSign. Allow enough display time for the playlist. The screen checks for published changes every minute and applies them between slides. Website playback requires an internet connection.</p></div></div>
+            </section>
+            <section class="editor-section" data-editor-panel="screen-navigation">
+              <h3>Screen Navigation</h3>
+              <label>Return to Playlist After Inactivity (seconds)<input type="number" min="15" max="600" data-screen-setting="browseTimeout" /></label>
+              <p class="editor-help">Applies while browsing videos, packages, schedules, or classes. A selected video plays to the end before returning. Back to Playlist returns immediately.</p>
+              <fieldset class="screen-controls screen-appearance" data-screen-classes-controls>
+                <h4>Classes Button</h4>
+                <label>Classes Content<select data-screen-setting="classesMode"><option value="webpage">Webpage URL</option><option value="image">Image</option></select></label>
+                <div data-screen-classes-mode="webpage">
+                  <label>Classes Webpage URL<input type="url" data-screen-setting="classesUrl" placeholder="https://…" /></label>
+                  <p class="editor-help">The page opens inside Studio Screen and rotates with it. The website must allow embedding. Activity inside an external webpage cannot reset the return timer; use a longer timeout above if needed.</p>
+                </div>
+                <div data-screen-classes-mode="image" hidden>
+                  <label>Classes Image URL<input type="url" data-screen-setting="classesImage" placeholder="Optional direct image URL" /></label>
+                  <label class="upload-field">Upload Classes Image<input type="file" accept="image/*" data-screen-art-upload="classesImage" /></label>
+                  <img class="screen-art-preview" data-screen-art-preview="classesImage" alt="Classes image preview" hidden />
+                  <button type="button" class="text-button" data-screen-art-clear="classesImage">Remove classes image</button>
+                </div>
+                <p class="editor-help">Switch modes any time. Both the URL and image stay saved. Leave the selected source empty to show a “Classes information coming soon” message.</p>
+                <p class="admin-message" role="status" data-screen-classes-message></p>
+              </fieldset>
+              <h4>Video Display Names</h4>
+              <p class="editor-help">These titles appear in the Videos gallery. Internal slide names stay unchanged. Blank titles appear as Video 1, Video 2, and so on.</p>
+              <div class="screen-video-names" data-screen-video-names></div>
+              <h4>Packages & Schedule Images</h4>
+              <p class="editor-help">Upload images in Playlist, open Edit, then set Image Category to Package / rate card or Schedule. Enabled images appear in the matching gallery and open at full size without cropping. Disabled slides are hidden from all galleries.</p>
             </section>
             <section class="editor-section" data-editor-panel="screen-preview">
               <h3>Preview Your Playlist</h3>

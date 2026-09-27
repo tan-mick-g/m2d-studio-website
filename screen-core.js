@@ -16,6 +16,10 @@
     value = value && typeof value === "object" ? value : {};
     return {
       muted: value.muted !== false,
+      classesMode: value.classesMode === "image" ? "image" : "webpage",
+      classesUrl: mediaUrl(value.classesUrl),
+      classesImage: mediaUrl(value.classesImage),
+      browseTimeout: clamp(value.browseTimeout, 15, 600, 60),
       duration: clamp(value.duration, 3, 300, 10),
       transition: value.transition === "cut" ? "cut" : "fade",
       background: /^#[\da-f]{6}$/i.test(value.background || "") ? value.background : defaults.background,
@@ -30,6 +34,8 @@
       items: (Array.isArray(value.items) ? value.items : []).filter(Boolean).map((item, index) => ({
         id: String(item.id || `slide-${index}`),
         name: String(item.name || "Untitled slide"),
+        displayName: String(item.displayName || ""),
+        category: ["packages", "schedule"].includes(item.category) ? item.category : "general",
         type: item.type === "video" ? "video" : "image",
         src: mediaUrl(item.src),
         landscapeSrc: mediaUrl(item.landscapeSrc),

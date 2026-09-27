@@ -13,12 +13,12 @@ window.MTD_SCREEN_EDITOR = ({ upload }) => {
   const id = () => window.crypto?.randomUUID?.() || `slide-${Date.now()}-${Math.random().toString(36).slice(2)}`;
   const escape = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
   const notify = (text, error = false) => {
-    [message, root.querySelector("[data-screen-appearance-message]")].forEach((element) => {
+    [message, root.querySelector("[data-screen-appearance-message]"), root.querySelector("[data-screen-classes-message]")].forEach((element) => {
       if (element) { element.textContent = text; element.classList.toggle("is-error", error); }
     });
   };
   const draftNotice = () => notify("Playlist updated. Preview it, then Save Changes to publish.");
-  const createItem = (extra = {}) => ({ id: id(), name: "New slide", type: "image", src: "", landscapeSrc: "", enabled: true, duration: "", fit: "contain", background: "brand", x: 50, y: 50, ...extra });
+  const createItem = (extra = {}) => ({ id: id(), name: "New slide", displayName: "", category: "general", type: "image", src: "", landscapeSrc: "", enabled: true, duration: "", fit: "contain", background: "brand", x: 50, y: 50, ...extra });
   const option = (value, label, current) => `<option value="${value}"${value === current ? " selected" : ""}>${label}</option>`;
   const updateSummary = () => {
     const enabled = settings.items.filter((item) => item.enabled);
@@ -55,6 +55,7 @@ window.MTD_SCREEN_EDITOR = ({ upload }) => {
               <label>Slide Name<input data-field="name" value="${escape(item.name)}" placeholder="e.g. Class rates" /></label>
               <label>Media Type<select data-field="type">${option("image", "Image / rate card", item.type)}${option("video", "Video", item.type)}</select></label>
             </div>
+            ${item.type === "image" ? `<label>Image Category<select data-field="category">${option("general", "General image", item.category)}${option("packages", "Package / rate card", item.category)}${option("schedule", "Schedule", item.category)}</select></label>` : ""}
             <label>Media URL<input data-field="src" type="url" value="${escape(item.src)}" placeholder="https://… (direct image or video file)" /></label>
             <label class="upload-field">Replace ${item.type === "video" ? "Video" : "Image"}<input type="file" accept="${item.type}/*" data-screen-file="src" /></label>
             <div class="field-grid">
@@ -79,9 +80,13 @@ window.MTD_SCREEN_EDITOR = ({ upload }) => {
           </div>
         </div>
       </article>`).join("") : '<div class="screen-empty"><span class="screen-empty-icon" aria-hidden="true">▤</span><h4>Your screen starts here</h4><p>Upload rate cards, studio photos, or videos.<br />They will play in the order you choose.</p></div>';
+    root.querySelector("[data-screen-video-names]").innerHTML = settings.items.filter(item => item.type === "video").map((item, index) => `<label>${escape(item.name)}${item.enabled ? "" : " (disabled)"}<input data-video-name="${escape(item.id)}" value="${escape(item.displayName)}" placeholder="Video ${index + 1}" /></label>`).join("") || '<p class="editor-help">Upload videos in Playlist to name them here.</p>';
     updateSummary();
   };
   const syncLoadingControls = () => {
+    root.querySelectorAll("[data-screen-classes-mode]").forEach(section => {
+      section.hidden = section.dataset.screenClassesMode !== settings.classesMode;
+    });
     root.querySelector('[data-screen-setting="loadingBetween"]').disabled = !settings.loadingEnabled;
     root.querySelector('[data-screen-setting="loadingDuration"]').disabled = !settings.loadingEnabled || !settings.loadingBetween;
   };
@@ -93,9 +98,10 @@ window.MTD_SCREEN_EDITOR = ({ upload }) => {
     });
   };
   const read = () => {
+    if (!Number.isFinite(Number(settings.browseTimeout)) || Number(settings.browseTimeout) < 15 || Number(settings.browseTimeout) > 600) throw new Error("Use an inactivity timeout from 15 to 600 seconds.");
     if (uploading) throw new Error("Wait for Studio Screen uploads to finish.");
-    for (const key of ["backgroundImage", "loadingImage"]) {
-      if (settings[key] && !core.mediaUrl(settings[key])) throw new Error(`Studio Screen: ${key === "backgroundImage" ? "background" : "loading"} image needs a valid URL.`);
+    for (const key of ["backgroundImage", "loadingImage", "classesImage", "classesUrl"]) {
+      if (settings[key] && !core.mediaUrl(settings[key])) throw new Error(`Studio Screen: ${({ backgroundImage: "background image", loadingImage: "loading image", classesImage: "classes image", classesUrl: "classes webpage" })[key]} needs a valid URL.`);
     }
     for (const [index, item] of settings.items.entries()) {
       if (item.enabled && !core.mediaUrl(item.src)) throw new Error(`Studio Screen slide ${index + 1} needs a valid media URL, or disable it for now.`);
@@ -117,6 +123,11 @@ window.MTD_SCREEN_EDITOR = ({ upload }) => {
     render();
   };
   root.addEventListener("input", (event) => {
+    if (event.target.dataset.videoName) {
+      const video = settings.items.find(item => item.id === event.target.dataset.videoName);
+      if (video) video.displayName = event.target.value;
+      return;
+    }
     const field = event.target.dataset.field;
     const setting = event.target.dataset.screenSetting;
     if (setting) {
@@ -248,7 +259,8 @@ window.MTD_SCREEN_EDITOR = ({ upload }) => {
     const key = input.dataset.screenArtUpload;
     if (!key || !input.files.length || uploading) return;
     const appearanceControls = root.querySelector("[data-screen-appearance-controls]");
-    uploading = true; controls.disabled = true; appearanceControls.disabled = true;
+    const classesControls = root.querySelector("[data-screen-classes-controls]");
+    uploading = true; controls.disabled = true; appearanceControls.disabled = true; classesControls.disabled = true;
     try {
       const file = input.files[0];
       if (!file.type.startsWith("image/")) throw new Error("Choose an image file.");
@@ -258,7 +270,7 @@ window.MTD_SCREEN_EDITOR = ({ upload }) => {
       root.querySelector(`[data-screen-setting="${key}"]`).value = result.publicUrl;
       syncArtwork(); notify("Image uploaded. Preview, then Save Changes to publish.");
     } catch (error) { notify(error.message, true); }
-    finally { uploading = false; controls.disabled = false; appearanceControls.disabled = false; input.value = ""; }
+    finally { uploading = false; controls.disabled = false; appearanceControls.disabled = false; classesControls.disabled = false; input.value = ""; }
   });
   list.addEventListener("dragstart", (event) => {
     if (uploading || !event.target.matches("[data-screen-drag]")) { event.preventDefault(); return; }
