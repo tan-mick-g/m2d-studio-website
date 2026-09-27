@@ -625,12 +625,14 @@
               <p class="editor-help">Packages, Schedule, and Classes are managed here independently of the looping playlist.</p>
               <fieldset class="screen-controls screen-appearance" data-navigation-controls>
                 <h4>Packages / Rate Cards</h4>
-                <label class="upload-field">Upload Rate Cards<input type="file" accept="image/*" multiple data-nav-upload="packages" /></label>
-                <button type="button" class="text-button" data-nav-add="packages">Add rate card from URL</button>
+                <p class="editor-help">Opens the first enabled image directly. Uploading replaces that image.</p>
+                <label class="upload-field">Upload / Replace Rate Card<input type="file" accept="image/*" data-nav-upload="packages" /></label>
+                <button type="button" class="text-button" data-nav-add="packages">Set rate card URL</button>
                 <div data-nav-list="packages"></div>
                 <h4>Schedule</h4>
-                <label class="upload-field">Upload Schedule Images<input type="file" accept="image/*" multiple data-nav-upload="schedule" /></label>
-                <button type="button" class="text-button" data-nav-add="schedule">Add schedule from URL</button>
+                <p class="editor-help">Opens the first enabled image directly. Uploading replaces that image.</p>
+                <label class="upload-field">Upload / Replace Schedule Image<input type="file" accept="image/*" data-nav-upload="schedule" /></label>
+                <button type="button" class="text-button" data-nav-add="schedule">Set schedule URL</button>
                 <div data-nav-list="schedule"></div>
                 <p class="admin-message" role="status" data-nav-message></p>
               </fieldset>
@@ -638,6 +640,7 @@
                 <h4>Classes Button</h4>
                 <label>Classes Content<select data-screen-setting="classesMode"><option value="webpage">Webpage URL</option><option value="image">Image</option></select></label>
                 <div data-screen-classes-mode="webpage">
+                  <p class="editor-help">For Rezerv, use the official Embed Widget URL. Regular booking pages such as /class may block display here. <a href="https://www.rezerv.co/blogs/embed-your-booking-on-any-website" target="_blank" rel="noopener">Rezerv embedding guide</a></p>
                   <label>Classes Webpage URL<input type="url" data-screen-setting="classesUrl" placeholder="https://…" /></label>
                   <p class="editor-help">The page opens inside Studio Screen and rotates with it. The website must allow embedding. Activity inside an external webpage cannot reset the return timer; use a longer timeout above if needed.</p>
                 </div>

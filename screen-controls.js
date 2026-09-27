@@ -48,6 +48,9 @@ window.MTD_SCREEN_CONTROLS = ({ suspend, play, resume }) => {
   const render = () => {
     panel.hidden = false; gallery.hidden = false; detail.hidden = true; back.hidden = true;
     clearMedia(gallery); clearMedia(detail);
+    panel.classList.remove("is-image-view");
+    panel.style.backgroundColor = settings.background;
+    panel.style.backgroundImage = settings.backgroundImage ? `url(${JSON.stringify(settings.backgroundImage)})` : "none";
     heading.textContent = { videos: "Videos", packages: "Packages", schedule: "Schedule", classes: "Classes" }[section];
     if (section === "classes") {
       gallery.hidden = true; detail.hidden = false;
@@ -55,9 +58,10 @@ window.MTD_SCREEN_CONTROLS = ({ suspend, play, resume }) => {
       if (!url) {
         detail.textContent = "Classes information coming soon.";
       } else if (settings.classesMode === "image") {
+        panel.classList.add("is-image-view");
         const image = document.createElement("img");
         image.src = url; image.alt = "Classes";
-        image.addEventListener("error", () => { detail.textContent = "The classes image could not load. Please try again later."; });
+        image.addEventListener("error", () => { panel.classList.remove("is-image-view"); detail.textContent = "The classes image could not load. Please try again later."; });
         detail.append(image);
       } else {
         const frame = document.createElement("iframe");
@@ -77,6 +81,26 @@ window.MTD_SCREEN_CONTROLS = ({ suspend, play, resume }) => {
       return;
     }
     const items = (section === "videos" ? settings.items.filter(item => item.type === "video") : settings.navigationImages[section] || []).filter(item => item.enabled && item.src);
+    if (section === "packages" || section === "schedule") {
+      gallery.hidden = true; detail.hidden = false;
+      const item = items[0];
+      if (item) {
+        panel.classList.add("is-image-view");
+        const image = document.createElement("img");
+        image.alt = item.name; image.src = source(item); image.dataset.itemId = item.id;
+        image.addEventListener("error", () => {
+          panel.classList.remove("is-image-view");
+          detail.textContent = "This image could not load. Please try again later.";
+        });
+        detail.append(image);
+        returnButton.focus();
+      } else {
+        detail.textContent = "No image has been added yet.";
+        heading.focus();
+      }
+      resetTimer();
+      return;
+    }
     if (!items.length) {
       const empty = document.createElement("p");
       empty.textContent = "Nothing has been added here yet.";

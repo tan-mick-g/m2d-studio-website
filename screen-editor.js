@@ -118,6 +118,10 @@ window.MTD_SCREEN_EDITOR = ({ upload }) => {
     if (uploading || (!add && !remove)) return;
     if (add) {
       const category = add.dataset.navAdd;
+      if (settings.navigationImages[category].length) {
+        root.querySelector(`[data-nav-list="${category}"] [data-nav-field="src"]`).focus();
+        return;
+      }
       settings.navigationImages[category].push({ id: id(), name: category === "packages" ? "Rate card" : "Schedule", src: "", landscapeSrc: "", enabled: true, type: "image" });
     } else {
       const row = remove.closest("[data-nav-id]");
@@ -139,8 +143,10 @@ window.MTD_SCREEN_EDITOR = ({ upload }) => {
         if (!file.type.startsWith("image/")) throw new Error("Choose image files for navigation.");
         notify(`Uploading ${file.name}…`);
         const result = await upload(file, `studioScreen.navigationImages.${category}`);
-        const existing = settings.navigationImages[category].find(item => item.id === input.dataset.navReplace);
-        if (existing) existing.src = result.publicUrl;
+        const existing = input.dataset.navReplace
+          ? settings.navigationImages[category].find(item => item.id === input.dataset.navReplace)
+          : settings.navigationImages[category].find(item => item.enabled) || settings.navigationImages[category][0];
+        if (existing) { existing.src = result.publicUrl; existing.landscapeSrc = ""; existing.enabled = true; }
         else settings.navigationImages[category].push({ id: id(), name: file.name.replace(/\.[^.]+$/, ""), src: result.publicUrl, landscapeSrc: "", enabled: true, type: "image" });
         completed++;
       }
