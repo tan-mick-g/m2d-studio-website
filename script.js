@@ -508,14 +508,31 @@ const applyHeroMedia = (content) => {
   }, 5000);
 };
 
-const renderCalendar = (schedule) => {
+const renderScheduleDate = (schedule = window.MTD_SITE_CONTENT?.schedule || defaultContent.schedule) => {
+  const heading = document.querySelector("[data-schedule-month]");
+  if (!heading) return;
+
+  const now = new Date();
+  heading.textContent = new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    year: "numeric",
+    timeZone: "Asia/Manila"
+  }).format(now);
+
   const container = document.querySelector("[data-calendar]");
   if (!container) return;
 
+  const parts = new Intl.DateTimeFormat("en-US", {
+    month: "numeric", year: "numeric", timeZone: "Asia/Manila"
+  }).formatToParts(now);
+  const year = Number(parts.find(part => part.type === "year").value);
+  const month = Number(parts.find(part => part.type === "month").value);
+  const firstWeekday = new Date(Date.UTC(year, month - 1, 1)).getUTCDay();
+  const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();
   const highlighted = new Set((schedule?.highlightedDays || []).map(Number));
   const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  const blanks = Array.from({ length: 6 }, (_, index) => `<span class="calendar-day is-empty">${index}</span>`);
-  const days = Array.from({ length: 31 }, (_, index) => {
+  const blanks = Array.from({ length: firstWeekday }, () => `<span class="calendar-day is-empty" aria-hidden="true"></span>`);
+  const days = Array.from({ length: daysInMonth }, (_, index) => {
     const day = index + 1;
     return `<span class="calendar-day ${highlighted.has(day) ? "is-highlighted" : ""}">${day}</span>`;
   });
@@ -747,7 +764,7 @@ const applyContent = (content) => {
   `;
   });
 
-  renderCalendar(content.schedule);
+  renderScheduleDate(content.schedule);
   renderScheduleWidget(content.schedule);
 
   setHref("[data-packages-band-cta]", resolveUrl(content.packagesBand?.ctaUrl, "#packages"));
@@ -963,6 +980,16 @@ document.querySelectorAll("[data-contact-message]").forEach((textarea) => {
     textarea.dataset.templateOwned = textarea.value === template ? "true" : "false";
   });
 });
+
+// Update before content loads, and refresh tabs left open across a month boundary.
+if (document.querySelector("[data-schedule-month]")) {
+  renderScheduleDate();
+  window.setInterval(() => renderScheduleDate(), 60000);
+  window.addEventListener("focus", () => renderScheduleDate());
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) renderScheduleDate();
+  });
+}
 
 loadContent().then((content) => {
   applyContent(content);
